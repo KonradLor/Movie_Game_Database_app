@@ -11,6 +11,11 @@ export interface CurrentUser {
   isAdmin: boolean;
   email: string | null;
   name: string | null;
+  // Savi API raktai (FAZE C). null = nesukonfigūruoti.
+  tmdbReadToken: string | null;
+  tmdbApiKey: string | null;
+  twitchClientId: string | null;
+  twitchClientSecret: string | null;
 }
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
@@ -42,6 +47,10 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     isAdmin: user.isAdmin,
     email: user.email,
     name: user.name,
+    tmdbReadToken: user.tmdbReadToken,
+    tmdbApiKey: user.tmdbApiKey,
+    twitchClientId: user.twitchClientId,
+    twitchClientSecret: user.twitchClientSecret,
   };
 }
 
