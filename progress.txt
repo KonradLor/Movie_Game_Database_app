@@ -71,7 +71,15 @@ FAZIU BUSENA
               [x] studijos puslapis /studija/[id] (kuriniai kolekcijoje)
               [x] media detalese: aktoriu/rezisieriu/studiju vardai - nuorodos
               [x] TESTUOTA: Andrew Garfield filmografija (75 kuriniai) kesuota, puslapiai 200
-[ ] Faze 4c - Admin API + Claude MCP prieiga
+[x] Faze 4c - Admin API + Claude MCP prieiga (PASIRENKAMA / opt-in)
+              [x] src/lib/api-key.ts: jei ADMIN_API_KEY tuscias -> API ISJUNGTAS (404)
+              [x] src/lib/media-service.ts (create/update is JSON)
+              [x] API: /api/admin/media (GET/POST), /api/admin/media/[id] (PATCH/DELETE),
+                  /api/admin/search (TMDB)
+              [x] MCP serveris atskiras paketas mcp/ (server.mjs, package.json, README):
+                  irankiai search_tmdb/list_media/import_tmdb/add_media/edit_media/delete_media
+              [x] TESTUOTA: be rakto 404(isjungta)/401, su raktu pilnas CRUD veikia
+              [x] Numatyta ISJUNGTA (ADMIN_API_KEY tuscias) - aplikacija veikia ir be sito
 [x] Faze 5  - CRUD UI (prideti / redaguoti / trinti + rankinis ivedimas)
               [x] DEV admin apejimas (DEV_ADMIN=true, tik ne-produkcijoje) kurimui
               [x] Server actions src/lib/actions.ts: createManualMedia, updateMedia,
@@ -113,6 +121,16 @@ FAZIU BUSENA
 DARBU ZURNALAS (naujausias virsuje)
 -------------------------------------------------------------------------
 2026-05-25
+  - BAIGTA Faze 4c (PASIRENKAMA): admin REST API (/api/admin/*) apsaugotas
+    ADMIN_API_KEY raktu. Numatytai ISJUNGTA (tuscias raktas -> 404). MCP serveris
+    atskirame mcp/ pakete (optional, prijungi tik panorejes). Testuota visa CRUD.
+    Aplikacija veikia identiskai ir be sito.
+  - GIT: git init + pradinis commitas, push i https://github.com/KonradLor/Movie_Game_Database_app.git
+    (saka main, 63 failai). Paruosta proprietary LICENSE (EN, naudojimas tik su autoriaus
+    sutikimu) + README (EN pagrindinis + LT papildomas). I .gitignore ideti serverio
+    infrastrukturos dokumentai (atsakymai/klausimai_infrastrukturai.txt,
+    faze3_KOMANDA_serverio_DI.txt) ir .env - NEItraukti del saugumo.
+    Git identity: Konrad Lorenz / klorenz.dev@gmail.com (greiciausiai busimas ADMIN_EMAIL).
   - BAIGTA Faze 4b: asmenu/kompaniju narsymas. Asmens puslapis su biografija ir
     filmografija (write-through kesuojama is TMDB, 75 kuriniai testuota). Studijos
     puslapis. Aktoriu/rezisieriu/studiju vardai media detalese - paspaudziami nuorodos.

@@ -1,0 +1,17 @@
+{
+  "name": "media-databank-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Pasirenkamas (optional) MCP serveris Media Databank admin API valdymui per Claude",
+  "bin": {
+    "media-databank-mcp": "server.mjs"
+  },
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.0",
+    "zod": "^3.24.1"
+  }
+}
