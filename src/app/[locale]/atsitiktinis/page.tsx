@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { db } from "@/lib/db";
-import { isAdmin } from "@/lib/admin";
+import { getCurrentUser } from "@/lib/current-user";
 import type { Prisma } from "@prisma/client";
 
 export default async function RandomPage({
@@ -11,10 +11,9 @@ export default async function RandomPage({
 }) {
   const { locale } = await params;
   const t = await getTranslations();
-  const admin = await isAdmin();
+  const user = await getCurrentUser();
 
-  const where: Prisma.MediaItemWhereInput = {};
-  if (!admin) where.visibility = "PUBLIC";
+  const where: Prisma.MediaItemWhereInput = { userId: user?.id ?? "__no_user__" };
 
   const count = await db.mediaItem.count({ where });
   if (count > 0) {

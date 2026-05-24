@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { importFromTmdb } from "@/lib/media-cache";
-import { isAdmin } from "@/lib/admin";
+import { getCurrentUser } from "@/lib/current-user";
 
 // POST /api/media/[id]/refresh -> priverstinai perparsiunta metaduomenis is TMDB.
-// Tik adminui.
+// Tik SAVO iraso (reikia prisijungti).
 export async function POST(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!(await isAdmin())) {
+  const user = await getCurrentUser();
+  if (!user) {
     return NextResponse.json({ error: "Reikia prisijungti" }, { status: 401 });
   }
   const { id } = await params;
-  const media = await db.mediaItem.findUnique({ where: { id } });
+  const media = await db.mediaItem.findFirst({ where: { id, userId: user.id } });
 
   if (!media) {
     return NextResponse.json({ error: "Nerasta" }, { status: 404 });
@@ -27,7 +28,7 @@ export async function POST(
 
   try {
     const tmdbType = media.type === "SERIES" || media.type === "ANIME" ? "tv" : "movie";
-    await importFromTmdb({ type: media.type, tmdbType, tmdbId: media.tmdbId });
+    await importFromTmdb({ userId: user.id, type: media.type, tmdbType, tmdbId: media.tmdbId });
     return NextResponse.json({ ok: true });
   } catch (e) {
     return NextResponse.json(

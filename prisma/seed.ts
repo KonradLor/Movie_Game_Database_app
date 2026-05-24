@@ -2,12 +2,28 @@ import { PrismaClient } from "@prisma/client";
 
 const db = new PrismaClient();
 
-// Keli pavyzdiniai irasai lokaliam testavimui (Faze 5/6 dizaino perziurai).
+// Keli pavyzdiniai irasai lokaliam testavimui (priskirti demo vartotojui).
 async function main() {
-  await db.mediaItem.upsert({
-    where: { type_tmdbId: { type: "MOVIE", tmdbId: 419430 } },
+  // Demo vartotojas (daugiavartotojiskumas)
+  const user = await db.user.upsert({
+    where: { sub: "seed@example.com" },
     update: {},
     create: {
+      sub: "seed@example.com",
+      email: "seed@example.com",
+      name: "Seed User",
+      userNumber: 999,
+      isAdmin: false,
+    },
+  });
+
+  await db.mediaItem.upsert({
+    where: {
+      userId_type_tmdbId: { userId: user.id, type: "MOVIE", tmdbId: 419430 },
+    },
+    update: {},
+    create: {
+      userId: user.id,
       type: "MOVIE",
       title: "Das Mädchen, das durch die Zeit sprang",
       year: 2006,
@@ -23,6 +39,7 @@ async function main() {
 
   await db.mediaItem.create({
     data: {
+      userId: user.id,
       type: "GAME",
       title: "The Witcher 3: Wild Hunt",
       year: 2015,

@@ -1,7 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { auth, signIn, signOut } from "@/auth";
-import { isAdmin } from "@/lib/admin";
 
 // Authentik registracijos (enroll) srautas - bendras kondev SSO.
 const ENROLL_URL = "https://auth.kondev.app/if/flow/enroll/";
@@ -10,7 +9,6 @@ export default async function TopBar() {
   const t = await getTranslations();
   const session = await auth();
   const loggedIn = Boolean(session?.user);
-  const admin = await isAdmin();
 
   const linkCls = "text-sm text-white/60 transition hover:text-white";
 
@@ -35,7 +33,7 @@ export default async function TopBar() {
             {t("nav.random")}
           </Link>
 
-          {admin && (
+          {loggedIn && (
             <Link
               href="/prideti"
               className="rounded-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-3 py-1.5 text-sm font-semibold text-white transition hover:opacity-90"

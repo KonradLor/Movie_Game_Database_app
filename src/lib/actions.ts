@@ -4,15 +4,23 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { MediaType, Visibility, MediaStatus } from "@prisma/client";
 import { db } from "./db";
-import { isAdmin } from "./admin";
+import { getCurrentUser } from "./current-user";
 import { importFromTmdb } from "./media-cache";
 import { cachePersonWorks } from "./people-cache";
 import type { TmdbMediaType } from "./tmdb";
 
-async function ensureAdmin() {
-  if (!(await isAdmin())) {
-    throw new Error("Reikia admin teisiu");
-  }
+// Bet kuris PRISIJUNGES vartotojas gali tvarkyti SAVO dienorasti.
+async function ensureUser() {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Reikia prisijungti");
+  return user;
+}
+
+// Patvirtina, kad irasas priklauso DABARTINIAM vartotojui (kitaip - klaida).
+async function ensureOwned(id: string, userId: string) {
+  const owned = await db.mediaItem.findFirst({ where: { id, userId } });
+  if (!owned) throw new Error("Irasas nerastas arba ne jusu");
+  return owned;
 }
 
 // --- Pagalbiniai FormData parseriai ---
@@ -41,7 +49,6 @@ async function syncTagsFromString(mediaId: string, tagsCsv: string | null) {
     .map((t) => t.trim())
     .filter(Boolean);
 
-  // Pasalinti senus rysius, kuriu nebeliko
   await db.tagOnMedia.deleteMany({ where: { mediaId } });
   for (const name of names) {
     const tag = await db.tag.upsert({
@@ -57,11 +64,12 @@ async function syncTagsFromString(mediaId: string, tagsCsv: string | null) {
 // RANKINIS sukurimas
 // ----------------------------------------------------------------------
 export async function createManualMedia(fd: FormData) {
-  await ensureAdmin();
+  const user = await ensureUser();
 
   const type = (str(fd, "type") as MediaType) || "MOVIE";
   const media = await db.mediaItem.create({
     data: {
+      userId: user.id,
       type,
       title: str(fd, "title") || "(be pavadinimo)",
       originalTitle: str(fd, "originalTitle"),
@@ -86,12 +94,13 @@ export async function createManualMedia(fd: FormData) {
 }
 
 // ----------------------------------------------------------------------
-// Redagavimas
+// Redagavimas (tik savo iraso)
 // ----------------------------------------------------------------------
 export async function updateMedia(fd: FormData) {
-  await ensureAdmin();
+  const user = await ensureUser();
   const id = str(fd, "id");
   if (!id) throw new Error("Truksta id");
+  await ensureOwned(id, user.id);
 
   await db.mediaItem.update({
     where: { id },
@@ -119,40 +128,39 @@ export async function updateMedia(fd: FormData) {
 }
 
 // ----------------------------------------------------------------------
-// Trynimas
+// Trynimas (tik savo iraso)
 // ----------------------------------------------------------------------
 export async function deleteMedia(fd: FormData) {
-  await ensureAdmin();
+  const user = await ensureUser();
   const id = str(fd, "id");
   if (!id) throw new Error("Truksta id");
+  await ensureOwned(id, user.id);
   await db.mediaItem.delete({ where: { id } });
   revalidatePath("/", "layout");
   redirect("/");
 }
 
 // ----------------------------------------------------------------------
-// TMDB importas (write-through cache)
+// TMDB importas (write-through cache) - i SAVO dienorasti
 // ----------------------------------------------------------------------
 export async function importTmdbAction(fd: FormData) {
-  await ensureAdmin();
+  const user = await ensureUser();
   const type = str(fd, "type") as MediaType;
   const tmdbType = str(fd, "tmdbType") as TmdbMediaType;
   const tmdbId = int(fd, "tmdbId");
   if (!type || !tmdbType || !tmdbId) throw new Error("Truksta duomenu");
 
-  const id = await importFromTmdb({ type, tmdbType, tmdbId });
+  const id = await importFromTmdb({ userId: user.id, type, tmdbType, tmdbId });
   revalidatePath("/", "layout");
   redirect(`/media/${id}`);
 }
 
-// Pazymeti kaip paziureta (is watchlist -> watched). Prideda WatchLog,
-// padidina watchCount, atnaujina datas.
+// Pazymeti kaip paziureta (tik savo iraso)
 export async function markWatchedAction(fd: FormData) {
-  await ensureAdmin();
+  const user = await ensureUser();
   const id = str(fd, "id");
   if (!id) throw new Error("Truksta id");
-  const media = await db.mediaItem.findUnique({ where: { id } });
-  if (!media) throw new Error("Nerasta");
+  const media = await ensureOwned(id, user.id);
 
   const now = new Date();
   await db.mediaItem.update({
@@ -169,9 +177,9 @@ export async function markWatchedAction(fd: FormData) {
   redirect(`/media/${id}`);
 }
 
-// Parsiusti/atnaujinti asmens biografija ir filmografija is TMDB (Faze 4b)
+// Parsiusti/atnaujinti asmens filmografija (bendras cache) - reikia prisijungti
 export async function cachePersonAction(fd: FormData) {
-  await ensureAdmin();
+  await ensureUser();
   const id = str(fd, "id");
   if (!id) throw new Error("Truksta id");
   await cachePersonWorks(id);
@@ -179,16 +187,16 @@ export async function cachePersonAction(fd: FormData) {
   redirect(`/asmuo/${id}`);
 }
 
-// Atnaujinti is saltinio (TMDB) - priverstinis perparsiuntimas
+// Atnaujinti is saltinio (TMDB) - tik savo iraso
 export async function refreshMediaAction(fd: FormData) {
-  await ensureAdmin();
+  const user = await ensureUser();
   const id = str(fd, "id");
   if (!id) throw new Error("Truksta id");
-  const media = await db.mediaItem.findUnique({ where: { id } });
-  if (!media?.tmdbId) throw new Error("Nera TMDB saltinio");
+  const media = await ensureOwned(id, user.id);
+  if (!media.tmdbId) throw new Error("Nera TMDB saltinio");
   const tmdbType: TmdbMediaType =
     media.type === "SERIES" || media.type === "ANIME" ? "tv" : "movie";
-  await importFromTmdb({ type: media.type, tmdbType, tmdbId: media.tmdbId });
+  await importFromTmdb({ userId: user.id, type: media.type, tmdbType, tmdbId: media.tmdbId });
   revalidatePath("/", "layout");
   redirect(`/media/${id}`);
 }

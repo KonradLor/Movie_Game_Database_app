@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { db } from "@/lib/db";
-import { isAdmin } from "@/lib/admin";
+import { getCurrentUser } from "@/lib/current-user";
 import { cachePersonAction, importTmdbAction } from "@/lib/actions";
 import type { CachedWork } from "@/lib/people-cache";
 
@@ -13,12 +13,15 @@ export default async function PersonPage({
 }) {
   const { id } = await params;
   const t = await getTranslations();
-  const admin = await isAdmin();
+  const user = await getCurrentUser();
+  const admin = !!user;
 
+  // Kreditai filtruojami i DABARTINIO vartotojo irasus (Person yra bendras cache)
   const person = await db.person.findUnique({
     where: { id },
     include: {
       credits: {
+        where: { media: { userId: user?.id ?? "__no_user__" } },
         include: { media: true },
       },
     },

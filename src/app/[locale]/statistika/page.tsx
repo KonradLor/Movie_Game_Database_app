@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
-import { isAdmin } from "@/lib/admin";
+import { getCurrentUser } from "@/lib/current-user";
 import { Link } from "@/i18n/navigation";
 import type { MediaType, Prisma } from "@prisma/client";
 
@@ -8,10 +8,13 @@ const TYPES: MediaType[] = ["MOVIE", "SERIES", "ANIME", "DOCUMENTARY", "GAME"];
 
 export default async function StatsPage() {
   const t = await getTranslations();
-  const admin = await isAdmin();
+  const user = await getCurrentUser();
+  const loggedIn = !!user;
 
-  const where: Prisma.MediaItemWhereInput = { status: "WATCHED" };
-  if (!admin) where.visibility = "PUBLIC";
+  const where: Prisma.MediaItemWhereInput = {
+    status: "WATCHED",
+    userId: user?.id ?? "__no_user__",
+  };
 
   const items = await db.mediaItem.findMany({ where });
 
@@ -108,8 +111,8 @@ export default async function StatsPage() {
         </section>
       </div>
 
-      {/* Eksportas (tik adminui) */}
-      {admin && (
+      {/* Eksportas (savo duomenu) */}
+      {loggedIn && (
         <section className="glass mt-6 flex flex-wrap items-center gap-3 p-6">
           <span className="text-sm font-semibold text-white/70">
             {t("actions.export")}:

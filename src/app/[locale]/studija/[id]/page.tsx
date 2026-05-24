@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { db } from "@/lib/db";
-import { isAdmin } from "@/lib/admin";
+import { getCurrentUser } from "@/lib/current-user";
 
 export default async function CompanyPage({
   params,
@@ -11,18 +11,22 @@ export default async function CompanyPage({
 }) {
   const { id } = await params;
   const t = await getTranslations();
-  const admin = await isAdmin();
+  const user = await getCurrentUser();
 
+  // Kreditai filtruojami i DABARTINIO vartotojo irasus (Company - bendras cache)
   const company = await db.company.findUnique({
     where: { id },
-    include: { credits: { include: { media: true } } },
+    include: {
+      credits: {
+        where: { media: { userId: user?.id ?? "__no_user__" } },
+        include: { media: true },
+      },
+    },
   });
   if (!company) notFound();
 
-  // Kuriniai kolekcijoje (gerbiam privatuma)
-  const works = company.credits
-    .map((c) => c.media)
-    .filter((m) => m && (admin || m.visibility === "PUBLIC"));
+  // Kuriniai tavo kolekcijoje
+  const works = company.credits.map((c) => c.media).filter(Boolean);
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">

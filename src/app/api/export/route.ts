@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { isAdmin } from "@/lib/admin";
+import { getCurrentUser } from "@/lib/current-user";
 
-// GET /api/export?format=json|csv -> visu irasu eksportas. Tik adminui.
+// GET /api/export?format=json|csv -> SAVO irasu eksportas. Reikia prisijungti.
 export async function GET(req: NextRequest) {
-  if (!(await isAdmin())) {
+  const user = await getCurrentUser();
+  if (!user) {
     return NextResponse.json({ error: "Reikia prisijungti" }, { status: 401 });
   }
   const format = req.nextUrl.searchParams.get("format") || "json";
 
   const items = await db.mediaItem.findMany({
+    where: { userId: user.id },
     include: { tags: { include: { tag: true } } },
     orderBy: { createdAt: "desc" },
   });

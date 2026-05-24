@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { importFromTmdb } from "@/lib/media-cache";
-import { isAdmin } from "@/lib/admin";
+import { getCurrentUser } from "@/lib/current-user";
 import type { MediaType } from "@prisma/client";
 import type { TmdbMediaType } from "@/lib/tmdb";
 
@@ -15,7 +15,8 @@ const VALID_TYPES: MediaType[] = [
 // POST /api/media/import  body: { type, tmdbType, tmdbId }
 // Parsiuncia is TMDB ir issaugo i DB (write-through cache). Tik adminui.
 export async function POST(req: NextRequest) {
-  if (!(await isAdmin())) {
+  const user = await getCurrentUser();
+  if (!user) {
     return NextResponse.json({ error: "Reikia prisijungti" }, { status: 401 });
   }
   try {
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Truksta tmdbId" }, { status: 400 });
     }
 
-    const id = await importFromTmdb({ type, tmdbType, tmdbId });
+    const id = await importFromTmdb({ userId: user.id, type, tmdbType, tmdbId });
     return NextResponse.json({ id, ok: true });
   } catch (e) {
     return NextResponse.json(

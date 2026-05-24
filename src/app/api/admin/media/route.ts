@@ -33,16 +33,25 @@ export async function POST(req: NextRequest) {
   if (!k.ok) return NextResponse.json({ error: k.error }, { status: k.status });
 
   try {
+    // Admin API operuoja admino dienorasciu (savininkas)
+    const adminUser = await db.user.findFirst({
+      where: { isAdmin: true },
+      orderBy: { userNumber: "asc" },
+    });
+    if (!adminUser) {
+      return NextResponse.json({ error: "Nera admin vartotojo" }, { status: 500 });
+    }
     const body = await req.json();
     if (body.tmdbId && body.tmdbType) {
       const id = await importFromTmdb({
+        userId: adminUser.id,
         type: (body.type as MediaType) || (body.tmdbType === "tv" ? "SERIES" : "MOVIE"),
         tmdbType: body.tmdbType as TmdbMediaType,
         tmdbId: Number(body.tmdbId),
       });
       return NextResponse.json({ id, ok: true, mode: "tmdb" });
     }
-    const id = await createMediaFromData(body);
+    const id = await createMediaFromData(body, adminUser.id);
     return NextResponse.json({ id, ok: true, mode: "manual" });
   } catch (e) {
     return NextResponse.json(

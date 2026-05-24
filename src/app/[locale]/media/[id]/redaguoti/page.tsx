@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { db } from "@/lib/db";
-import { isAdmin } from "@/lib/admin";
+import { getCurrentUser } from "@/lib/current-user";
 import MediaForm from "@/components/MediaForm";
 
 export default async function EditPage({
@@ -10,12 +10,14 @@ export default async function EditPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  if (!(await isAdmin())) notFound();
+  const user = await getCurrentUser();
+  if (!user) notFound();
   const { id } = await params;
   const t = await getTranslations();
 
-  const item = await db.mediaItem.findUnique({
-    where: { id },
+  // Tik SAVO irasa galima redaguoti
+  const item = await db.mediaItem.findFirst({
+    where: { id, userId: user.id },
     include: { tags: { include: { tag: true } } },
   });
   if (!item) notFound();

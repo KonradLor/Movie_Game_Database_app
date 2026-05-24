@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
-import { isAdmin } from "@/lib/admin";
+import { getCurrentUser } from "@/lib/current-user";
 import CategoryNav from "@/components/CategoryNav";
 import SearchBar from "@/components/SearchBar";
 import MediaCard from "@/components/MediaCard";
@@ -15,11 +15,14 @@ export default async function HomePage({
   searchParams: Promise<{ cat?: string; q?: string }>;
 }) {
   const t = await getTranslations();
-  const admin = await isAdmin();
+  const user = await getCurrentUser();
   const { cat = "", q = "" } = await searchParams;
 
-  const where: Prisma.MediaItemWhereInput = { status: "WATCHED" };
-  if (!admin) where.visibility = "PUBLIC";
+  // Daugiavartotojiskumas: kiekvienas mato TIK savo irasus
+  const where: Prisma.MediaItemWhereInput = {
+    status: "WATCHED",
+    userId: user?.id ?? "__no_user__",
+  };
   if (cat && VALID_CATS.includes(cat)) where.type = cat as MediaType;
   if (q.trim()) where.title = { contains: q.trim(), mode: "insensitive" };
 
@@ -44,7 +47,7 @@ export default async function HomePage({
       </header>
 
       {/* On this day (tik be filtro/paieskos) */}
-      {!cat && !q && <OnThisDay admin={admin} />}
+      {!cat && !q && <OnThisDay userId={user?.id ?? null} />}
 
       {/* Filtrai */}
       <div className="mb-8">

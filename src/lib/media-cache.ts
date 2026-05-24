@@ -17,6 +17,8 @@ import {
 const MAX_CAST = 15;
 
 export interface ImportInput {
+  // Savininkas (i kurio dienorasti importuojam)
+  userId: string;
   // Pageidaujama kategorija portale (anime/dok. nustato vartotojas)
   type: MediaType;
   // TMDB media tipas ir id
@@ -36,9 +38,11 @@ export async function importFromTmdb(input: ImportInput): Promise<string> {
   const poster = posterUrl(details.poster_path);
   const genres = (details.genres || []).map((g) => g.name);
 
-  // Upsert pagal (type, tmdbId). Atnaujinant - NElieciam asmenines info.
+  // Upsert pagal (userId, type, tmdbId) - per-vartotojo. Atnaujinant - NElieciam asmenines info.
   const media = await db.mediaItem.upsert({
-    where: { type_tmdbId: { type: input.type, tmdbId: input.tmdbId } },
+    where: {
+      userId_type_tmdbId: { userId: input.userId, type: input.type, tmdbId: input.tmdbId },
+    },
     update: {
       title,
       originalTitle,
@@ -50,6 +54,7 @@ export async function importFromTmdb(input: ImportInput): Promise<string> {
       cachedAt: new Date(),
     },
     create: {
+      userId: input.userId,
       type: input.type,
       title,
       originalTitle,

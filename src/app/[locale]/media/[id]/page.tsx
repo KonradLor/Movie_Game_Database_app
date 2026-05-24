@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { db } from "@/lib/db";
-import { isAdmin } from "@/lib/admin";
+import { getCurrentUser } from "@/lib/current-user";
 import { deleteMedia, refreshMediaAction, markWatchedAction } from "@/lib/actions";
 
 export default async function MediaDetailPage({
@@ -12,10 +12,11 @@ export default async function MediaDetailPage({
 }) {
   const { id } = await params;
   const t = await getTranslations();
-  const admin = await isAdmin();
+  const user = await getCurrentUser();
 
-  const item = await db.mediaItem.findUnique({
-    where: { id },
+  // Tik SAVO irasa rodom (daugiavartotojiskumas)
+  const item = await db.mediaItem.findFirst({
+    where: { id, userId: user?.id ?? "__no_user__" },
     include: {
       tags: { include: { tag: true } },
       credits: { include: { person: true, company: true } },
@@ -23,8 +24,8 @@ export default async function MediaDetailPage({
   });
 
   if (!item) notFound();
-  // Privatumas: nevieso iraso be admin nerodom
-  if (item.visibility === "PRIVATE" && !admin) notFound();
+  // Savininkas gali tvarkyti savo irasa
+  const admin = !!user;
 
   const actors = item.credits.filter((c) => c.role === "ACTOR" && c.person);
   const directors = item.credits.filter((c) => c.role === "DIRECTOR" && c.person);

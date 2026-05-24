@@ -38,9 +38,10 @@ async function syncTags(mediaId: string, tags?: string[]) {
   }
 }
 
-export async function createMediaFromData(input: MediaInput): Promise<string> {
+export async function createMediaFromData(input: MediaInput, userId: string): Promise<string> {
   const media = await db.mediaItem.create({
     data: {
+      userId,
       type: input.type || "MOVIE",
       title: input.title || "(be pavadinimo)",
       originalTitle: input.originalTitle ?? null,

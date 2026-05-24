@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { searchMulti, posterUrl } from "@/lib/tmdb";
-import { isAdmin } from "@/lib/admin";
+import { getCurrentUser } from "@/lib/current-user";
 
-// GET /api/tmdb/search?q=...  -> TMDB paieska (filmai + serialai). Tik adminui.
+// GET /api/tmdb/search?q=...  -> TMDB paieska (filmai + serialai). Reikia prisijungti.
 export async function GET(req: NextRequest) {
-  if (!(await isAdmin())) {
+  if (!(await getCurrentUser())) {
     return NextResponse.json({ error: "Reikia prisijungti" }, { status: 401 });
   }
   const q = req.nextUrl.searchParams.get("q") || "";

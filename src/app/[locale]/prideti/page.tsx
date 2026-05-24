@@ -1,12 +1,12 @@
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
-import { isAdmin } from "@/lib/admin";
+import { getCurrentUser } from "@/lib/current-user";
 import TmdbSearch from "@/components/TmdbSearch";
 import MediaForm from "@/components/MediaForm";
 
 export default async function AddPage() {
-  if (!(await isAdmin())) notFound();
+  if (!(await getCurrentUser())) notFound();
   const t = await getTranslations();
 
   return (

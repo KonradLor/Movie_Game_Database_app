@@ -1,16 +1,19 @@
 import { getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
-import { isAdmin } from "@/lib/admin";
+import { getCurrentUser } from "@/lib/current-user";
 import { Link } from "@/i18n/navigation";
 import { markWatchedAction } from "@/lib/actions";
 import type { Prisma } from "@prisma/client";
 
 export default async function WatchlistPage() {
   const t = await getTranslations();
-  const admin = await isAdmin();
+  const user = await getCurrentUser();
+  const loggedIn = !!user;
 
-  const where: Prisma.MediaItemWhereInput = { status: "WATCHLIST" };
-  if (!admin) where.visibility = "PUBLIC";
+  const where: Prisma.MediaItemWhereInput = {
+    status: "WATCHLIST",
+    userId: user?.id ?? "__no_user__",
+  };
 
   const items = await db.mediaItem.findMany({
     where,
@@ -51,7 +54,7 @@ export default async function WatchlistPage() {
                   {item.title}
                 </h3>
               </Link>
-              {admin && (
+              {loggedIn && (
                 <form action={markWatchedAction} className="mt-2 px-1">
                   <input type="hidden" name="id" value={item.id} />
                   <button className="w-full rounded-lg bg-white/10 py-1.5 text-xs font-medium text-white transition hover:bg-white/20">

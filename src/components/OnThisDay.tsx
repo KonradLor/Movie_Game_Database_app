@@ -3,16 +3,16 @@ import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
 import type { Prisma } from "@prisma/client";
 
-export default async function OnThisDay({ admin }: { admin: boolean }) {
+export default async function OnThisDay({ userId }: { userId: string | null }) {
   const t = await getTranslations();
   const now = new Date();
   const m = now.getMonth();
   const d = now.getDate();
 
   const where: Prisma.MediaItemWhereInput = {
+    userId: userId ?? "__no_user__",
     OR: [{ firstWatched: { not: null } }, { lastWatched: { not: null } }],
   };
-  if (!admin) where.visibility = "PUBLIC";
 
   const candidates = await db.mediaItem.findMany({ where });
 

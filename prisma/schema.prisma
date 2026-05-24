@@ -51,11 +51,42 @@ enum CreditRole {
 }
 
 // ----------------------------------------------------------------------
+// VARTOTOJAS (daugiavartotojiskumas - kiekvienas turi savo dienorasti)
+// ----------------------------------------------------------------------
+
+model User {
+  id         String   @id @default(cuid())
+  sub        String   @unique // Authentik subject (sub_mode=email -> el. pastas)
+  email      String?
+  name       String?
+  userNumber Int      @unique // eiles nr. (1..N) - API raktu gating (FAZE C)
+  isAdmin    Boolean  @default(false)
+
+  // FAZE C - savi API raktai (21-as ir veliau). Kol kas null = naudoja bendrus.
+  tmdbReadToken      String?
+  tmdbApiKey         String?
+  twitchClientId     String?
+  twitchClientSecret String?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  mediaItems MediaItem[]
+
+  @@index([userNumber])
+}
+
+// ----------------------------------------------------------------------
 // PAGRINDINIS IRASAS
 // ----------------------------------------------------------------------
 
 model MediaItem {
   id          String      @id @default(cuid())
+
+  // Savininkas (daugiavartotojiskumas) - kiekvienas irasas priklauso vartotojui
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   type        MediaType
   title       String
   originalTitle String?
@@ -90,8 +121,9 @@ model MediaItem {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
-  @@unique([type, tmdbId])
-  @@unique([type, igdbId])
+  @@unique([userId, type, tmdbId])
+  @@unique([userId, type, igdbId])
+  @@index([userId])
   @@index([type])
   @@index([visibility])
   @@index([status])
