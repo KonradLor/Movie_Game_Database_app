@@ -8,7 +8,7 @@ import MobileGate from "@/components/MobileGate";
 import "../globals.css";
 
 export const metadata: Metadata = {
-  title: "Mano medijos bazė",
+  title: "Medijų dienoraštis",
   description: "Asmeninė filmų, serialų, anime, dokumentikos ir žaidimų bazė",
 };
 
