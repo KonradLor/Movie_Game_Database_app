@@ -1,0 +1,37 @@
+# Diegimui Oracle serveryje (Faze 9). Lokaliai naudojam "npm run dev".
+# Jungiamasi prie ESAMO bendro Caddy tinklo "web" (external) - Caddy pasiekia
+# moviedb-app per konteinerio varda, BE host portu. Postgres - atskiras,
+# izoliuotas, bind-mount i /var/server-data/moviedb.
+
+services:
+  moviedb-app:
+    build: .
+    container_name: moviedb-app
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://moviedb:${POSTGRES_PASSWORD}@moviedb-postgres:5432/moviedb
+    depends_on:
+      - moviedb-postgres
+    networks:
+      - web
+      - moviedb-internal
+
+  moviedb-postgres:
+    image: postgres:16-alpine
+    container_name: moviedb-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: moviedb
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: moviedb
+    volumes:
+      - /var/server-data/moviedb:/var/lib/postgresql/data
+    networks:
+      - moviedb-internal
+
+networks:
+  web:
+    external: true
+  moviedb-internal:
+    driver: bridge

@@ -1,0 +1,186 @@
+=========================================================================
+PROJEKTO PROGRESAS: Movie / Series / Games databank (media.kondev.app)
+=========================================================================
+Asmenine filmu / serialu / anime / dokumentikos / zaidimu duomenu baze.
+Stekas: Next.js (App Router, TS, Tailwind, arm64 Docker) + Postgres/Prisma
++ Authentik OIDC + TMDB/IGDB su lokaliu kesavimu. Diegiama i esama Oracle
+serveri (kondev.app) kaip subdomenas media.kondev.app.
+
+TAISYKLE: si failas atnaujinamas KIEKVIENA karta, kai kas nors padaroma -
+fiksuojama data, kas atlikta, kokie failai paliesti, kas toliau.
+=========================================================================
+
+LEGENDA: [ ] dar nepradeta | [~] vykdoma | [x] baigta
+
+-------------------------------------------------------------------------
+FAZIU BUSENA
+-------------------------------------------------------------------------
+[~] Faze 0  - Pasiruosimas (media.kondev.app, Authentik OIDC klientas, TMDB+IGDB raktai)
+              [x] TMDB raktai GAUTI ir issaugoti i .env (v3 key + v4 read token)
+              [~] IGDB/Twitch raktai - ATIDETA (problemu su Twitch; zaidimu integracija
+                  prijungiama veliau, kodas paruosiamas kad uztektu idet 2 raktus)
+              [ ] media.kondev.app subdomeno patvirtinimas
+              [ ] Authentik OIDC klientas (daroma su Faze 3)
+[x] Faze 1  - Next.js karkasas (arm64 Docker, standalone, web tinklas, i18n LT)
+              [x] Next.js 15.5.18 + React 19 + TS + Tailwind v4 + next-intl v3
+              [x] i18n struktura (LT, paruosta DE/ENG), [locale] routing
+              [x] Dockerfile (multi-stage, standalone) + docker-compose (web tinklas
+                  + atskiras moviedb-postgres) + .dockerignore + .env.example
+              [x] Build sekmingas, dev serveris testuotas: HTTP 200, LT tekstai OK
+[x] Faze 2  - DB ir modeliai (atskiras moviedb-postgres, Prisma schema)
+              [x] Prisma 6.19.3 (ne 7 - per nauja/breaking)
+              [x] schema.prisma: MediaItem, WatchLog, Tag, TagOnMedia, Person,
+                  Company, Credit + enumai (MediaType, Visibility, MediaStatus,
+                  DataSource, CreditRole). Kesavimo laukai, 3 lygiu privatumas.
+              [x] Pradine migracija prisma/migrations/0_init/migration.sql (183 eil.)
+              [x] src/lib/db.ts (Prisma client singleton), prisma/seed.ts
+              [x] build su "prisma generate && next build" OK
+              [x] LOKALI Postgres 17 idiegta (winget), DB "moviedb" + role "moviedb"
+                  (slaptazodis devpassword), superuser postgres slapt. "postgres"
+              [x] Migracija pritaikyta, seed (2 irasai) iterpti
+              [x] END-TO-END patikra: pradinis puslapis skaito is DB, irasai matomi
+                  su ivertinimais (HTTP 200)
+[x] Faze 3  - Prisijungimas per Authentik OIDC
+              [x] KOMANDA serverio DI paruosta: faze3_KOMANDA_serverio_DI.txt
+                  (Authentik OIDC Provider+Application konfiguracija, ka grazinti)
+              [x] Auth.js (NextAuth v5) idiegtas: src/auth.ts (Authentik provider,
+                  admin pagal ADMIN_EMAIL, trustHost), api/auth/[...nextauth],
+                  src/lib/admin.ts, src/types/next-auth.d.ts
+              [x] Apsaugoti API marsrutai (import/refresh/search) - 401 be prisijungimo
+              [x] AUTH_SECRET sugeneruotas, .env paruostas
+              [ ] LAUKIAM is serverio DI: AUTHENTIK_CLIENT_ID, _SECRET, ADMIN_EMAIL
+                  -> ideti i .env -> tada gyvas login testas (lokaliai per
+                  localhost:3100 redirect URI, jau itrauktas i komanda)
+[~] Faze 4  - TMDB + IGDB integracija su lokaliu kesavimu (write-through)
+              [x] TMDB klientas src/lib/tmdb.ts (paieska, detales, plakatai, de-DE)
+              [x] Write-through cache src/lib/media-cache.ts (issaugo MediaItem +
+                  zanrus kaip tagus + kreditus: aktoriai/rezisierius/scenaristai/studijos)
+              [x] API: /api/tmdb/search, /api/media/import, /api/media/[id]/refresh
+              [x] TESTUOTA gyvai: Hacksaw Ridge importuotas (140min, 31 kreditas,
+                  3 tagai), matomas puslapyje su plakatu, refresh veikia
+              [ ] IGDB (zaidimai) - ATIDETA, laukiam Twitch raktu
+              [ ] (veliau, neprivaloma) plakatu parsisiuntimas i serveri (localPoster)
+                  pilnai autonomijai - dabar hotlink is TMDB CDN
+              [ ] API marsrutu apsauga (tik adminui) - bus Faze 3
+[x] Faze 4b - Asmenu ir kompaniju narsymas su kesavimu
+              [x] Person.cachedWorks Json laukas + migracija
+              [x] tmdb.ts getPerson (bio + combined_credits), people-cache.ts
+                  (cachePersonWorks - write-through)
+              [x] cachePersonAction; asmens puslapis /asmuo/[id] (bio, kolekcijoje,
+                  filmografija su import mygtukais, "kolekcijoje" zymos)
+              [x] studijos puslapis /studija/[id] (kuriniai kolekcijoje)
+              [x] media detalese: aktoriu/rezisieriu/studiju vardai - nuorodos
+              [x] TESTUOTA: Andrew Garfield filmografija (75 kuriniai) kesuota, puslapiai 200
+[ ] Faze 4c - Admin API + Claude MCP prieiga
+[x] Faze 5  - CRUD UI (prideti / redaguoti / trinti + rankinis ivedimas)
+              [x] DEV admin apejimas (DEV_ADMIN=true, tik ne-produkcijoje) kurimui
+              [x] Server actions src/lib/actions.ts: createManualMedia, updateMedia,
+                  deleteMedia, importTmdbAction, refreshMediaAction (visi tikrina admin)
+              [x] Komponentai: MediaForm (kurimas/redagavimas), TmdbSearch (klientinis)
+              [x] Puslapiai: /prideti, /media/[id] (detales+admin mygtukai),
+                  /media/[id]/redaguoti
+              [x] Pradinis puslapis: "Prideti" mygtukas, korteles veda i detales,
+                  admin mato ir privacius irasus
+              [x] TESTUOTA: visi puslapiai 200, importas per UI/API, GoT serialas
+                  importuotas su aktoriais, detales/redagavimas veikia
+[x] Faze 6  - Bento grid / glass dizainas + plyteles
+              [x] globals.css: glass, card-glow svytejimas, gradientai, scrollbaras
+              [x] Komponentai: MediaCard (plyteles kaip 2.jpg: plakatas + metai/tipas/
+                  trukme, ivertinimas ir privatumo zyma ant plakato), CategoryNav
+                  (veikiantys filtrai su aktyvia bukle), SearchBar (paieska)
+              [x] Pradinis puslapis: gradientinis pavadinimas, glass paieska,
+                  "+ Prideti", responsive tinklelis (2-6 stulpeliai)
+              [x] TESTUOTA: filtrai (cat=GAME), paieska (q=witcher), screenshot OK -
+                  atitinka 2.jpg vizija (tamsus bento/glass/glow)
+[~] Faze 7  - Papildomos funkcijos
+              [x] Bendra navigacija TopBar (Pradzia/Noriu/Statistika/Atsitiktinis/+Prideti)
+              [x] Watchlist /noriu + "Pazideta" veiksmas (markWatchedAction + WatchLog)
+              [x] Statistika /statistika (viso irasu/valandu, pagal kategorija,
+                  ivertinimu pasiskirstymas, geriausiai ivertinti)
+              [x] Atsitiktinis parinkejas /atsitiktinis (redirect i atsitiktini)
+              [x] "On this day" komponentas pradiniame puslapyje
+              [x] Eksportas /api/export JSON + CSV (admin), nuorodos statistikoje
+              [x] 3 lygiu privatumas - jau veikia (PUBLIC/UNLISTED/PRIVATE)
+              [x] Svarus build OK (11 puslapiu)
+              [x] MobileGate: telefono ekrane (<768px) rodomas mandagus pranesimas,
+                  kad portalas skirtas kompiuteriui (CSS md:hidden, be JS)
+              [SPRENDIMAS] PWA NEDAROM (vartotojo sprendimas - portalas desktop-only)
+              [ ] LIKO (nebutina): zanru/tagu filtravimas, heatmap kalendorius
+[ ] Faze 8  - Esamu Google Sheets duomenu importas
+[ ] Faze 9  - Diegimas prie esamos infrastrukturos (Caddy route, deploy, backup)
+
+-------------------------------------------------------------------------
+DARBU ZURNALAS (naujausias virsuje)
+-------------------------------------------------------------------------
+2026-05-25
+  - BAIGTA Faze 4b: asmenu/kompaniju narsymas. Asmens puslapis su biografija ir
+    filmografija (write-through kesuojama is TMDB, 75 kuriniai testuota). Studijos
+    puslapis. Aktoriu/rezisieriu/studiju vardai media detalese - paspaudziami nuorodos.
+    Migracija person_cached_works. moviedb rolei suteikta CREATEDB (shadow DB).
+  - Faze 7 (didzioji dalis): TopBar navigacija, watchlist + "pazideta", statistika,
+    atsitiktinis parinkejas, "On this day", eksportas JSON/CSV. Visi puslapiai 200,
+    svarus build OK. Liko: PWA, tagu filtravimas, heatmap kalendorius.
+  - BAIGTA Faze 6: modernus bento/glass/glow dizainas. Plyteles su plakatais,
+    veikiantys kategoriju filtrai + paieska, responsive (2-6 stulp.), gradientai,
+    svytejimas uzvedus. Patikrinta screenshot - atitinka 2.jpg vizija.
+    Sukurti .claude/launch.json (preview "media-dev", portas 3100).
+  - BAIGTA Faze 5: pilnas CRUD UI. TMDB paieska + importas per UI, rankinis ivedimas,
+    redagavimas, trynimas, "atnaujinti is saltinio". Server actions + komponentai
+    (MediaForm, TmdbSearch) + puslapiai (/prideti, /media/[id], .../redaguoti).
+    DEV_ADMIN apejimas leidzia testuoti kol nera Authentik login. Viskas testuota.
+    PASTABA: DEV_ADMIN=true .env veikia tik lokaliai (NODE_ENV != production).
+
+2026-05-24
+  - Faze 3 IVYKDYTA (musu puse): sukurta tiksli KOMANDA serverio DI
+    (faze3_KOMANDA_serverio_DI.txt) Authentik OIDC kliento konfiguracijai.
+    Igyvendintas Auth.js v5 kodas: Authentik provider, admin pagal ADMIN_EMAIL,
+    apsaugoti API marsrutai (401 be login). AUTH_SECRET sugeneruotas.
+    LIKO: serverio DI grazina CLIENT_ID/SECRET + ADMIN_EMAIL -> ideti i .env ->
+    gyvas login testas. Redirect URI lokaliam testui (localhost:3100) jau itrauktas.
+  - Faze 4 (TMDB dalis) BAIGTA: write-through kesavimas veikia gyvai. Failai:
+    src/lib/tmdb.ts, src/lib/media-cache.ts, src/app/api/tmdb/search/route.ts,
+    src/app/api/media/import/route.ts, src/app/api/media/[id]/refresh/route.ts.
+    Metaduomenys traukiami de-DE (atitinka vartotojo vokiska turini). Importuotas
+    test filmas su 31 kreditu ir 3 tagais. IGDB lieka atideta (Twitch raktai).
+  - BAIGTA Faze 2: Prisma schema + modeliai. 7 modeliai + 5 enumai. Pradine
+    migracija sukurta. DB client singleton ir seed paruosti.
+    Sprendimas: idiegta LOKALI Postgres 17 (winget) kūrimui. DB "moviedb" sukurta,
+    migracija pritaikyta, seed iterptas. Pradinis puslapis prijungtas prie DB ir
+    rodo irasus - end-to-end stekas (Next.js -> Prisma -> Postgres) veikia.
+  - BAIGTA Faze 1: sukurtas Next.js karkasas. Failai: package.json, tsconfig.json,
+    next.config.ts, postcss.config.mjs, src/i18n/* (routing, request, navigation),
+    src/middleware.ts, messages/lt.json, src/app/globals.css,
+    src/app/[locale]/{layout,page}.tsx, Dockerfile, .dockerignore,
+    docker-compose.yml, .env.example. Build OK, dev serveris atsako HTTP 200,
+    LT tekstai su diakritikais atvaizduojami. Next atnaujintas i 15.5.18 (saugumo CVE).
+    Sprendimas: kuriam lokaliai (node_modules tik PC, i serveri keliauja TIK kodas).
+  - Pradeta Faze 0. Paruostos TMDB + IGDB/Twitch API raktu gavimo instrukcijos
+    faile faze0_API_raktu_instrukcijos.txt. Laukiam, kol vartotojas gaus 4 raktus:
+    TMDB v3 key, TMDB v4 read token, Twitch Client ID, Twitch Client Secret.
+  - Suplanuotas visas projektas: architektura, 12 faziu, papildomos idejos.
+  - Surinkta esamo Oracle serverio infrastrukturos informacija (per
+    atsakymai_infrastrukturai.txt), planas pritaikytas: jungiames prie esamo
+    Caddy/web tinklo, atskiras Postgres, Authentik OIDC vietoj tiesioginio Google.
+  - Sukurtas sis progress.txt failas.
+  - Statusas: dar neprasidejo kodo rasymas. Laukiam starto signalo (Faze 0 / Faze 1).
+
+-------------------------------------------------------------------------
+KITA SESIJA - NUO KO PRADETI (2026-05-25)
+-------------------------------------------------------------------------
+  1. Jei gauti is serverio DI Authentik raktai -> ideti i .env
+     (AUTHENTIK_CLIENT_ID, AUTHENTIK_CLIENT_SECRET, ADMIN_EMAIL) ->
+     paleisti dev (npm run dev -- -p 3100) -> testuoti login per
+     http://localhost:3100 (redirect URI jau registruotas Authentike).
+  2. Tada arba Faze 5 (CRUD UI - prideti/redaguoti/trinti su TMDB paieska),
+     arba uzbaigti login testa.
+  3. Twitch raktai (IGDB) - kai bus, ideti i .env, tada IGDB integracija (Faze 4).
+  PALEIDIMAS: lokali Postgres 17 veikia kaip Windows servisas (auto). DB duomenys
+  islikę. npm run dev -- -p 3100. Detales: memory/reference_local_dev.md.
+
+-------------------------------------------------------------------------
+ATVIRI KLAUSIMAI / PASTABOS
+-------------------------------------------------------------------------
+  - Subdomenas: media.kondev.app (gali keistis i filmai.kondev.app).
+  - Google Sheets importas - atliekamas veliau (Faze 8).
+  - i18n: dabar tik LT, paruosta DE/ENG veliau.
+=========================================================================

@@ -1,0 +1,104 @@
+{
+  "app": {
+    "title": "Mano medijos bazė",
+    "subtitle": "Filmai, serialai, anime, dokumentika ir žaidimai"
+  },
+  "nav": {
+    "all": "Viskas",
+    "movies": "Filmai",
+    "series": "Serialai",
+    "anime": "Anime",
+    "documentaries": "Dokumentika",
+    "games": "Žaidimai",
+    "home": "Pradžia",
+    "watchlist": "Noriu žiūrėti",
+    "stats": "Statistika",
+    "random": "Atsitiktinis",
+    "login": "Prisijungti",
+    "logout": "Atsijungti"
+  },
+  "watchlist": {
+    "title": "Noriu žiūrėti",
+    "empty": "Sąrašas tuščias",
+    "markWatched": "Pažiūrėta"
+  },
+  "stats": {
+    "title": "Statistika",
+    "totalItems": "Iš viso įrašų",
+    "totalHours": "Iš viso valandų",
+    "byType": "Pagal kategoriją",
+    "byYear": "Pagal žiūrėjimo metus",
+    "topRated": "Geriausiai įvertinti",
+    "ratingDist": "Įvertinimų pasiskirstymas"
+  },
+  "onThisDay": {
+    "title": "Šią dieną",
+    "subtitle": "Ką žiūrėjai šią dieną anksčiau"
+  },
+  "mobile": {
+    "title": "Skirta kompiuteriui",
+    "message": "Šis portalas sukurtas ir geriausiai veikia didesniame ekrane (kompiuteryje arba planšetėje).",
+    "hint": "Prašome atidaryti jį per kompiuterio naršyklę — ten pamatysite visą gražią plytelių galeriją."
+  },
+  "home": {
+    "newest": "Naujausi",
+    "empty": "Kol kas įrašų nėra",
+    "loading": "Kraunama…"
+  },
+  "card": {
+    "minutes": "min.",
+    "watchedTimes": "Žiūrėta kartų: {count}"
+  },
+  "actions": {
+    "add": "Pridėti",
+    "edit": "Redaguoti",
+    "delete": "Ištrinti",
+    "save": "Išsaugoti",
+    "cancel": "Atšaukti",
+    "search": "Ieškoti",
+    "import": "Importuoti",
+    "refresh": "Atnaujinti iš šaltinio",
+    "back": "Atgal",
+    "confirmDelete": "Tikrai ištrinti šį įrašą?",
+    "export": "Eksportuoti"
+  },
+  "form": {
+    "addTitle": "Naujas įrašas",
+    "editTitle": "Redaguoti įrašą",
+    "searchTmdb": "Ieškoti TMDB (filmai / serialai)",
+    "searchPlaceholder": "Įveskite pavadinimą…",
+    "orManual": "Arba įveskite rankiniu būdu",
+    "type": "Kategorija",
+    "title": "Pavadinimas",
+    "originalTitle": "Originalus pavadinimas",
+    "year": "Metai",
+    "duration": "Trukmė (min.)",
+    "description": "Aprašymas",
+    "posterUrl": "Plakato nuoroda (URL)",
+    "rating": "Įvertinimas (1–5)",
+    "opinion": "Mano nuomonė",
+    "status": "Būsena",
+    "watchCount": "Kiek kartų žiūrėta",
+    "firstWatched": "Pirmą kartą žiūrėta",
+    "lastWatched": "Paskutinį kartą žiūrėta",
+    "visibility": "Matomumas",
+    "tags": "Žymos (atskirtos kableliais)",
+    "noResults": "Nieko nerasta"
+  },
+  "type": {
+    "MOVIE": "Filmas",
+    "SERIES": "Serialas",
+    "ANIME": "Anime",
+    "DOCUMENTARY": "Dokumentika",
+    "GAME": "Žaidimas"
+  },
+  "status": {
+    "WATCHED": "Žiūrėta",
+    "WATCHLIST": "Noriu žiūrėti"
+  },
+  "visibility": {
+    "PUBLIC": "Viešas",
+    "UNLISTED": "Tik su nuoroda",
+    "PRIVATE": "Privatus"
+  }
+}

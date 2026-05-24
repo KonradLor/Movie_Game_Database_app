@@ -1,0 +1,191 @@
+// Media Databank - duomenu bazes schema
+// Visi parsiusti duomenys saugomi lokaliai (write-through cache, Faze 4).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ----------------------------------------------------------------------
+// ENUMAI
+// ----------------------------------------------------------------------
+
+enum MediaType {
+  MOVIE // Filmas
+  SERIES // Serialas
+  ANIME // Anime
+  DOCUMENTARY // Dokumentika
+  GAME // Zaidimas
+}
+
+enum Visibility {
+  PUBLIC // Matomas visiems
+  UNLISTED // Tik su tiesiogine nuoroda
+  PRIVATE // Tik adminui prisijungus
+}
+
+enum MediaStatus {
+  WATCHED // Jau ziureta/zaista
+  WATCHLIST // Noriu paziureti (Faze 7)
+}
+
+enum DataSource {
+  TMDB
+  IGDB
+  MANUAL
+}
+
+enum CreditRole {
+  ACTOR // Aktorius
+  DIRECTOR // Rezisierius
+  WRITER // Scenaristas
+  CREATOR // Kurejas
+  DESIGNER // Zaidimo dizaineris
+  DEVELOPER // Zaidimo kurejas (kompanija)
+  PUBLISHER // Leidejas (kompanija)
+  STUDIO // Studija (kompanija)
+}
+
+// ----------------------------------------------------------------------
+// PAGRINDINIS IRASAS
+// ----------------------------------------------------------------------
+
+model MediaItem {
+  id          String      @id @default(cuid())
+  type        MediaType
+  title       String
+  originalTitle String?
+  year        Int?
+  durationMin Int? // trukme minutemis
+  description String? // aprasymas
+  posterUrl   String? // isorinis (TMDB CDN)
+  localPoster String? // parsisiustas i serveri (Faze 4)
+
+  // Asmenine informacija
+  rating      Int? // ivertinimas (pvz. 1-5 arba 1-10)
+  opinion     String? // mano nuomone / komentaras
+  status      MediaStatus @default(WATCHED)
+  watchCount  Int         @default(1) // kiek kartu ziureta
+  firstWatched DateTime? // pirma perziura
+  lastWatched DateTime? // paskutine perziura
+
+  // Privatumas
+  visibility  Visibility  @default(PUBLIC)
+
+  // Saltinis / kesavimas
+  source      DataSource  @default(MANUAL)
+  tmdbId      Int?
+  igdbId      Int?
+  cachedAt    DateTime? // kada paskutini karta atnaujinta is saltinio
+
+  // Rysiai
+  tags        TagOnMedia[]
+  credits     Credit[]
+  watchLogs   WatchLog[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([type, tmdbId])
+  @@unique([type, igdbId])
+  @@index([type])
+  @@index([visibility])
+  @@index([status])
+}
+
+// ----------------------------------------------------------------------
+// PERZIURU ISTORIJA (rewatch, Faze 7)
+// ----------------------------------------------------------------------
+
+model WatchLog {
+  id        String    @id @default(cuid())
+  mediaId   String
+  media     MediaItem @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  watchedAt DateTime
+  note      String?
+  createdAt DateTime  @default(now())
+
+  @@index([mediaId])
+  @@index([watchedAt])
+}
+
+// ----------------------------------------------------------------------
+// ZYMOS / TAGAI
+// ----------------------------------------------------------------------
+
+model Tag {
+  id    String       @id @default(cuid())
+  name  String       @unique
+  media TagOnMedia[]
+}
+
+model TagOnMedia {
+  mediaId String
+  tagId   String
+  media   MediaItem @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  tag     Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([mediaId, tagId])
+}
+
+// ----------------------------------------------------------------------
+// ASMENYS (aktoriai, rezisieriai, dizaineriai) - Faze 4b
+// ----------------------------------------------------------------------
+
+model Person {
+  id           String   @id @default(cuid())
+  name         String
+  bio          String?
+  photoUrl     String?
+  localPhoto   String?
+  tmdbId       Int?     @unique
+  igdbId       Int?     @unique
+  worksCachedAt DateTime? // kada filmografija paskutini karta parsiusta
+  cachedWorks  Json? // kesuota TMDB filmografija (ne kolekcijos dalis)
+  credits      Credit[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([name])
+}
+
+// ----------------------------------------------------------------------
+// KOMPANIJOS (studijos, leidejai, developeriai) - Faze 4b
+// ----------------------------------------------------------------------
+
+model Company {
+  id        String   @id @default(cuid())
+  name      String
+  logoUrl   String?
+  tmdbId    Int?     @unique
+  igdbId    Int?     @unique
+  credits   Credit[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
+// ----------------------------------------------------------------------
+// KREDITAI (jungtis: irasas <-> asmuo/kompanija su vaidmeniu)
+// ----------------------------------------------------------------------
+
+model Credit {
+  id        String     @id @default(cuid())
+  role      CreditRole
+  character String? // veikejo vardas (aktoriams)
+  mediaId   String
+  media     MediaItem  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  personId  String?
+  person    Person?    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  companyId String?
+  company   Company?   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([mediaId])
+  @@index([personId])
+  @@index([companyId])
+}

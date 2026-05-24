@@ -1,0 +1,31 @@
+# Paslaptys - NIEKADA necommitinti
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Node / Next.js (Faze 1+)
+node_modules/
+.next/
+out/
+dist/
+build/
+npm-debug.log*
+yarn-error.log*
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Duomenys / backup
+*.sqlite
+*.db
+/data/
+
+# Serverio infrastrukturos dokumentai (IP, architektura, SSO konfig) - tik lokaliai
+atsakymai_infrastrukturai.txt
+klausimai_infrastrukturai.txt
+faze3_KOMANDA_serverio_DI.txt

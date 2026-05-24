@@ -1,0 +1,49 @@
+PROPRIETARY SOFTWARE LICENSE
+Copyright (c) 2026 KonradLor. All Rights Reserved.
+
+1. DEFINITIONS
+   "Software" means the source code, documentation, assets, and any other
+   files contained in this repository, in whole or in part.
+   "Author" means the copyright holder, KonradLor.
+
+2. OWNERSHIP
+   The Software is the exclusive, proprietary property of the Author and is
+   protected by copyright and other intellectual property laws. All rights
+   are reserved by the Author.
+
+3. NO LICENSE GRANTED BY DEFAULT
+   No rights or licenses are granted to any person or entity, whether
+   express or implied. Without the prior, explicit, written consent of the
+   Author, NO person may:
+     (a) use, run, execute, or deploy the Software;
+     (b) copy, reproduce, or store the Software;
+     (c) modify, adapt, translate, or create derivative works;
+     (d) merge, publish, distribute, sublicense, sell, rent, or lease the
+         Software;
+     (e) reverse engineer the Software except where such restriction is
+         prohibited by applicable law.
+
+4. PERMISSION
+   Any use of the Software requires the prior written permission of the
+   Author. Permission, if granted, may be limited, conditional, and revoked
+   at any time at the Author's sole discretion. To request permission,
+   contact the Author via the GitHub account: https://github.com/KonradLor
+
+5. THIRD-PARTY DATA
+   This Software uses the TMDB API and (optionally) the IGDB API but is not
+   endorsed or certified by TMDB or IGDB. All third-party trademarks,
+   metadata, images, and content remain the property of their respective
+   owners and are subject to their own terms.
+
+6. DISCLAIMER OF WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+7. LIMITATION OF LIABILITY
+   IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING
+   FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
+
+Unauthorized use of the Software is strictly prohibited.

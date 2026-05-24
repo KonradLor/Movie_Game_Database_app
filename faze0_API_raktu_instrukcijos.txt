@@ -1,0 +1,85 @@
+=========================================================================
+FAZE 0 - DALIS 1: API RAKTU GAVIMAS (TMDB + IGDB/Twitch)
+=========================================================================
+Abu nemokami. Gavus raktus - irasysim juos i .env faila (NIEKADA i git).
+Kai turesi raktus, atsiusk juos man (arba ideki i .env, kai darysim Faze 1).
+=========================================================================
+
+
+#########################################################################
+A) TMDB API RAKTAS (filmai, serialai, anime, dokumentika)
+#########################################################################
+
+1. Eik i https://www.themoviedb.org/  ->  "Join TMDB" (Sign Up).
+   - Susikurk paskyra (el. pastas, vartotojo vardas, slaptazodis).
+   - Patvirtink el. pasta (gausi laiska).
+
+2. Prisijungus eik i nustatymus:
+   https://www.themoviedb.org/settings/api
+   (arba: virsuje desineje tavo avataras -> Settings -> kaireje "API").
+
+3. Spausk "Create" / "Request an API Key".
+   - Pasirink tipa: "Developer" (nemokamas, asmeniniam naudojimui).
+   - Sutik su salygomis.
+
+4. Uzpildyk forma (galima paprastai):
+   - Type of use: Personal / Education
+   - Application Name: Media Databank
+   - Application URL: https://media.kondev.app
+   - Application Summary: Asmenine filmu/serialu/zaidimu duomenu baze,
+     nekomercinis projektas, viskas kesuojama lokaliai.
+
+5. Gausi DU dalykus (uztenka vieno, paimsim abu):
+   - "API Key (v3 auth)"  -> trumpas raktas, pvz. abcd1234ef...
+   - "API Read Access Token (v4 auth)" -> ilgas JWT (Bearer) tokenas.
+   * MES NAUDOSIM v4 Read Access Token (Bearer) - patogesnis. Bet issaugok abu.
+
+6. NUSIUSK MAN (arba uzsirasyk saugiai):
+   TMDB_API_KEY=...............(v3)
+   TMDB_READ_TOKEN=...........(v4 Bearer)
+
+
+#########################################################################
+B) IGDB RAKTAS per TWITCH (zaidimai)
+#########################################################################
+IGDB priklauso Twitch/Amazon, todel autentifikacija eina per Twitch.
+
+1. Eik i https://dev.twitch.tv/  ->  prisijunk Twitch paskyra.
+   - Jei neturi Twitch paskyros - susikurk (nemokama).
+   - SVARBU: Twitch reikalauja ijungti 2FA (two-factor) paskyrai, kad
+     galetum registruoti aplikacija. Ijunk per Twitch Security nustatymus
+     (telefono numeris / authenticator app).
+
+2. Eik i https://dev.twitch.tv/console/apps  ->  "Register Your Application".
+
+3. Uzpildyk:
+   - Name: Media Databank IGDB
+   - OAuth Redirect URLs: http://localhost  (IGDB tai nenaudoja, bet laukas
+     privalomas - iveskite http://localhost)
+   - Category: Application Integration
+   - Client Type: Confidential
+
+4. Sukurus aplikacija gausi:
+   - Client ID  (matomas iskart)
+   - Client Secret (spausk "New Secret" -> nukopijuok IS KARTO, veliau
+     nebematysi, teks generuoti is naujo)
+
+5. NUSIUSK MAN (arba uzsirasyk saugiai):
+   TWITCH_CLIENT_ID=.............
+   TWITCH_CLIENT_SECRET=.........
+
+   (Pastaba: pacio "IGDB access token" generuoti NEREIKIA rankiniu budu -
+    portalas pats jį gaus is Twitch su Client ID/Secret ir automatiskai
+    atsinaujins. Tau uztenka duoti ID + Secret.)
+
+
+#########################################################################
+KAS TOLIAU
+#########################################################################
+- Kai tures iuos 4 (TMDB v3, TMDB v4 token, Twitch Client ID, Secret) -
+  ideisim i .env (Faze 1) ir patikrinsim, kad veikia (testine uzklausa).
+- Likusi Faze 0 dalis (media.kondev.app subdomenas + Authentik OIDC klientas)
+  bus atskiros instrukcijos - jas darysim, kai prireiks prisijungimo (Faze 3).
+- Niekam viesai nedalink raktu. Mums uztenka vieno karto - toliau viska
+  kesuosim lokaliai tavo serveryje.
+=========================================================================
