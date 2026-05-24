@@ -9,6 +9,7 @@ export default async function TopBar() {
   const t = await getTranslations();
   const session = await auth();
   const loggedIn = Boolean(session?.user);
+  const admin = session?.user?.isAdmin === true;
 
   const linkCls = "text-sm text-white/60 transition hover:text-white";
 
@@ -32,6 +33,11 @@ export default async function TopBar() {
           <Link href="/atsitiktinis" className={linkCls}>
             {t("nav.random")}
           </Link>
+          {admin && (
+            <Link href="/admin" className="text-sm text-[var(--color-accent)] transition hover:brightness-125">
+              Admin
+            </Link>
+          )}
 
           {loggedIn && (
             <Link
