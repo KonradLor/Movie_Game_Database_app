@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { importTmdbAction } from "@/lib/actions";
 
 interface Result {
@@ -23,14 +24,21 @@ export default function TmdbSearch() {
   const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [needKeys, setNeedKeys] = useState(false);
 
   async function search(e: React.FormEvent) {
     e.preventDefault();
     if (!q.trim()) return;
     setLoading(true);
     setSearched(true);
+    setNeedKeys(false);
     try {
       const res = await fetch(`/api/tmdb/search?q=${encodeURIComponent(q)}`);
+      if (res.status === 403) {
+        setNeedKeys(true);
+        setResults([]);
+        return;
+      }
       const data = await res.json();
       setResults(data.results || []);
     } finally {
@@ -59,7 +67,24 @@ export default function TmdbSearch() {
       </form>
 
       {loading && <p className="text-sm text-white/50">{t("home.loading")}</p>}
-      {!loading && searched && results.length === 0 && (
+
+      {needKeys && (
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
+          <p className="font-medium text-amber-200">Reikia tavo API raktų</p>
+          <p className="mt-1 text-amber-100/70">
+            Bendri serverio raktai skirti tik pirmiems vartotojams. Norint ieškoti ir
+            pridėti naujų įrašų iš TMDB, įvesk savo TMDB raktą profilyje.
+          </p>
+          <Link
+            href="/profilis"
+            className="mt-3 inline-block rounded-lg bg-amber-500/20 px-3 py-1.5 text-xs font-medium text-amber-200 transition hover:bg-amber-500/30"
+          >
+            → Į profilį (įvesti raktus)
+          </Link>
+        </div>
+      )}
+
+      {!loading && !needKeys && searched && results.length === 0 && (
         <p className="text-sm text-white/50">{t("form.noResults")}</p>
       )}
 
