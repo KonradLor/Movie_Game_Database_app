@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { importFromTmdb } from "@/lib/media-cache";
 import { getCurrentUser } from "@/lib/current-user";
+import { resolveTmdb } from "@/lib/api-keys";
 import type { MediaType } from "@prisma/client";
 import type { TmdbMediaType } from "@/lib/tmdb";
 
@@ -19,6 +20,13 @@ export async function POST(req: NextRequest) {
   if (!user) {
     return NextResponse.json({ error: "Reikia prisijungti" }, { status: 401 });
   }
+  const tmdb = resolveTmdb(user);
+  if (!tmdb.canSearch) {
+    return NextResponse.json(
+      { error: "needOwnKeys", message: "Reikia įvesti savo TMDB raktus profilyje." },
+      { status: 403 }
+    );
+  }
   try {
     const body = await req.json();
     const type = body.type as MediaType;
@@ -35,7 +43,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Truksta tmdbId" }, { status: 400 });
     }
 
-    const id = await importFromTmdb({ userId: user.id, type, tmdbType, tmdbId });
+    const id = await importFromTmdb({ userId: user.id, type, tmdbType, tmdbId, readToken: tmdb.readToken ?? undefined });
     return NextResponse.json({ id, ok: true });
   } catch (e) {
     return NextResponse.json(

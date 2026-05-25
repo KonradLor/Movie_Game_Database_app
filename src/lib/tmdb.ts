@@ -8,23 +8,29 @@ const IMAGE_BASE = "https://image.tmdb.org/t/p";
 // Galima perrasyti per .env TMDB_LANG.
 const LANG = process.env.TMDB_LANG || "de-DE";
 
-function authHeaders(): HeadersInit {
-  const token = process.env.TMDB_READ_TOKEN;
-  if (!token) {
-    throw new Error("TMDB_READ_TOKEN nera nustatytas .env faile");
+// token - efektyvus v4 Read Token (FAZE C: pagal vartotoja). Jei nepaduotas -
+// fallback i .env (pvz. vidiniai/admin keliai). Nera nei vieno -> klaida.
+function authHeaders(token?: string): HeadersInit {
+  const t = token || process.env.TMDB_READ_TOKEN;
+  if (!t) {
+    throw new Error("TMDB raktas nenustatytas (nei vartotojo, nei serverio)");
   }
   return {
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${t}`,
     accept: "application/json",
   };
 }
 
-async function tmdbGet<T>(path: string, params: Record<string, string> = {}): Promise<T> {
+async function tmdbGet<T>(
+  path: string,
+  params: Record<string, string> = {},
+  token?: string
+): Promise<T> {
   const url = new URL(`${TMDB_BASE}${path}`);
   url.searchParams.set("language", LANG);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
 
-  const res = await fetch(url, { headers: authHeaders() });
+  const res = await fetch(url, { headers: authHeaders(token) });
   if (!res.ok) {
     throw new Error(`TMDB klaida ${res.status}: ${await res.text()}`);
   }
@@ -101,13 +107,13 @@ export interface TmdbDetails {
 // Funkcijos
 // ----------------------------------------------------------------------
 
-export async function searchMulti(query: string): Promise<TmdbSearchResult[]> {
+export async function searchMulti(query: string, token?: string): Promise<TmdbSearchResult[]> {
   if (!query.trim()) return [];
-  const data = await tmdbGet<{ results: TmdbSearchResult[] }>("/search/multi", {
-    query,
-    include_adult: "true",
-    page: "1",
-  });
+  const data = await tmdbGet<{ results: TmdbSearchResult[] }>(
+    "/search/multi",
+    { query, include_adult: "true", page: "1" },
+    token
+  );
   // Tik filmai ir serialai (asmenis tvarkysim Faze 4b atskirai)
   return (data.results || []).filter(
     (r) => r.media_type === "movie" || r.media_type === "tv"
@@ -116,11 +122,10 @@ export async function searchMulti(query: string): Promise<TmdbSearchResult[]> {
 
 export async function getDetails(
   type: TmdbMediaType,
-  id: number
+  id: number,
+  token?: string
 ): Promise<TmdbDetails> {
-  return tmdbGet<TmdbDetails>(`/${type}/${id}`, {
-    append_to_response: "credits",
-  });
+  return tmdbGet<TmdbDetails>(`/${type}/${id}`, { append_to_response: "credits" }, token);
 }
 
 export function posterUrl(path?: string | null, size = "w500"): string | null {
@@ -153,10 +158,8 @@ export interface TmdbPerson {
   };
 }
 
-export async function getPerson(id: number): Promise<TmdbPerson> {
-  return tmdbGet<TmdbPerson>(`/person/${id}`, {
-    append_to_response: "combined_credits",
-  });
+export async function getPerson(id: number, token?: string): Promise<TmdbPerson> {
+  return tmdbGet<TmdbPerson>(`/person/${id}`, { append_to_response: "combined_credits" }, token);
 }
 
 // Pagalbinis: istraukti pagrindinius duomenis is detaliu

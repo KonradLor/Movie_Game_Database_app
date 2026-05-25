@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { searchMulti, posterUrl } from "@/lib/tmdb";
 import { getCurrentUser } from "@/lib/current-user";
+import { resolveTmdb } from "@/lib/api-keys";
 
 // GET /api/tmdb/search?q=...  -> TMDB paieska (filmai + serialai). Reikia prisijungti.
 export async function GET(req: NextRequest) {
-  if (!(await getCurrentUser())) {
+  const user = await getCurrentUser();
+  if (!user) {
     return NextResponse.json({ error: "Reikia prisijungti" }, { status: 401 });
+  }
+  const tmdb = resolveTmdb(user);
+  if (!tmdb.canSearch) {
+    return NextResponse.json(
+      { error: "needOwnKeys", message: "Reikia įvesti savo TMDB raktus profilyje." },
+      { status: 403 }
+    );
   }
   const q = req.nextUrl.searchParams.get("q") || "";
   if (!q.trim()) {
@@ -13,7 +22,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const results = await searchMulti(q);
+    const results = await searchMulti(q, tmdb.readToken ?? undefined);
     const mapped = results.map((r) => ({
       tmdbId: r.id,
       tmdbType: r.media_type as "movie" | "tv",

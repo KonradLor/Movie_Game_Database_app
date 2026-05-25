@@ -24,11 +24,13 @@ export interface ImportInput {
   // TMDB media tipas ir id
   tmdbType: TmdbMediaType;
   tmdbId: number;
+  // Efektyvus TMDB v4 read token (FAZE C: pagal vartotoja). Nebutina - fallback env.
+  readToken?: string;
 }
 
 // Parsiusti is TMDB ir issaugoti (sukurti arba atnaujinti metaduomenis).
 export async function importFromTmdb(input: ImportInput): Promise<string> {
-  const details = await getDetails(input.tmdbType, input.tmdbId);
+  const details = await getDetails(input.tmdbType, input.tmdbId, input.readToken);
 
   const title = extractTitle(details);
   const originalTitle = details.original_title || details.original_name || null;

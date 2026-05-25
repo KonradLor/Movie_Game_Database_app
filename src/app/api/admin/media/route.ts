@@ -41,6 +41,8 @@ export async function POST(req: NextRequest) {
     if (!adminUser) {
       return NextResponse.json({ error: "Nera admin vartotojo" }, { status: 500 });
     }
+    const { resolveTmdb } = await import("@/lib/api-keys");
+    const tmdb = resolveTmdb(adminUser);
     const body = await req.json();
     if (body.tmdbId && body.tmdbType) {
       const id = await importFromTmdb({
@@ -48,6 +50,7 @@ export async function POST(req: NextRequest) {
         type: (body.type as MediaType) || (body.tmdbType === "tv" ? "SERIES" : "MOVIE"),
         tmdbType: body.tmdbType as TmdbMediaType,
         tmdbId: Number(body.tmdbId),
+        readToken: tmdb.readToken ?? undefined,
       });
       return NextResponse.json({ id, ok: true, mode: "tmdb" });
     }

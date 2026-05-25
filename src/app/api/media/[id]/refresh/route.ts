@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { importFromTmdb } from "@/lib/media-cache";
 import { getCurrentUser } from "@/lib/current-user";
+import { resolveTmdb } from "@/lib/api-keys";
 
 // POST /api/media/[id]/refresh -> priverstinai perparsiunta metaduomenis is TMDB.
 // Tik SAVO iraso (reikia prisijungti).
@@ -27,8 +28,15 @@ export async function POST(
   }
 
   try {
+    const tmdb = resolveTmdb(user);
+    if (!tmdb.canSearch) {
+      return NextResponse.json(
+        { error: "Reikia įvesti savo TMDB raktus profilyje" },
+        { status: 403 }
+      );
+    }
     const tmdbType = media.type === "SERIES" || media.type === "ANIME" ? "tv" : "movie";
-    await importFromTmdb({ userId: user.id, type: media.type, tmdbType, tmdbId: media.tmdbId });
+    await importFromTmdb({ userId: user.id, type: media.type, tmdbType, tmdbId: media.tmdbId, readToken: tmdb.readToken ?? undefined });
     return NextResponse.json({ ok: true });
   } catch (e) {
     return NextResponse.json(

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import type { MediaType, Visibility, MediaStatus, Prisma } from "@prisma/client";
 import { db } from "./db";
 import { getCurrentUser } from "./current-user";
+import { resolveTmdb } from "./api-keys";
 import { importFromTmdb } from "./media-cache";
 import { cachePersonWorks } from "./people-cache";
 import type { TmdbMediaType } from "./tmdb";
@@ -150,7 +151,15 @@ export async function importTmdbAction(fd: FormData) {
   const tmdbId = int(fd, "tmdbId");
   if (!type || !tmdbType || !tmdbId) throw new Error("Truksta duomenu");
 
-  const id = await importFromTmdb({ userId: user.id, type, tmdbType, tmdbId });
+  const tmdb = resolveTmdb(user);
+  if (!tmdb.canSearch) throw new Error("Reikia įvesti savo TMDB raktus profilyje");
+  const id = await importFromTmdb({
+    userId: user.id,
+    type,
+    tmdbType,
+    tmdbId,
+    readToken: tmdb.readToken ?? undefined,
+  });
   revalidatePath("/", "layout");
   redirect(`/media/${id}`);
 }
@@ -179,10 +188,12 @@ export async function markWatchedAction(fd: FormData) {
 
 // Parsiusti/atnaujinti asmens filmografija (bendras cache) - reikia prisijungti
 export async function cachePersonAction(fd: FormData) {
-  await ensureUser();
+  const user = await ensureUser();
   const id = str(fd, "id");
   if (!id) throw new Error("Truksta id");
-  await cachePersonWorks(id);
+  const tmdb = resolveTmdb(user);
+  if (!tmdb.canSearch) throw new Error("Reikia įvesti savo TMDB raktus profilyje");
+  await cachePersonWorks(id, tmdb.readToken ?? undefined);
   revalidatePath("/", "layout");
   redirect(`/asmuo/${id}`);
 }
@@ -233,9 +244,17 @@ export async function refreshMediaAction(fd: FormData) {
   if (!id) throw new Error("Truksta id");
   const media = await ensureOwned(id, user.id);
   if (!media.tmdbId) throw new Error("Nera TMDB saltinio");
+  const tmdb = resolveTmdb(user);
+  if (!tmdb.canSearch) throw new Error("Reikia įvesti savo TMDB raktus profilyje");
   const tmdbType: TmdbMediaType =
     media.type === "SERIES" || media.type === "ANIME" ? "tv" : "movie";
-  await importFromTmdb({ userId: user.id, type: media.type, tmdbType, tmdbId: media.tmdbId });
+  await importFromTmdb({
+    userId: user.id,
+    type: media.type,
+    tmdbType,
+    tmdbId: media.tmdbId,
+    readToken: tmdb.readToken ?? undefined,
+  });
   revalidatePath("/", "layout");
   redirect(`/media/${id}`);
 }
