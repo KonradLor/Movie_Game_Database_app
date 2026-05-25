@@ -51,9 +51,13 @@ export default async function TopBar() {
           {/* --- Prisijungimo sritis --- */}
           {loggedIn ? (
             <div className="flex items-center gap-3">
-              <span className="text-sm text-white/50">
+              <Link
+                href="/profilis"
+                className="text-sm text-white/60 transition hover:text-white"
+                title="Profilis ir API raktai"
+              >
                 {session?.user?.name || session?.user?.email}
-              </span>
+              </Link>
               <form
                 action={async () => {
                   "use server";

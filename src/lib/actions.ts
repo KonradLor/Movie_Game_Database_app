@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type { MediaType, Visibility, MediaStatus } from "@prisma/client";
+import type { MediaType, Visibility, MediaStatus, Prisma } from "@prisma/client";
 import { db } from "./db";
 import { getCurrentUser } from "./current-user";
 import { importFromTmdb } from "./media-cache";
@@ -185,6 +185,45 @@ export async function cachePersonAction(fd: FormData) {
   await cachePersonWorks(id);
   revalidatePath("/", "layout");
   redirect(`/asmuo/${id}`);
+}
+
+// ----------------------------------------------------------------------
+// FAZE C: savo API raktu issaugojimas (profilis)
+// ----------------------------------------------------------------------
+// Tusti laukai NEkeiciami (palieka esamus). Naudoti "Isvalyti" mygtuka istrynimui.
+export async function saveApiKeysAction(fd: FormData) {
+  const user = await ensureUser();
+  const data: Prisma.UserUpdateInput = {};
+  const fields = [
+    "tmdbReadToken",
+    "tmdbApiKey",
+    "twitchClientId",
+    "twitchClientSecret",
+  ] as const;
+  for (const f of fields) {
+    const v = str(fd, f);
+    if (v !== null) (data as Record<string, string>)[f] = v;
+  }
+  if (Object.keys(data).length > 0) {
+    await db.user.update({ where: { id: user.id }, data });
+  }
+  revalidatePath("/profilis");
+  redirect("/profilis");
+}
+
+export async function clearApiKeysAction() {
+  const user = await ensureUser();
+  await db.user.update({
+    where: { id: user.id },
+    data: {
+      tmdbReadToken: null,
+      tmdbApiKey: null,
+      twitchClientId: null,
+      twitchClientSecret: null,
+    },
+  });
+  revalidatePath("/profilis");
+  redirect("/profilis");
 }
 
 // Atnaujinti is saltinio (TMDB) - tik savo iraso
