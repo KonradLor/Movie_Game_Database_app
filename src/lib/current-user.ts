@@ -24,6 +24,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
   if (!email) return null;
 
   const key = email.toLowerCase();
+  const sName = session?.user?.name ?? null;
 
   let user = await db.user.findUnique({ where: { sub: key } });
   if (!user) {
@@ -34,10 +35,16 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
       data: {
         sub: key,
         email,
-        name: session?.user?.name ?? null,
+        name: sName,
         userNumber: count + 1,
         isAdmin,
       },
+    });
+  } else if ((sName && sName !== user.name) || email !== user.email) {
+    // Atnaujinam varda/emaila (pvz. buvo tuscias) per login
+    user = await db.user.update({
+      where: { id: user.id },
+      data: { name: sName ?? user.name, email },
     });
   }
 

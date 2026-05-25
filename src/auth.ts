@@ -14,10 +14,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    // Pazymime admina pagal el. pasta
+    // Pazymime admina pagal el. pasta; vardas: name -> preferred_username (Authentik username)
     async jwt({ token, profile }) {
       if (profile?.email) {
         token.email = profile.email;
+      }
+      const p = profile as { name?: string; preferred_username?: string } | undefined;
+      const displayName = p?.name?.trim() || p?.preferred_username?.trim();
+      if (displayName) {
+        token.name = displayName;
       }
       token.isAdmin =
         !!token.email &&
@@ -28,6 +33,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.isAdmin = Boolean(token.isAdmin);
         if (token.email) session.user.email = token.email as string;
+        if (token.name) session.user.name = token.name as string;
       }
       return session;
     },
