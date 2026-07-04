@@ -2,12 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type { MediaType, Visibility, MediaStatus, Prisma } from "@prisma/client";
+import { getLocale } from "next-intl/server";
+import type { MediaType, Visibility, MediaStatus, GamePlatform, Prisma } from "@prisma/client";
 import { db } from "./db";
 import { getCurrentUser } from "./current-user";
-import { resolveTmdb } from "./api-keys";
-import { importFromTmdb } from "./media-cache";
+import { resolveTmdb, resolveTwitch } from "./api-keys";
+import { importFromTmdb, importFromIgdb } from "./media-cache";
 import { cachePersonWorks } from "./people-cache";
+import { tmdbLang } from "./locale";
 import type { TmdbMediaType } from "./tmdb";
 
 // Bet kuris PRISIJUNGES vartotojas gali tvarkyti SAVO dienorasti.
@@ -42,6 +44,26 @@ function date(fd: FormData, key: string): Date | null {
   if (v === null) return null;
   const d = new Date(v);
   return Number.isNaN(d.getTime()) ? null : d;
+}
+function float(fd: FormData, key: string): number | null {
+  const v = str(fd, key);
+  if (v === null) return null;
+  const n = parseFloat(v.replace(",", "."));
+  return Number.isNaN(n) ? null : n;
+}
+function bool(fd: FormData, key: string): boolean {
+  return fd.get(key) !== null;
+}
+
+// Zaidimo laukai is FormData (tik jei tipas GAME; kitaip null/false).
+function gameFields(fd: FormData, type: MediaType | null | undefined) {
+  const isGame = type === "GAME";
+  return {
+    platform: isGame ? ((str(fd, "platform") as GamePlatform | null) ?? null) : null,
+    playedHours: isGame ? float(fd, "playedHours") : null,
+    beatenHours: isGame ? float(fd, "beatenHours") : null,
+    platinum: isGame ? bool(fd, "platinum") : false,
+  };
 }
 
 async function syncTagsFromString(mediaId: string, tagsCsv: string | null) {
@@ -86,6 +108,7 @@ export async function createManualMedia(fd: FormData) {
       lastWatched: date(fd, "lastWatched"),
       visibility: (str(fd, "visibility") as Visibility) || "PUBLIC",
       source: "MANUAL",
+      ...gameFields(fd, type),
     },
   });
 
@@ -103,10 +126,11 @@ export async function updateMedia(fd: FormData) {
   if (!id) throw new Error("Truksta id");
   await ensureOwned(id, user.id);
 
+  const newType = (str(fd, "type") as MediaType) || undefined;
   await db.mediaItem.update({
     where: { id },
     data: {
-      type: (str(fd, "type") as MediaType) || undefined,
+      type: newType,
       title: str(fd, "title") || undefined,
       originalTitle: str(fd, "originalTitle"),
       year: int(fd, "year"),
@@ -120,6 +144,7 @@ export async function updateMedia(fd: FormData) {
       firstWatched: date(fd, "firstWatched"),
       lastWatched: date(fd, "lastWatched"),
       visibility: (str(fd, "visibility") as Visibility) || undefined,
+      ...gameFields(fd, newType),
     },
   });
 
@@ -159,9 +184,80 @@ export async function importTmdbAction(fd: FormData) {
     tmdbType,
     tmdbId,
     readToken: tmdb.readToken ?? undefined,
+    allowAdult: user.allowAdult,
   });
   revalidatePath("/", "layout");
   redirect(`/media/${id}`);
+}
+
+// ----------------------------------------------------------------------
+// IGDB importas (zaidimai) - i SAVO dienorasti
+// ----------------------------------------------------------------------
+export async function importIgdbAction(fd: FormData) {
+  const user = await ensureUser();
+  const igdbId = int(fd, "igdbId");
+  if (!igdbId) throw new Error("Truksta duomenu");
+
+  const twitch = resolveTwitch(user);
+  if (!twitch.canSearch || !twitch.clientId || !twitch.clientSecret) {
+    throw new Error("Reikia įvesti savo Twitch/IGDB raktus profilyje");
+  }
+  const id = await importFromIgdb({
+    userId: user.id,
+    igdbId,
+    creds: { clientId: twitch.clientId, clientSecret: twitch.clientSecret },
+    allowAdult: user.allowAdult,
+  });
+  revalidatePath("/", "layout");
+  redirect(`/media/${id}`);
+}
+
+// Atnaujinti VISUS savo saltiniu (TMDB/IGDB) irasus - uzpildo visas 3 kalbas.
+// Skirta senai (vienakalbei) bibliotekai "pakelti" i daugiakalbe. Sugede irasai
+// praleidziami (pvz. adult be leidimo), batchas nenutraukiamas.
+export async function refreshAllMediaAction() {
+  const user = await ensureUser();
+  const items = await db.mediaItem.findMany({
+    where: {
+      userId: user.id,
+      OR: [{ tmdbId: { not: null } }, { igdbId: { not: null } }],
+    },
+    select: { id: true, type: true, tmdbId: true, igdbId: true },
+  });
+
+  const tmdb = resolveTmdb(user);
+  const twitch = resolveTwitch(user);
+
+  for (const m of items) {
+    try {
+      if (m.igdbId) {
+        if (twitch.canSearch && twitch.clientId && twitch.clientSecret) {
+          await importFromIgdb({
+            userId: user.id,
+            igdbId: m.igdbId,
+            creds: { clientId: twitch.clientId, clientSecret: twitch.clientSecret },
+            allowAdult: user.allowAdult,
+          });
+        }
+      } else if (m.tmdbId && tmdb.canSearch) {
+        const tmdbType: TmdbMediaType =
+          m.type === "SERIES" || m.type === "ANIME" ? "tv" : "movie";
+        await importFromTmdb({
+          userId: user.id,
+          type: m.type,
+          tmdbType,
+          tmdbId: m.tmdbId,
+          readToken: tmdb.readToken ?? undefined,
+          allowAdult: user.allowAdult,
+        });
+      }
+    } catch {
+      // Praleisti sugedusi irasa, testi toliau.
+    }
+  }
+
+  revalidatePath("/", "layout");
+  redirect("/profilis");
 }
 
 // Pazymeti kaip paziureta (tik savo iraso)
@@ -193,7 +289,8 @@ export async function cachePersonAction(fd: FormData) {
   if (!id) throw new Error("Truksta id");
   const tmdb = resolveTmdb(user);
   if (!tmdb.canSearch) throw new Error("Reikia įvesti savo TMDB raktus profilyje");
-  await cachePersonWorks(id, tmdb.readToken ?? undefined);
+  const locale = await getLocale();
+  await cachePersonWorks(id, tmdb.readToken ?? undefined, tmdbLang(locale));
   revalidatePath("/", "layout");
   redirect(`/asmuo/${id}`);
 }
@@ -237,13 +334,40 @@ export async function clearApiKeysAction() {
   redirect("/profilis");
 }
 
-// Atnaujinti is saltinio (TMDB) - tik savo iraso
+// Suaugusiuju turinio nustatymo issaugojimas (checkbox: yra -> leista).
+export async function saveAdultPrefAction(fd: FormData) {
+  const user = await ensureUser();
+  const allow = fd.get("allowAdult") !== null;
+  await db.user.update({ where: { id: user.id }, data: { allowAdult: allow } });
+  revalidatePath("/", "layout");
+  redirect("/profilis");
+}
+
+// Atnaujinti is saltinio - tik savo iraso. Zaidimai -> IGDB, kita -> TMDB.
+// Atnaujinus TMDB irasa - uzpildomos VISOS 3 kalbos (senus vokiskus irasus
+// tai "pakelia" i daugiakalbius).
 export async function refreshMediaAction(fd: FormData) {
   const user = await ensureUser();
   const id = str(fd, "id");
   if (!id) throw new Error("Truksta id");
   const media = await ensureOwned(id, user.id);
-  if (!media.tmdbId) throw new Error("Nera TMDB saltinio");
+
+  if (media.igdbId) {
+    const twitch = resolveTwitch(user);
+    if (!twitch.canSearch || !twitch.clientId || !twitch.clientSecret) {
+      throw new Error("Reikia įvesti savo Twitch/IGDB raktus profilyje");
+    }
+    await importFromIgdb({
+      userId: user.id,
+      igdbId: media.igdbId,
+      creds: { clientId: twitch.clientId, clientSecret: twitch.clientSecret },
+      allowAdult: user.allowAdult,
+    });
+    revalidatePath("/", "layout");
+    redirect(`/media/${id}`);
+  }
+
+  if (!media.tmdbId) throw new Error("Nera saltinio (rankinis irasas)");
   const tmdb = resolveTmdb(user);
   if (!tmdb.canSearch) throw new Error("Reikia įvesti savo TMDB raktus profilyje");
   const tmdbType: TmdbMediaType =
@@ -254,6 +378,7 @@ export async function refreshMediaAction(fd: FormData) {
     tmdbType,
     tmdbId: media.tmdbId,
     readToken: tmdb.readToken ?? undefined,
+    allowAdult: user.allowAdult,
   });
   revalidatePath("/", "layout");
   redirect(`/media/${id}`);

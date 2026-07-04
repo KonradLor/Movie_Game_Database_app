@@ -39,6 +39,17 @@ enum DataSource {
   MANUAL
 }
 
+// Zaidimo platforma (kur zaista/praeita). Tik GAME tipui.
+enum GamePlatform {
+  PC
+  STEAM
+  PLAYSTATION
+  XBOX
+  NINTENDO_SWITCH
+  MOBILE
+  OTHER
+}
+
 enum CreditRole {
   ACTOR // Aktorius
   DIRECTOR // Rezisierius
@@ -68,6 +79,10 @@ model User {
   twitchClientId     String?
   twitchClientSecret String?
 
+  // Suaugusiuju turinio filtras. false (numatyta) = pornografija/adult blokuojama
+  // paieskoje ir importe. Vartotojas gali issijungti profilyje savo rizika.
+  allowAdult Boolean @default(false)
+
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -88,11 +103,16 @@ model MediaItem {
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   type        MediaType
-  title       String
+  title       String // numatytoji/atsargine kalba (EN)
   originalTitle String?
   year        Int?
   durationMin Int? // trukme minutemis
-  description String? // aprasymas
+  description String? // aprasymas numatytaja/atsargine kalba (EN)
+
+  // Daugiakalbis turinys: { "en": {title, description}, "de": {...}, "lt": {...} }
+  // Uzpildomas importuojant is TMDB (3 kalbos). Rodant - parenkama pagal UI kalba,
+  // atsargine varianta - EN (title/description laukai virsuje).
+  translations Json?
   posterUrl   String? // isorinis (TMDB CDN)
   localPoster String? // parsisiustas i serveri (Faze 4)
 
@@ -103,6 +123,12 @@ model MediaItem {
   watchCount  Int         @default(1) // kiek kartu ziureta
   firstWatched DateTime? // pirma perziura
   lastWatched DateTime? // paskutine perziura
+
+  // Zaidimams (GAME) skirti asmeniniai laukai
+  platform     GamePlatform? // kurioje platformoje zaista/praeita
+  playedHours  Float? // kiek valandu is viso zaista
+  beatenHours  Float? // kiek valandu reikejo praeiti
+  platinum     Boolean @default(false) // platinum / 100% pasiekimai / perejimas
 
   // Privatumas
   visibility  Visibility  @default(PUBLIC)

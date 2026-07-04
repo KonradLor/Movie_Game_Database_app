@@ -1,0 +1,217 @@
+{
+  "app": {
+    "title": "Medientagebuch",
+    "subtitle": "Filme, Serien, Anime, Dokumentationen und Spiele",
+    "brandTagline": "Deine ganze persönliche Multimedia-Welt, hier",
+    "description": "Persönliche Datenbank für Filme, Serien, Anime, Dokumentationen und Spiele"
+  },
+  "nav": {
+    "all": "Alles",
+    "movies": "Filme",
+    "series": "Serien",
+    "anime": "Anime",
+    "documentaries": "Dokumentationen",
+    "games": "Spiele",
+    "home": "Startseite",
+    "watchlist": "Möchte ich sehen",
+    "stats": "Statistik",
+    "random": "Zufällig",
+    "feedback": "Feedback",
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "logout": "Abmelden"
+  },
+  "theme": {
+    "label": "Design",
+    "default": "Violett",
+    "neon": "Neon",
+    "sunset": "Sonnenuntergang",
+    "emerald": "Smaragd",
+    "rose": "Rosé"
+  },
+  "gameFields": {
+    "section": "Spiel-Details",
+    "platform": "Plattform",
+    "playedHours": "Gespielte Stunden",
+    "beatenHours": "Stunden zum Durchspielen",
+    "platinum": "Platin / 100%"
+  },
+  "platform": {
+    "PC": "PC",
+    "STEAM": "Steam",
+    "PLAYSTATION": "PlayStation",
+    "XBOX": "Xbox",
+    "NINTENDO_SWITCH": "Nintendo Switch",
+    "MOBILE": "Mobil",
+    "OTHER": "Sonstiges"
+  },
+  "feedback": {
+    "title": "Feedback",
+    "back": "Zurück",
+    "intro": "Einen Fehler gefunden, eine Idee oder einen Funktionswunsch? Sende ihn hier — das hilft, das Portal zu verbessern.",
+    "type": "Art",
+    "type_BUG": "Fehler / Problem",
+    "type_IDEA": "Idee",
+    "type_FEATURE": "Funktionswunsch",
+    "type_FEEDBACK": "Feedback",
+    "type_OTHER": "Sonstiges",
+    "name": "Name",
+    "email": "E-Mail",
+    "message": "Nachricht",
+    "messagePlaceholder": "Schreibe deinen Vorschlag, Fehlerbericht oder deine Idee…",
+    "optional": "optional",
+    "submit": "Senden",
+    "sent": "Danke! Deine Nachricht wurde gesendet.",
+    "sendAnother": "Weitere senden",
+    "error": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+    "tooFast": "Zu schnell — bitte warte ein paar Sekunden und versuche es erneut.",
+    "adminHeading": "Erhaltenes Feedback (Admin)",
+    "empty": "Noch kein Feedback."
+  },
+  "lang": {
+    "label": "Sprache",
+    "en": "English",
+    "lt": "Lietuvių",
+    "de": "Deutsch"
+  },
+  "watchlist": {
+    "title": "Möchte ich sehen",
+    "empty": "Die Liste ist leer",
+    "markWatched": "Gesehen"
+  },
+  "stats": {
+    "title": "Statistik",
+    "totalItems": "Einträge insgesamt",
+    "totalHours": "Stunden insgesamt",
+    "byType": "Nach Kategorie",
+    "byYear": "Nach Jahr gesehen",
+    "topRated": "Am besten bewertet",
+    "ratingDist": "Bewertungsverteilung"
+  },
+  "onThisDay": {
+    "title": "An diesem Tag",
+    "subtitle": "Was du an diesem Tag zuvor gesehen hast"
+  },
+  "mobile": {
+    "title": "Für den Desktop gemacht",
+    "message": "Dieses Portal wurde für größere Bildschirme (Computer oder Tablet) erstellt und funktioniert dort am besten.",
+    "hint": "Bitte öffne es in einem Desktop-Browser — dort siehst du die vollständige Kachelgalerie."
+  },
+  "home": {
+    "newest": "Neueste",
+    "empty": "Noch keine Einträge",
+    "loading": "Wird geladen…"
+  },
+  "card": {
+    "minutes": "Min.",
+    "watchedTimes": "{count}× gesehen"
+  },
+  "actions": {
+    "add": "Hinzufügen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "search": "Suchen",
+    "import": "Importieren",
+    "refresh": "Aus Quelle aktualisieren",
+    "back": "Zurück",
+    "confirmDelete": "Diesen Eintrag wirklich löschen?",
+    "export": "Exportieren"
+  },
+  "form": {
+    "addTitle": "Neuer Eintrag",
+    "editTitle": "Eintrag bearbeiten",
+    "searchTmdb": "TMDB durchsuchen (Filme / Serien)",
+    "searchGames": "Spiele durchsuchen (IGDB)",
+    "searchPlaceholder": "Titel eingeben…",
+    "searchGamesPlaceholder": "Spieltitel eingeben…",
+    "orManual": "Oder manuell eingeben",
+    "type": "Kategorie",
+    "title": "Titel",
+    "originalTitle": "Originaltitel",
+    "year": "Jahr",
+    "duration": "Dauer (Min.)",
+    "description": "Beschreibung",
+    "posterUrl": "Poster-Link (URL)",
+    "rating": "Bewertung (1–5)",
+    "opinion": "Meine Meinung",
+    "status": "Status",
+    "watchCount": "Wie oft gesehen",
+    "firstWatched": "Zuerst gesehen",
+    "lastWatched": "Zuletzt gesehen",
+    "visibility": "Sichtbarkeit",
+    "tags": "Schlagwörter (kommagetrennt)",
+    "noResults": "Nichts gefunden"
+  },
+  "search": {
+    "needKeysTitle": "Deine API-Schlüssel erforderlich",
+    "needKeysBody": "Die gemeinsamen Server-Schlüssel sind nur für die ersten Nutzer. Um zu suchen und neue Einträge hinzuzufügen, gib deinen eigenen Schlüssel im Profil ein.",
+    "toProfile": "→ Zum Profil (Schlüssel eingeben)",
+    "adultBlocked": "Erwachseneninhalte sind ausgeblendet. Du kannst sie im Profil aktivieren."
+  },
+  "credits": {
+    "directors": "Regie:",
+    "cast": "Besetzung:",
+    "studios": "Studios:",
+    "developers": "Entwickler:",
+    "publishers": "Publisher:"
+  },
+  "detail": {
+    "inCollection": "In deiner Sammlung",
+    "filmography": "Filmografie",
+    "moreInfo": "+ Mehr Infos",
+    "ownedBadge": "✓ in Sammlung"
+  },
+  "type": {
+    "MOVIE": "Film",
+    "SERIES": "Serie",
+    "ANIME": "Anime",
+    "DOCUMENTARY": "Dokumentation",
+    "GAME": "Spiel"
+  },
+  "status": {
+    "WATCHED": "Gesehen",
+    "WATCHLIST": "Möchte ich sehen"
+  },
+  "visibility": {
+    "PUBLIC": "Öffentlich",
+    "UNLISTED": "Nur mit Link",
+    "PRIVATE": "Privat"
+  },
+  "profile": {
+    "title": "Profil",
+    "back": "Zurück",
+    "user": "Nutzer",
+    "number": "Nr.",
+    "adminBadge": "Admin",
+    "sharedInfo": "Die ersten {limit} Nutzer dürfen die gemeinsamen Server-Schlüssel verwenden. Möchtest du deine eigenen nutzen? Gib sie unten ein (optional).",
+    "requiredInfo": "Du bist Nutzer #{number} (nach den ersten {limit}). Um neue Filme/Spiele aus den Datenbanken hinzuzufügen, MUSST du unten deine eigenen API-Schlüssel eingeben.",
+    "tmdbHeading": "TMDB (Filme / Serien / Anime)",
+    "readToken": "Read Access Token (v4)",
+    "apiKey": "API Key (v3)",
+    "twitchHeading": "Twitch / IGDB (Spiele)",
+    "clientId": "Client ID",
+    "clientSecret": "Client Secret",
+    "keyPlaceholder": "Eingeben zum Setzen / Ändern",
+    "emptyHint": "Lass ein Feld leer — der Wert bleibt unverändert. Schlüssel sind nur für dich sichtbar.",
+    "saveKeys": "Schlüssel speichern",
+    "clearKeys": "Alle meine Schlüssel löschen",
+    "set": "gesetzt ••••••",
+    "notSet": "nicht gesetzt",
+    "srcRequired": "MUSST eigene Schlüssel eingeben",
+    "srcOwn": "deine Schlüssel werden verwendet",
+    "srcShared": "gemeinsame Server-Schlüssel werden verwendet",
+    "langHeading": "Sprache",
+    "langHint": "Wähle die Sprache der Oberfläche. Neue Importe laden Beschreibungen ebenfalls in dieser Sprache. Du kannst sie jederzeit in der oberen Leiste umschalten.",
+    "themeHeading": "Design",
+    "themeHint": "Wähle ein Farbdesign für das ganze Portal. Wird sofort angewendet und für das nächste Mal gespeichert.",
+    "adultHeading": "Erwachseneninhalte",
+    "adultToggle": "Erwachseneninhalte erlauben (pornografische Filme / Spiele)",
+    "adultHint": "Standardmäßig aus: Erwachseneninhalte werden in der Suche ausgeblendet und beim Import abgelehnt. Auf eigenes Risiko einschalten.",
+    "saved": "Gespeichert",
+    "refreshAllHeading": "Vorhandene Einträge",
+    "refreshAll": "Alle meine Einträge aktualisieren",
+    "refreshAllHint": "Ältere Einträge wurden in einer einzigen Sprache gespeichert. Dies lädt jeden importierten Film / jede Serie / jedes Spiel neu aus der Quelle und füllt alle drei Sprachen, sodass das Umschalten der Sprache sie sofort neu beschriftet. Bei großen Sammlungen kann es etwas dauern."
+  }
+}

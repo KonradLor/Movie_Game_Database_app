@@ -1,0 +1,217 @@
+{
+  "app": {
+    "title": "Media Diary",
+    "subtitle": "Movies, series, anime, documentaries and games",
+    "brandTagline": "Your entire personal multimedia world, right here",
+    "description": "Personal database of movies, series, anime, documentaries and games"
+  },
+  "nav": {
+    "all": "All",
+    "movies": "Movies",
+    "series": "Series",
+    "anime": "Anime",
+    "documentaries": "Documentaries",
+    "games": "Games",
+    "home": "Home",
+    "watchlist": "Want to watch",
+    "stats": "Statistics",
+    "random": "Random",
+    "feedback": "Feedback",
+    "login": "Log in",
+    "register": "Register",
+    "logout": "Log out"
+  },
+  "theme": {
+    "label": "Theme",
+    "default": "Violet",
+    "neon": "Neon",
+    "sunset": "Sunset",
+    "emerald": "Emerald",
+    "rose": "Rosé"
+  },
+  "gameFields": {
+    "section": "Game details",
+    "platform": "Platform",
+    "playedHours": "Hours played",
+    "beatenHours": "Hours to beat",
+    "platinum": "Platinum / 100%"
+  },
+  "platform": {
+    "PC": "PC",
+    "STEAM": "Steam",
+    "PLAYSTATION": "PlayStation",
+    "XBOX": "Xbox",
+    "NINTENDO_SWITCH": "Nintendo Switch",
+    "MOBILE": "Mobile",
+    "OTHER": "Other"
+  },
+  "feedback": {
+    "title": "Feedback",
+    "back": "Back",
+    "intro": "Found a bug, have an idea or a feature request? Send it here — it helps improve the portal.",
+    "type": "Type",
+    "type_BUG": "Bug / problem",
+    "type_IDEA": "Idea",
+    "type_FEATURE": "Feature request",
+    "type_FEEDBACK": "Feedback",
+    "type_OTHER": "Other",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "messagePlaceholder": "Write your suggestion, bug report or idea…",
+    "optional": "optional",
+    "submit": "Send",
+    "sent": "Thank you! Your message was sent.",
+    "sendAnother": "Send another",
+    "error": "Something went wrong. Please try again.",
+    "tooFast": "Too fast — please wait a few seconds and try again.",
+    "adminHeading": "Received feedback (admin)",
+    "empty": "No feedback yet."
+  },
+  "lang": {
+    "label": "Language",
+    "en": "English",
+    "lt": "Lietuvių",
+    "de": "Deutsch"
+  },
+  "watchlist": {
+    "title": "Want to watch",
+    "empty": "The list is empty",
+    "markWatched": "Watched"
+  },
+  "stats": {
+    "title": "Statistics",
+    "totalItems": "Total entries",
+    "totalHours": "Total hours",
+    "byType": "By category",
+    "byYear": "By year watched",
+    "topRated": "Top rated",
+    "ratingDist": "Rating distribution"
+  },
+  "onThisDay": {
+    "title": "On this day",
+    "subtitle": "What you watched on this day before"
+  },
+  "mobile": {
+    "title": "Made for desktop",
+    "message": "This portal was built for and works best on a larger screen (computer or tablet).",
+    "hint": "Please open it in a desktop browser — that is where you will see the full tile gallery."
+  },
+  "home": {
+    "newest": "Newest",
+    "empty": "No entries yet",
+    "loading": "Loading…"
+  },
+  "card": {
+    "minutes": "min",
+    "watchedTimes": "Watched {count} times"
+  },
+  "actions": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "search": "Search",
+    "import": "Import",
+    "refresh": "Refresh from source",
+    "back": "Back",
+    "confirmDelete": "Really delete this entry?",
+    "export": "Export"
+  },
+  "form": {
+    "addTitle": "New entry",
+    "editTitle": "Edit entry",
+    "searchTmdb": "Search TMDB (movies / series)",
+    "searchGames": "Search games (IGDB)",
+    "searchPlaceholder": "Enter a title…",
+    "searchGamesPlaceholder": "Enter a game title…",
+    "orManual": "Or enter it manually",
+    "type": "Category",
+    "title": "Title",
+    "originalTitle": "Original title",
+    "year": "Year",
+    "duration": "Duration (min.)",
+    "description": "Description",
+    "posterUrl": "Poster link (URL)",
+    "rating": "Rating (1–5)",
+    "opinion": "My opinion",
+    "status": "Status",
+    "watchCount": "Times watched",
+    "firstWatched": "First watched",
+    "lastWatched": "Last watched",
+    "visibility": "Visibility",
+    "tags": "Tags (comma separated)",
+    "noResults": "Nothing found"
+  },
+  "search": {
+    "needKeysTitle": "Your API keys required",
+    "needKeysBody": "The shared server keys are only for the first users. To search and add new entries, enter your own key in your profile.",
+    "toProfile": "→ To profile (enter keys)",
+    "adultBlocked": "Adult content is hidden. You can enable it in your profile."
+  },
+  "credits": {
+    "directors": "Director:",
+    "cast": "Cast:",
+    "studios": "Studios:",
+    "developers": "Developers:",
+    "publishers": "Publishers:"
+  },
+  "detail": {
+    "inCollection": "In your collection",
+    "filmography": "Filmography",
+    "moreInfo": "+ More info",
+    "ownedBadge": "✓ in collection"
+  },
+  "type": {
+    "MOVIE": "Movie",
+    "SERIES": "Series",
+    "ANIME": "Anime",
+    "DOCUMENTARY": "Documentary",
+    "GAME": "Game"
+  },
+  "status": {
+    "WATCHED": "Watched",
+    "WATCHLIST": "Want to watch"
+  },
+  "visibility": {
+    "PUBLIC": "Public",
+    "UNLISTED": "Unlisted",
+    "PRIVATE": "Private"
+  },
+  "profile": {
+    "title": "Profile",
+    "back": "Back",
+    "user": "User",
+    "number": "No.",
+    "adminBadge": "admin",
+    "sharedInfo": "The first {limit} users may use the shared server keys. Want to use your own? Enter them below (optional).",
+    "requiredInfo": "You are user #{number} (after the first {limit}). To add new movies/games from the databases you MUST enter your own API keys below.",
+    "tmdbHeading": "TMDB (movies / series / anime)",
+    "readToken": "Read Access Token (v4)",
+    "apiKey": "API Key (v3)",
+    "twitchHeading": "Twitch / IGDB (games)",
+    "clientId": "Client ID",
+    "clientSecret": "Client Secret",
+    "keyPlaceholder": "Enter to set / change",
+    "emptyHint": "Leave a field empty — the value will not change. Keys are visible only to you.",
+    "saveKeys": "Save keys",
+    "clearKeys": "Clear all my keys",
+    "set": "set ••••••",
+    "notSet": "not set",
+    "srcRequired": "MUST enter your own keys",
+    "srcOwn": "using your keys",
+    "srcShared": "using shared server keys",
+    "langHeading": "Language",
+    "langHint": "Choose the interface language. New imports fetch descriptions in this language too. You can switch it any time in the top bar.",
+    "themeHeading": "Theme",
+    "themeHint": "Pick a colour theme for the whole portal. Applies instantly and is saved for next time.",
+    "adultHeading": "Adult content",
+    "adultToggle": "Allow adult content (pornographic movies / games)",
+    "adultHint": "Off by default: adult content is hidden in search and refused on import. Turn on at your own risk.",
+    "saved": "Saved",
+    "refreshAllHeading": "Existing entries",
+    "refreshAll": "Refresh all my entries",
+    "refreshAllHint": "Older entries were saved in a single language. This re-fetches every imported movie / series / game from the source and fills in all three languages, so switching language re-labels them instantly. May take a while for large libraries."
+  }
+}

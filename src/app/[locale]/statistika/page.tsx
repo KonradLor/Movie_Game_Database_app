@@ -1,13 +1,15 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/current-user";
 import { Link } from "@/i18n/navigation";
+import { pickText } from "@/lib/locale";
 import type { MediaType, Prisma } from "@prisma/client";
 
 const TYPES: MediaType[] = ["MOVIE", "SERIES", "ANIME", "DOCUMENTARY", "GAME"];
 
 export default async function StatsPage() {
   const t = await getTranslations();
+  const locale = await getLocale();
   const user = await getCurrentUser();
   const loggedIn = !!user;
 
@@ -145,7 +147,7 @@ export default async function StatsPage() {
                 href={`/media/${i.id}`}
                 className="rounded-lg bg-white/5 px-3 py-2 text-sm hover:bg-white/10"
               >
-                {i.title}{" "}
+                {pickText(i, locale).title}{" "}
                 <span className="text-amber-300">★{i.rating}</span>
               </Link>
             ))}

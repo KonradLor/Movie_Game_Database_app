@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { importFromTmdb } from "@/lib/media-cache";
+import { importFromTmdb, ADULT_BLOCKED } from "@/lib/media-cache";
 import { getCurrentUser } from "@/lib/current-user";
 import { resolveTmdb } from "@/lib/api-keys";
 import type { MediaType } from "@prisma/client";
@@ -43,9 +43,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Truksta tmdbId" }, { status: 400 });
     }
 
-    const id = await importFromTmdb({ userId: user.id, type, tmdbType, tmdbId, readToken: tmdb.readToken ?? undefined });
+    const id = await importFromTmdb({
+      userId: user.id,
+      type,
+      tmdbType,
+      tmdbId,
+      readToken: tmdb.readToken ?? undefined,
+      allowAdult: user.allowAdult,
+    });
     return NextResponse.json({ id, ok: true });
   } catch (e) {
+    if (e instanceof Error && e.message === ADULT_BLOCKED) {
+      return NextResponse.json(
+        { error: ADULT_BLOCKED, message: "Suaugusiuju turinys blokuojamas (ijunk profilyje)." },
+        { status: 403 }
+      );
+    }
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Nezinoma klaida" },
       { status: 500 }

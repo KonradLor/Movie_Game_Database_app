@@ -1,6 +1,10 @@
 import { getTranslations } from "next-intl/server";
+import { cookies } from "next/headers";
 import { Link } from "@/i18n/navigation";
 import { auth, signIn, signOut } from "@/auth";
+import { toTheme, THEME_COOKIE } from "@/lib/theme";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 // Authentik registracijos (enroll) srautas - bendras kondev SSO.
 const ENROLL_URL = "https://auth.kondev.app/if/flow/enroll/";
@@ -10,6 +14,7 @@ export default async function TopBar() {
   const session = await auth();
   const loggedIn = Boolean(session?.user);
   const admin = session?.user?.isAdmin === true;
+  const theme = toTheme((await cookies()).get(THEME_COOKIE)?.value);
 
   const linkCls = "text-sm text-white/60 transition hover:text-white";
 
@@ -17,7 +22,7 @@ export default async function TopBar() {
     <header className="sticky top-0 z-30 border-b border-white/5 bg-black/30 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <Link href="/" className="text-sm font-bold tracking-tight">
-          <span className="text-gradient">●</span> Visas tavo asmeninis multimedijų pasaulis čia
+          <span className="text-gradient">●</span> {t("app.brandTagline")}
         </Link>
 
         <nav className="flex items-center gap-4">
@@ -33,6 +38,9 @@ export default async function TopBar() {
           <Link href="/atsitiktinis" className={linkCls}>
             {t("nav.random")}
           </Link>
+          <Link href="/atsiliepimai" className={linkCls}>
+            {t("nav.feedback")}
+          </Link>
           {admin && (
             <Link href="/admin" className="text-sm text-[var(--color-accent)] transition hover:brightness-125">
               Admin
@@ -47,6 +55,10 @@ export default async function TopBar() {
               + {t("actions.add")}
             </Link>
           )}
+
+          {/* Temu ir kalbos perjungikliai - matomi visada */}
+          <ThemeSwitcher initial={theme} variant="compact" />
+          <LanguageSwitcher />
 
           {/* --- Prisijungimo sritis --- */}
           {loggedIn ? (

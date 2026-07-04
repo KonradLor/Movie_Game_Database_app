@@ -1,8 +1,9 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/current-user";
+import { pickText } from "@/lib/locale";
 import { deleteMedia, refreshMediaAction, markWatchedAction } from "@/lib/actions";
 
 export default async function MediaDetailPage({
@@ -12,6 +13,7 @@ export default async function MediaDetailPage({
 }) {
   const { id } = await params;
   const t = await getTranslations();
+  const locale = await getLocale();
   const user = await getCurrentUser();
 
   // Tik SAVO irasa rodom (daugiavartotojiskumas)
@@ -26,10 +28,13 @@ export default async function MediaDetailPage({
   if (!item) notFound();
   // Savininkas gali tvarkyti savo irasa
   const admin = !!user;
+  const { title, description } = pickText(item, locale);
 
   const actors = item.credits.filter((c) => c.role === "ACTOR" && c.person);
   const directors = item.credits.filter((c) => c.role === "DIRECTOR" && c.person);
   const studios = item.credits.filter((c) => c.role === "STUDIO" && c.company);
+  const developers = item.credits.filter((c) => c.role === "DEVELOPER" && c.company);
+  const publishers = item.credits.filter((c) => c.role === "PUBLISHER" && c.company);
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
@@ -53,7 +58,7 @@ export default async function MediaDetailPage({
             >
               {t("actions.edit")}
             </Link>
-            {item.tmdbId && (
+            {(item.tmdbId || item.igdbId) && (
               <form action={refreshMediaAction}>
                 <input type="hidden" name="id" value={item.id} />
                 <button className="rounded-lg bg-white/10 px-3 py-1.5 text-sm hover:bg-white/20">
@@ -75,7 +80,7 @@ export default async function MediaDetailPage({
         <div className="mx-auto w-48 shrink-0 overflow-hidden rounded-xl bg-white/5 sm:mx-0">
           {item.posterUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={item.posterUrl} alt={item.title} className="w-full" />
+            <img src={item.posterUrl} alt={title} className="w-full" />
           ) : (
             <div className="flex aspect-[2/3] items-center justify-center text-xs text-white/30">
               —
@@ -84,8 +89,8 @@ export default async function MediaDetailPage({
         </div>
 
         <div className="min-w-0 flex-1">
-          <h1 className="text-2xl font-bold">{item.title}</h1>
-          {item.originalTitle && item.originalTitle !== item.title && (
+          <h1 className="text-2xl font-bold">{title}</h1>
+          {item.originalTitle && item.originalTitle !== title && (
             <p className="text-sm text-white/40">{item.originalTitle}</p>
           )}
 
@@ -109,13 +114,40 @@ export default async function MediaDetailPage({
             {t("card.watchedTimes", { count: item.watchCount })}
           </p>
 
+          {/* Zaidimo asmeniniai duomenys */}
+          {item.type === "GAME" &&
+            (item.platform || item.playedHours != null || item.beatenHours != null || item.platinum) && (
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+                {item.platform && (
+                  <span className="rounded bg-white/10 px-2 py-0.5 text-white/70">
+                    {t(`platform.${item.platform}`)}
+                  </span>
+                )}
+                {item.playedHours != null && (
+                  <span className="text-white/60">
+                    {t("gameFields.playedHours")}: {item.playedHours} h
+                  </span>
+                )}
+                {item.beatenHours != null && (
+                  <span className="text-white/60">
+                    {t("gameFields.beatenHours")}: {item.beatenHours} h
+                  </span>
+                )}
+                {item.platinum && (
+                  <span className="rounded bg-amber-500/20 px-2 py-0.5 font-medium text-amber-300">
+                    🏆 {t("gameFields.platinum")}
+                  </span>
+                )}
+              </div>
+            )}
+
           {item.opinion && (
             <p className="mt-3 rounded-lg bg-white/5 p-3 text-sm italic text-white/80">
               {item.opinion}
             </p>
           )}
-          {item.description && (
-            <p className="mt-3 text-sm text-white/70">{item.description}</p>
+          {description && (
+            <p className="mt-3 text-sm text-white/70">{description}</p>
           )}
 
           {item.tags.length > 0 && (
@@ -130,7 +162,7 @@ export default async function MediaDetailPage({
 
           {directors.length > 0 && (
             <p className="mt-3 text-sm text-white/60">
-              <span className="text-white/40">Rež.: </span>
+              <span className="text-white/40">{t("credits.directors")} </span>
               {directors.map((c, idx) => (
                 <span key={c.id}>
                   {idx > 0 && ", "}
@@ -143,7 +175,7 @@ export default async function MediaDetailPage({
           )}
           {actors.length > 0 && (
             <p className="mt-1 text-sm text-white/60">
-              <span className="text-white/40">Vaidina: </span>
+              <span className="text-white/40">{t("credits.cast")} </span>
               {actors.slice(0, 8).map((c, idx) => (
                 <span key={c.id}>
                   {idx > 0 && ", "}
@@ -156,8 +188,34 @@ export default async function MediaDetailPage({
           )}
           {studios.length > 0 && (
             <p className="mt-1 text-sm text-white/60">
-              <span className="text-white/40">Studijos: </span>
+              <span className="text-white/40">{t("credits.studios")} </span>
               {studios.map((c, idx) => (
+                <span key={c.id}>
+                  {idx > 0 && ", "}
+                  <Link href={`/studija/${c.company!.id}`} className="hover:text-white hover:underline">
+                    {c.company!.name}
+                  </Link>
+                </span>
+              ))}
+            </p>
+          )}
+          {developers.length > 0 && (
+            <p className="mt-1 text-sm text-white/60">
+              <span className="text-white/40">{t("credits.developers")} </span>
+              {developers.map((c, idx) => (
+                <span key={c.id}>
+                  {idx > 0 && ", "}
+                  <Link href={`/studija/${c.company!.id}`} className="hover:text-white hover:underline">
+                    {c.company!.name}
+                  </Link>
+                </span>
+              ))}
+            </p>
+          )}
+          {publishers.length > 0 && (
+            <p className="mt-1 text-sm text-white/60">
+              <span className="text-white/40">{t("credits.publishers")} </span>
+              {publishers.map((c, idx) => (
                 <span key={c.id}>
                   {idx > 0 && ", "}
                   <Link href={`/studija/${c.company!.id}`} className="hover:text-white hover:underline">

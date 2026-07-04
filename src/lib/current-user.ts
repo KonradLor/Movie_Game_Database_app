@@ -16,6 +16,8 @@ export interface CurrentUser {
   tmdbApiKey: string | null;
   twitchClientId: string | null;
   twitchClientSecret: string | null;
+  // Suaugusiuju turinio leidimas (numatytai false = blokuota).
+  allowAdult: boolean;
 }
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
@@ -58,6 +60,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     tmdbApiKey: user.tmdbApiKey,
     twitchClientId: user.twitchClientId,
     twitchClientSecret: user.twitchClientSecret,
+    allowAdult: user.allowAdult,
   };
 }
 

@@ -1,8 +1,9 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/current-user";
+import { pickText } from "@/lib/locale";
 import { cachePersonAction, importTmdbAction } from "@/lib/actions";
 import type { CachedWork } from "@/lib/people-cache";
 
@@ -13,6 +14,7 @@ export default async function PersonPage({
 }) {
   const { id } = await params;
   const t = await getTranslations();
+  const locale = await getLocale();
   const user = await getCurrentUser();
   const admin = !!user;
 
@@ -65,7 +67,7 @@ export default async function PersonPage({
             <form action={cachePersonAction} className="mt-4">
               <input type="hidden" name="id" value={person.id} />
               <button className="rounded-lg bg-white/10 px-4 py-2 text-sm hover:bg-white/20">
-                {works.length > 0 ? t("actions.refresh") : "+ Daugiau informacijos"}
+                {works.length > 0 ? t("actions.refresh") : t("detail.moreInfo")}
               </button>
             </form>
           )}
@@ -75,7 +77,7 @@ export default async function PersonPage({
       {/* Kolekcijoje */}
       {inCollection.length > 0 && (
         <section className="mb-8">
-          <h2 className="mb-3 text-sm font-semibold text-white/70">Tavo kolekcijoje</h2>
+          <h2 className="mb-3 text-sm font-semibold text-white/70">{t("detail.inCollection")}</h2>
           <div className="flex flex-wrap gap-2">
             {inCollection.map((x) => (
               <Link
@@ -83,7 +85,7 @@ export default async function PersonPage({
                 href={`/media/${x.media.id}`}
                 className="rounded-lg bg-white/5 px-3 py-2 text-sm hover:bg-white/10"
               >
-                {x.media.title}
+                {pickText(x.media, locale).title}
                 {x.character && <span className="text-white/40"> — {x.character}</span>}
               </Link>
             ))}
@@ -95,7 +97,7 @@ export default async function PersonPage({
       {works.length > 0 && (
         <section>
           <h2 className="mb-4 text-sm font-semibold text-white/70">
-            Filmografija ({works.length})
+            {t("detail.filmography")} ({works.length})
           </h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {works.map((w) => {
@@ -131,7 +133,7 @@ export default async function PersonPage({
                     </form>
                   )}
                   {owned && (
-                    <p className="px-1 text-[11px] text-emerald-400">✓ kolekcijoje</p>
+                    <p className="px-1 text-[11px] text-emerald-400">{t("detail.ownedBadge")}</p>
                   )}
                 </div>
               );

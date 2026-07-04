@@ -1,27 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { importTmdbAction } from "@/lib/actions";
+import { importIgdbAction } from "@/lib/actions";
 
 interface Result {
-  tmdbId: number;
-  tmdbType: "movie" | "tv";
-  suggestedType: string;
+  igdbId: number;
   title: string;
-  originalTitle: string;
   overview: string;
-  year: string | null;
+  year: number | null;
   poster: string | null;
 }
 
-// Tik TMDB tipai (zaidimai importuojami atskirai per IGDB).
-const TYPES = ["MOVIE", "SERIES", "ANIME", "DOCUMENTARY"] as const;
-
-export default function TmdbSearch() {
+export default function IgdbSearch() {
   const t = useTranslations();
-  const locale = useLocale();
   const [q, setQ] = useState("");
   const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,9 +28,7 @@ export default function TmdbSearch() {
     setSearched(true);
     setNeedKeys(false);
     try {
-      const res = await fetch(
-        `/api/tmdb/search?q=${encodeURIComponent(q)}&lang=${locale}`
-      );
+      const res = await fetch(`/api/igdb/search?q=${encodeURIComponent(q)}`);
       if (res.status === 403) {
         setNeedKeys(true);
         setResults([]);
@@ -59,7 +50,7 @@ export default function TmdbSearch() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder={t("form.searchPlaceholder")}
+          placeholder={t("form.searchGamesPlaceholder")}
           className={inputCls}
         />
         <button
@@ -92,7 +83,7 @@ export default function TmdbSearch() {
       <ul className="space-y-3">
         {results.map((r) => (
           <li
-            key={`${r.tmdbType}-${r.tmdbId}`}
+            key={r.igdbId}
             className="flex gap-3 rounded-lg border border-white/10 bg-white/5 p-3"
           >
             <div className="h-24 w-16 shrink-0 overflow-hidden rounded bg-white/10">
@@ -107,20 +98,11 @@ export default function TmdbSearch() {
               </p>
               <p className="line-clamp-2 text-xs text-white/50">{r.overview}</p>
 
-              <form action={importTmdbAction} className="mt-2 flex items-center gap-2">
-                <input type="hidden" name="tmdbId" value={r.tmdbId} />
-                <input type="hidden" name="tmdbType" value={r.tmdbType} />
-                <select
-                  name="type"
-                  defaultValue={r.suggestedType}
-                  className="rounded bg-white/10 px-2 py-1 text-xs text-white"
-                >
-                  {TYPES.map((ty) => (
-                    <option key={ty} value={ty}>
-                      {t(`type.${ty}`)}
-                    </option>
-                  ))}
-                </select>
+              <form action={importIgdbAction} className="mt-2 flex items-center gap-2">
+                <input type="hidden" name="igdbId" value={r.igdbId} />
+                <span className="rounded bg-white/10 px-2 py-1 text-xs text-white/70">
+                  {t("type.GAME")}
+                </span>
                 <button
                   type="submit"
                   className="rounded bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-3 py-1 text-xs font-medium text-white transition hover:opacity-90"

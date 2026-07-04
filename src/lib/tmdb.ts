@@ -4,9 +4,18 @@
 const TMDB_BASE = "https://api.themoviedb.org/3";
 const IMAGE_BASE = "https://image.tmdb.org/t/p";
 
-// Kalba metaduomenims. Vartotojo turinys vokiskas -> de-DE numatyta.
-// Galima perrasyti per .env TMDB_LANG.
-const LANG = process.env.TMDB_LANG || "de-DE";
+// Numatytoji kalba, jei nepaduota (fallback) - anglu.
+const DEFAULT_LANG = "en-US";
+
+// Bendros TMDB uzklausos parinktys.
+export interface TmdbOpts {
+  // Efektyvus v4 Read Token (FAZE C: pagal vartotoja). Nera -> fallback .env.
+  token?: string;
+  // TMDB "language" (pvz. en-US, de-DE, lt-LT). Nera -> en-US.
+  lang?: string;
+  // Ar itraukti suaugusiuju turini (numatytai NE - blokuojama).
+  includeAdult?: boolean;
+}
 
 // token - efektyvus v4 Read Token (FAZE C: pagal vartotoja). Jei nepaduotas -
 // fallback i .env (pvz. vidiniai/admin keliai). Nera nei vieno -> klaida.
@@ -24,13 +33,13 @@ function authHeaders(token?: string): HeadersInit {
 async function tmdbGet<T>(
   path: string,
   params: Record<string, string> = {},
-  token?: string
+  opts: TmdbOpts = {}
 ): Promise<T> {
   const url = new URL(`${TMDB_BASE}${path}`);
-  url.searchParams.set("language", LANG);
+  url.searchParams.set("language", opts.lang || DEFAULT_LANG);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
 
-  const res = await fetch(url, { headers: authHeaders(token) });
+  const res = await fetch(url, { headers: authHeaders(opts.token) });
   if (!res.ok) {
     throw new Error(`TMDB klaida ${res.status}: ${await res.text()}`);
   }
@@ -55,6 +64,7 @@ export interface TmdbSearchResult {
   profile_path?: string | null; // asmenys
   release_date?: string; // filmai
   first_air_date?: string; // serialai
+  adult?: boolean; // suaugusiuju turinys (filmai)
 }
 
 export interface TmdbGenre {
@@ -94,6 +104,7 @@ export interface TmdbDetails {
   first_air_date?: string;
   runtime?: number; // filmai (min)
   episode_run_time?: number[]; // serialai
+  adult?: boolean; // suaugusiuju turinys (filmai)
   genres?: TmdbGenre[];
   origin_country?: string[];
   production_companies?: TmdbCompany[];
@@ -107,25 +118,29 @@ export interface TmdbDetails {
 // Funkcijos
 // ----------------------------------------------------------------------
 
-export async function searchMulti(query: string, token?: string): Promise<TmdbSearchResult[]> {
+export async function searchMulti(query: string, opts: TmdbOpts = {}): Promise<TmdbSearchResult[]> {
   if (!query.trim()) return [];
+  const includeAdult = opts.includeAdult === true;
   const data = await tmdbGet<{ results: TmdbSearchResult[] }>(
     "/search/multi",
-    { query, include_adult: "true", page: "1" },
-    token
+    { query, include_adult: includeAdult ? "true" : "false", page: "1" },
+    opts
   );
-  // Tik filmai ir serialai (asmenis tvarkysim Faze 4b atskirai)
+  // Tik filmai ir serialai (asmenis tvarkysim Faze 4b atskirai).
+  // Papildomas saugiklis: net jei include_adult praleido - atmetam adult=true.
   return (data.results || []).filter(
-    (r) => r.media_type === "movie" || r.media_type === "tv"
+    (r) =>
+      (r.media_type === "movie" || r.media_type === "tv") &&
+      (includeAdult || r.adult !== true)
   );
 }
 
 export async function getDetails(
   type: TmdbMediaType,
   id: number,
-  token?: string
+  opts: TmdbOpts = {}
 ): Promise<TmdbDetails> {
-  return tmdbGet<TmdbDetails>(`/${type}/${id}`, { append_to_response: "credits" }, token);
+  return tmdbGet<TmdbDetails>(`/${type}/${id}`, { append_to_response: "credits" }, opts);
 }
 
 export function posterUrl(path?: string | null, size = "w500"): string | null {
@@ -158,8 +173,8 @@ export interface TmdbPerson {
   };
 }
 
-export async function getPerson(id: number, token?: string): Promise<TmdbPerson> {
-  return tmdbGet<TmdbPerson>(`/person/${id}`, { append_to_response: "combined_credits" }, token);
+export async function getPerson(id: number, opts: TmdbOpts = {}): Promise<TmdbPerson> {
+  return tmdbGet<TmdbPerson>(`/person/${id}`, { append_to_response: "combined_credits" }, opts);
 }
 
 // Pagalbinis: istraukti pagrindinius duomenis is detaliu
