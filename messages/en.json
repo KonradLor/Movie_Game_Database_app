@@ -72,6 +72,13 @@
     "new": "new",
     "inboxHint": "What your friends think you should watch or play."
   },
+  "follow": {
+    "follow": "Follow",
+    "following": "Following",
+    "feedHeading": "Following — recent activity",
+    "watched": "recently watched",
+    "played": "recently played"
+  },
   "theme": {
     "label": "Theme",
     "default": "Violet",

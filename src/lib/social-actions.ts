@@ -114,6 +114,51 @@ export async function removeFriendshipAction(fd: FormData) {
       ],
     },
   });
+  // Nutraukus draugyste - panaikinam ir sekimo rysius abiem kryptim (sekti gali
+  // tik draugai, tad nepaliekam "kabancio" sekimo, kuris rodytu 404 nuorodas).
+  await db.follow.deleteMany({
+    where: {
+      OR: [
+        { followerId: fr.requesterId, followingId: fr.addresseeId },
+        { followerId: fr.addresseeId, followingId: fr.requesterId },
+      ],
+    },
+  });
+  revalidatePath("/", "layout");
+}
+
+// ----------------------------------------------------------------------
+// Sekimas: perjungti (sekti / nebesekti) drauga
+// ----------------------------------------------------------------------
+export async function toggleFollowAction(fd: FormData) {
+  const user = await ensureUser();
+  const targetId = fdStr(fd, "targetId", 40);
+  if (!targetId || targetId === user.id) return;
+  // Sekti galima tik drauga
+  if (!(await areFriends(user.id, targetId))) return;
+
+  const existing = await db.follow.findUnique({
+    where: { followerId_followingId: { followerId: user.id, followingId: targetId } },
+  });
+  if (existing) {
+    try {
+      await db.follow.delete({ where: { id: existing.id } });
+    } catch (e) {
+      // Lenktynes (dvigubas paspaudimas) - jau nebeseka (P2025), ignoruojam.
+      if (!(e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2025")) {
+        throw e;
+      }
+    }
+  } else {
+    try {
+      await db.follow.create({ data: { followerId: user.id, followingId: targetId } });
+    } catch (e) {
+      // Lenktynes (dvigubas paspaudimas) - jau seka (P2002), ignoruojam.
+      if (!(e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002")) {
+        throw e;
+      }
+    }
+  }
   revalidatePath("/", "layout");
 }
 

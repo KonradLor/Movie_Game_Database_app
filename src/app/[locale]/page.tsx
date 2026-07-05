@@ -5,6 +5,7 @@ import CategoryNav from "@/components/CategoryNav";
 import SearchBar from "@/components/SearchBar";
 import MediaCard from "@/components/MediaCard";
 import OnThisDay from "@/components/OnThisDay";
+import FollowingFeed from "@/components/FollowingFeed";
 import type { MediaType, Prisma } from "@prisma/client";
 
 const VALID_CATS = ["MOVIE", "SERIES", "ANIME", "DOCUMENTARY", "GAME"];
@@ -46,7 +47,8 @@ export default async function HomePage({
         </div>
       </header>
 
-      {/* On this day (tik be filtro/paieskos) */}
+      {/* Sekamu draugu veiklos srautas + On this day (tik be filtro/paieskos) */}
+      {!cat && !q && <FollowingFeed userId={user?.id ?? null} />}
       {!cat && !q && <OnThisDay userId={user?.id ?? null} />}
 
       {/* Filtrai */}

@@ -7,10 +7,12 @@ import {
   getFriends,
   getIncomingRequests,
   getOutgoingRequests,
+  getFollowingIds,
 } from "@/lib/friends";
 import {
   acceptFriendRequestAction,
   removeFriendshipAction,
+  toggleFollowAction,
 } from "@/lib/social-actions";
 import AddFriendForm from "@/components/AddFriendForm";
 import MediaCard from "@/components/MediaCard";
@@ -23,12 +25,15 @@ export default async function FriendsPage() {
   const user = await getCurrentUser();
   if (!user) notFound();
   const t = await getTranslations("friends");
+  const tFollow = await getTranslations("follow");
 
-  const [friends, incoming, outgoing] = await Promise.all([
+  const [friends, incoming, outgoing, followingIds] = await Promise.all([
     getFriends(user.id),
     getIncomingRequests(user.id),
     getOutgoingRequests(user.id),
+    getFollowingIds(user.id),
   ]);
+  const followingSet = new Set(followingIds);
 
   // Naujausia draugu veikla - ju viesi (PUBLIC) perziureti/zaisti irasai
   const friendIds = friends.map((f) => f.id);
@@ -114,11 +119,22 @@ export default async function FriendsPage() {
                   {label(f)} <span className="text-white/35">#{f.userNumber}</span>
                 </span>
                 <div className="flex items-center gap-2">
+                  <form action={toggleFollowAction}>
+                    <input type="hidden" name="targetId" value={f.id} />
+                    <button
+                      className={
+                        followingSet.has(f.id)
+                          ? "rounded-lg bg-[var(--color-accent)]/20 px-3 py-1.5 text-xs font-medium text-[var(--color-accent)] transition hover:bg-[var(--color-accent)]/30"
+                          : btnGhost
+                      }
+                    >
+                      {followingSet.has(f.id) ? `✓ ${tFollow("following")}` : tFollow("follow")}
+                    </button>
+                  </form>
                   <Link href={`/draugai/${f.userNumber}`} className={btnGhost}>
                     {t("viewCollection")}
                   </Link>
                   <form action={removeFriendshipAction}>
-                    {/* rasti rysio eilute pagal drauga - naudojam removeByPair per userNumber? */}
                     <input type="hidden" name="id" value={f.friendshipId} />
                     <button className={btnDanger}>{t("remove")}</button>
                   </form>

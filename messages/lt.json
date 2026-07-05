@@ -72,6 +72,13 @@
     "new": "nauja",
     "inboxHint": "Ką draugai siūlo tau pažiūrėti ar pažaisti."
   },
+  "follow": {
+    "follow": "Sekti",
+    "following": "Sekama",
+    "feedHeading": "Sekami draugai — naujausia veikla",
+    "watched": "neseniai žiūrėjo",
+    "played": "neseniai žaidė"
+  },
   "theme": {
     "label": "Tema",
     "default": "Violetinė",

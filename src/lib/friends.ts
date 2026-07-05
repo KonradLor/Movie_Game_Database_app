@@ -80,3 +80,37 @@ export async function getPendingIncomingCount(userId: string): Promise<number> {
 export async function getUnreadRecommendationCount(userId: string): Promise<number> {
   return db.recommendation.count({ where: { toId: userId, readAt: null } });
 }
+
+// ----------------------------------------------------------------------
+// Sekimas (Follow) - kryptinis: userId seka kitus.
+// ----------------------------------------------------------------------
+
+// Kuriuos vartotojus userId seka.
+export async function getFollowingIds(userId: string): Promise<string[]> {
+  const rows = await db.follow.findMany({
+    where: { followerId: userId },
+    select: { followingId: true },
+  });
+  return rows.map((r) => r.followingId);
+}
+
+export async function isFollowing(userId: string, targetId: string): Promise<boolean> {
+  const row = await db.follow.findUnique({
+    where: { followerId_followingId: { followerId: userId, followingId: targetId } },
+    select: { id: true },
+  });
+  return Boolean(row);
+}
+
+// Sekamu draugu naujausia VIESA (PUBLIC) perziureta/zaista veikla - trumpam
+// "informuotas" srautui pagrindiniame puslapyje. Grazina irasus su savininko vardu.
+export async function getFollowingFeed(userId: string, take = 20) {
+  const ids = await getFollowingIds(userId);
+  if (ids.length === 0) return [];
+  return db.mediaItem.findMany({
+    where: { userId: { in: ids }, visibility: "PUBLIC", status: "WATCHED" },
+    orderBy: { createdAt: "desc" },
+    take,
+    include: { user: { select: { name: true, userNumber: true } } },
+  });
+}

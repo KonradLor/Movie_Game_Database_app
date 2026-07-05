@@ -72,6 +72,13 @@
     "new": "neu",
     "inboxHint": "Was deine Freunde dir zum Ansehen oder Spielen vorschlagen."
   },
+  "follow": {
+    "follow": "Folgen",
+    "following": "Folge ich",
+    "feedHeading": "Abonniert — neueste Aktivität",
+    "watched": "sah kürzlich",
+    "played": "spielte kürzlich"
+  },
   "theme": {
     "label": "Design",
     "default": "Violett",

@@ -94,11 +94,13 @@ model User {
 
   mediaItems MediaItem[]
 
-  // Socialiniai rysiai (draugyste + rekomendacijos)
+  // Socialiniai rysiai (draugyste + rekomendacijos + sekimas)
   sentFriendRequests      Friendship[]     @relation("FriendRequester")
   receivedFriendRequests  Friendship[]     @relation("FriendAddressee")
   sentRecommendations     Recommendation[] @relation("RecFrom")
   receivedRecommendations Recommendation[] @relation("RecTo")
+  following               Follow[]         @relation("Follower")
+  followers               Follow[]         @relation("Following")
 
   @@index([userNumber])
 }
@@ -304,4 +306,22 @@ model Recommendation {
   @@index([toId])
   @@index([fromId])
   @@index([mediaId])
+}
+
+// ----------------------------------------------------------------------
+// SEKIMAS (kryptinis: as seku drauga -> jo nauja vieša veikla matoma mano
+// pagrindiniame puslapyje). Leidziamas tik tarp draugu.
+// ----------------------------------------------------------------------
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  follower    User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
 }
