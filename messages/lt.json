@@ -77,7 +77,14 @@
     "following": "Sekama",
     "feedHeading": "Sekami draugai — naujausia veikla",
     "watched": "neseniai žiūrėjo",
-    "played": "neseniai žaidė"
+    "played": "neseniai žaidė",
+    "wantsToWatch": "nori pažiūrėti",
+    "wantsToPlay": "nori pažaisti",
+    "feedTitle": "Sekamų draugų veikla",
+    "navLabel": "Veikla",
+    "seeAll": "Visa veikla",
+    "empty": "Sekamų draugų veiklos kol kas nėra.",
+    "new": "nauja"
   },
   "theme": {
     "label": "Tema",

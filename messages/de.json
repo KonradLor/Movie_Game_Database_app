@@ -77,7 +77,14 @@
     "following": "Folge ich",
     "feedHeading": "Abonniert — neueste Aktivität",
     "watched": "sah kürzlich",
-    "played": "spielte kürzlich"
+    "played": "spielte kürzlich",
+    "wantsToWatch": "möchte sehen",
+    "wantsToPlay": "möchte spielen",
+    "feedTitle": "Aktivität der Freunde",
+    "navLabel": "Aktivität",
+    "seeAll": "Alle ansehen",
+    "empty": "Noch keine Aktivität von Abonnierten.",
+    "new": "neu"
   },
   "theme": {
     "label": "Design",

@@ -3,7 +3,11 @@ import { cookies } from "next/headers";
 import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import { getCurrentUser } from "@/lib/current-user";
-import { getPendingIncomingCount, getUnreadRecommendationCount } from "@/lib/friends";
+import {
+  getPendingIncomingCount,
+  getUnreadRecommendationCount,
+  getNewFollowingActivityCount,
+} from "@/lib/friends";
 import { toTheme, THEME_COOKIE } from "@/lib/theme";
 import { signInAction } from "@/lib/auth-actions";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -31,6 +35,13 @@ function MailIcon() {
     </svg>
   );
 }
+function ActivityIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+      <path d="M3 12h4l2.5-7 5 14 2.5-7H21" />
+    </svg>
+  );
+}
 
 export default async function TopBar() {
   const t = await getTranslations();
@@ -42,11 +53,13 @@ export default async function TopBar() {
   // Nav badge'ai: laukiancios draugystes uzklausos + neskaitytos rekomendacijos
   let pendingReq = 0;
   let unreadRec = 0;
+  let newActivity = 0;
   const cu = loggedIn ? await getCurrentUser() : null;
   if (cu) {
-    [pendingReq, unreadRec] = await Promise.all([
+    [pendingReq, unreadRec, newActivity] = await Promise.all([
       getPendingIncomingCount(cu.id),
       getUnreadRecommendationCount(cu.id),
+      getNewFollowingActivityCount(cu.id, cu.followFeedSeenAt),
     ]);
   }
   const userName = session?.user?.name || session?.user?.email || "";
@@ -92,6 +105,17 @@ export default async function TopBar() {
               >
                 <MailIcon />
                 {unreadRec > 0 && <span className={badgeCls}>{unreadRec}</span>}
+              </Link>
+              <Link
+                href="/sekimas"
+                className={iconCls}
+                aria-label={t("follow.navLabel")}
+                title={t("follow.navLabel")}
+              >
+                <ActivityIcon />
+                {newActivity > 0 && (
+                  <span className={badgeCls}>{newActivity > 9 ? "9+" : newActivity}</span>
+                )}
               </Link>
 
               <Link

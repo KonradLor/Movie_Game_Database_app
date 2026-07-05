@@ -89,6 +89,10 @@ model User {
   // paieskoje ir importe. Vartotojas gali issijungti profilyje savo rizika.
   allowAdult Boolean @default(false)
 
+  // Kada paskutini karta ziurejo sekamu draugu veiklos srauta (/sekimas) -
+  // "nauja veikla" badge skaicius = irasu su activityAt > sio laiko.
+  followFeedSeenAt DateTime?
+
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -138,6 +142,11 @@ model MediaItem {
   firstWatched DateTime? // pirma perziura
   lastWatched DateTime? // paskutine perziura
 
+  // Veiklos laikas draugu sekimo srautui: keliamas pridedant irasa ir pazymint
+  // "ziureta" (markWatched), bet NE atnaujinant metaduomenis is saltinio. Pagal ji
+  // rikiuojamas srautas (kad "pazymejo ziureta" irgi issoktu i virsu).
+  activityAt  DateTime?
+
   // Zaidimams (GAME) skirti asmeniniai laukai
   platform     GamePlatform? // kurioje platformoje zaista/praeita
   playedHours  Float? // kiek valandu is viso zaista
@@ -168,6 +177,7 @@ model MediaItem {
   @@index([type])
   @@index([visibility])
   @@index([status])
+  @@index([activityAt])
 }
 
 // ----------------------------------------------------------------------

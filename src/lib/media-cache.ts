@@ -113,6 +113,7 @@ export async function importFromTmdb(input: ImportInput): Promise<string> {
       source: "TMDB",
       tmdbId: input.tmdbId,
       cachedAt: new Date(),
+      activityAt: new Date(), // pridejimas = veikla (NE atnaujinant - zr. update)
     },
   });
 
@@ -175,6 +176,7 @@ export async function importFromIgdb(input: ImportGameInput): Promise<string> {
       source: "IGDB",
       igdbId: input.igdbId,
       cachedAt: new Date(),
+      activityAt: new Date(), // pridejimas = veikla (NE atnaujinant)
     },
   });
 

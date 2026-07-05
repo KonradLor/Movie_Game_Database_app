@@ -129,6 +129,7 @@ export async function createManualMedia(fd: FormData) {
       lastWatched: date(fd, "lastWatched"),
       visibility: (str(fd, "visibility") as Visibility) || "PUBLIC",
       source: "MANUAL",
+      activityAt: new Date(), // naujas irasas = veikla (sekimo srautui)
       ...gameFields(fd, type),
     },
   });
@@ -145,9 +146,14 @@ export async function updateMedia(fd: FormData) {
   const user = await ensureUser();
   const id = str(fd, "id");
   if (!id) throw new Error("Truksta id");
-  await ensureOwned(id, user.id);
+  const existing = await ensureOwned(id, user.id);
 
   const newType = (str(fd, "type") as MediaType) || undefined;
+  const newStatus = (str(fd, "status") as MediaStatus) || undefined;
+  // Perejimas i WATCHED per redagavimo forma (ne markWatched mygtuka) = veikla,
+  // kad ir sitas kelias issoktu i sekimo srauto virsu (suderinta su markWatched).
+  const becameWatched = newStatus === "WATCHED" && existing.status !== "WATCHED";
+
   await db.mediaItem.update({
     where: { id },
     data: {
@@ -159,10 +165,11 @@ export async function updateMedia(fd: FormData) {
       posterUrl: str(fd, "posterUrl"),
       rating: int(fd, "rating"),
       opinion: str(fd, "opinion"),
-      status: (str(fd, "status") as MediaStatus) || undefined,
+      status: newStatus,
       visibility: (str(fd, "visibility") as Visibility) || undefined,
       ...watchFieldsUpdate(fd, newType),
       ...gameFields(fd, newType),
+      ...(becameWatched ? { activityAt: new Date() } : {}),
     },
   });
 
@@ -293,6 +300,7 @@ export async function markWatchedAction(fd: FormData) {
       watchCount: media.status === "WATCHLIST" ? 1 : media.watchCount + 1,
       firstWatched: media.firstWatched ?? now,
       lastWatched: now,
+      activityAt: now, // pazymejo ziureta = veikla (issoka i sekimo srauto virsu)
     },
   });
   await db.watchLog.create({ data: { mediaId: id, watchedAt: now } });

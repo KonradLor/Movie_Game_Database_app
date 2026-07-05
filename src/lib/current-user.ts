@@ -18,6 +18,8 @@ export interface CurrentUser {
   twitchClientSecret: string | null;
   // Suaugusiuju turinio leidimas (numatytai false = blokuota).
   allowAdult: boolean;
+  // Kada paskutini karta ziurejo sekimo srauta (badge skaiciavimui). null = niekada.
+  followFeedSeenAt: Date | null;
 }
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
@@ -61,6 +63,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     twitchClientId: user.twitchClientId,
     twitchClientSecret: user.twitchClientSecret,
     allowAdult: user.allowAdult,
+    followFeedSeenAt: user.followFeedSeenAt,
   };
 }
 

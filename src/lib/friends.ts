@@ -102,15 +102,38 @@ export async function isFollowing(userId: string, targetId: string): Promise<boo
   return Boolean(row);
 }
 
-// Sekamu draugu naujausia VIESA (PUBLIC) perziureta/zaista veikla - trumpam
-// "informuotas" srautui pagrindiniame puslapyje. Grazina irasus su savininko vardu.
+// Sekamu draugu naujausia VIESA (PUBLIC) veikla: ka ziurejo/zaide (WATCHED) IR ka
+// nori paziureti/pazaisti (WATCHLIST). Rikiuojama pagal activityAt (kad "pazymejo
+// ziureta" irgi issoktu i virsu, ne tik naujai pridetas). Su savininko vardu.
 export async function getFollowingFeed(userId: string, take = 20) {
   const ids = await getFollowingIds(userId);
   if (ids.length === 0) return [];
   return db.mediaItem.findMany({
-    where: { userId: { in: ids }, visibility: "PUBLIC", status: "WATCHED" },
-    orderBy: { createdAt: "desc" },
+    where: {
+      userId: { in: ids },
+      visibility: "PUBLIC",
+      status: { in: ["WATCHED", "WATCHLIST"] },
+    },
+    orderBy: { activityAt: { sort: "desc", nulls: "last" } },
     take,
     include: { user: { select: { name: true, userNumber: true } } },
+  });
+}
+
+// "Nauja veikla" badge skaicius: kiek sekamu draugu veiklos atsirado nuo paskutinio
+// karto (since = User.followFeedSeenAt). null = niekada ziureta -> visa dabartine.
+export async function getNewFollowingActivityCount(
+  userId: string,
+  since: Date | null
+): Promise<number> {
+  const ids = await getFollowingIds(userId);
+  if (ids.length === 0) return 0;
+  return db.mediaItem.count({
+    where: {
+      userId: { in: ids },
+      visibility: "PUBLIC",
+      status: { in: ["WATCHED", "WATCHLIST"] },
+      ...(since ? { activityAt: { gt: since } } : {}),
+    },
   });
 }
