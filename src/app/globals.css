@@ -96,6 +96,14 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Native <select> isskleidziamas sarasas: be sito narsykle piesia balta fona,
+   o mes turim balta teksta -> balta ant balto, nesimato. Priverstinai tamsu. */
+select option,
+select optgroup {
+  background-color: #14141c;
+  color: #e8e8f0;
+}
+
 body {
   /* Svytintys gradientai fone (glow) - spalvos is temos */
   background-image:
