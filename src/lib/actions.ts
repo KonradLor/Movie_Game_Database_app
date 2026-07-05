@@ -66,6 +66,27 @@ function gameFields(fd: FormData, type: MediaType | null | undefined) {
   };
 }
 
+// Ziurejimo laukai is FormData (REDAGUOJANT). Zaidimams formoje sie laukai
+// NErodomi, tad ju NEnusiunciam ir NEkeiciam (undefined = palikti kaip yra) -
+// kitaip redaguojant zaidima tyliai istrintume firstWatched/lastWatched
+// (jos legaliai atsiranda per "pazymeti ziuretu") ir durationMin.
+function watchFieldsUpdate(fd: FormData, type: MediaType | null | undefined) {
+  if (type === "GAME") {
+    return {
+      durationMin: undefined,
+      watchCount: undefined,
+      firstWatched: undefined,
+      lastWatched: undefined,
+    };
+  }
+  return {
+    durationMin: int(fd, "durationMin"),
+    watchCount: int(fd, "watchCount") ?? undefined,
+    firstWatched: date(fd, "firstWatched"),
+    lastWatched: date(fd, "lastWatched"),
+  };
+}
+
 async function syncTagsFromString(mediaId: string, tagsCsv: string | null) {
   const names = (tagsCsv || "")
     .split(",")
@@ -134,16 +155,13 @@ export async function updateMedia(fd: FormData) {
       title: str(fd, "title") || undefined,
       originalTitle: str(fd, "originalTitle"),
       year: int(fd, "year"),
-      durationMin: int(fd, "durationMin"),
       description: str(fd, "description"),
       posterUrl: str(fd, "posterUrl"),
       rating: int(fd, "rating"),
       opinion: str(fd, "opinion"),
       status: (str(fd, "status") as MediaStatus) || undefined,
-      watchCount: int(fd, "watchCount") ?? undefined,
-      firstWatched: date(fd, "firstWatched"),
-      lastWatched: date(fd, "lastWatched"),
       visibility: (str(fd, "visibility") as Visibility) || undefined,
+      ...watchFieldsUpdate(fd, newType),
       ...gameFields(fd, newType),
     },
   });

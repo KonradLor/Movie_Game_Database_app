@@ -11,7 +11,6 @@ import {
   saveAdultPrefAction,
   refreshAllMediaAction,
 } from "@/lib/actions";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 export default async function ProfilePage() {
@@ -70,15 +69,10 @@ export default async function ProfilePage() {
         </p>
       </section>
 
-      {/* Kalba */}
+      {/* Kalba (perjungiama viršuje per vėliavėles) + esamų įrašų atnaujinimas */}
       <section className="glass mb-6 p-6">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <h2 className="text-sm font-semibold text-white/80">{t("langHeading")}</h2>
-            <p className="mt-1 text-xs text-white/45">{t("langHint")}</p>
-          </div>
-          <LanguageSwitcher />
-        </div>
+        <h2 className="text-sm font-semibold text-white/80">{t("langHeading")}</h2>
+        <p className="mt-1 text-xs text-white/45">{t("langHint")}</p>
 
         {/* Masinis atnaujinimas - senus vienakalbius irasus paverciam daugiakalbiais */}
         <div className="mt-4 border-t border-white/10 pt-4">

@@ -2,8 +2,6 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/current-user";
-import TmdbSearch from "@/components/TmdbSearch";
-import IgdbSearch from "@/components/IgdbSearch";
 import MediaForm from "@/components/MediaForm";
 
 export default async function AddPage() {
@@ -19,26 +17,8 @@ export default async function AddPage() {
         </Link>
       </div>
 
-      <section className="mb-8">
-        <h2 className="mb-3 text-sm font-medium text-white/70">
-          {t("form.searchTmdb")}
-        </h2>
-        <TmdbSearch />
-      </section>
-
-      <section className="mb-8">
-        <h2 className="mb-3 text-sm font-medium text-white/70">
-          {t("form.searchGames")}
-        </h2>
-        <IgdbSearch />
-      </section>
-
-      <section>
-        <h2 className="mb-3 text-sm font-medium text-white/70">
-          {t("form.orManual")}
-        </h2>
-        <MediaForm />
-      </section>
+      {/* Kategorija pirmiausia: pagal ja rodoma tinkama paieska + laukai */}
+      <MediaForm showSearch />
     </main>
   );
 }

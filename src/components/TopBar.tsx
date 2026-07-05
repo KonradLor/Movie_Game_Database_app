@@ -1,10 +1,7 @@
 import { getTranslations } from "next-intl/server";
-import { cookies } from "next/headers";
 import { Link } from "@/i18n/navigation";
 import { auth, signIn, signOut } from "@/auth";
-import { toTheme, THEME_COOKIE } from "@/lib/theme";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 // Authentik registracijos (enroll) srautas - bendras kondev SSO.
 const ENROLL_URL = "https://auth.kondev.app/if/flow/enroll/";
@@ -14,7 +11,6 @@ export default async function TopBar() {
   const session = await auth();
   const loggedIn = Boolean(session?.user);
   const admin = session?.user?.isAdmin === true;
-  const theme = toTheme((await cookies()).get(THEME_COOKIE)?.value);
 
   const linkCls = "text-sm text-white/60 transition hover:text-white";
 
@@ -56,8 +52,7 @@ export default async function TopBar() {
             </Link>
           )}
 
-          {/* Temu ir kalbos perjungikliai - matomi visada */}
-          <ThemeSwitcher initial={theme} variant="compact" />
+          {/* Tik kalbos perjungiklis (vėliavėlės). Temos pasirinkimas - profilyje. */}
           <LanguageSwitcher />
 
           {/* --- Prisijungimo sritis --- */}
