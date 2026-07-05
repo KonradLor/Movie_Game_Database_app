@@ -19,7 +19,58 @@
     "feedback": "Feedback",
     "login": "Log in",
     "register": "Register",
-    "logout": "Log out"
+    "logout": "Log out",
+    "friends": "Friends",
+    "recommendations": "Recommendations"
+  },
+  "friends": {
+    "title": "Friends",
+    "back": "Back",
+    "yourCode": "Your friend code",
+    "yourCodeHint": "Share this number so friends can add you.",
+    "addByCode": "Add a friend by code",
+    "addHint": "Enter your friend's code (#number) and send a request.",
+    "sendRequest": "Send request",
+    "requestSent": "Request sent!",
+    "incoming": "Friend requests",
+    "outgoing": "Sent requests",
+    "yourFriends": "Your friends",
+    "noFriends": "No friends yet. Add someone by their code above.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "viewCollection": "View collection",
+    "activity": "Friends' recent activity",
+    "noActivity": "No public entries from friends yet.",
+    "waiting": "waiting",
+    "err_badCode": "Enter a valid code (a number).",
+    "err_self": "That is your own code.",
+    "err_notFound": "No user with that code.",
+    "err_already": "You are already friends.",
+    "err_pending": "Request already sent.",
+    "err_badRequest": "Something went wrong."
+  },
+  "friendCol": {
+    "title": "{name}'s collection",
+    "subtitle": "Public movies, series and games",
+    "empty": "No public entries yet."
+  },
+  "rec": {
+    "recommend": "Recommend to a friend",
+    "toFriend": "Friend",
+    "messagePlaceholder": "Why is it worth it? (optional)",
+    "send": "Send recommendation",
+    "sent": "Recommendation sent!",
+    "error": "Could not send.",
+    "notPublicHint": "Make this entry public to recommend it to friends.",
+    "title": "Recommendations",
+    "empty": "No recommendations yet.",
+    "from": "from",
+    "viewDetails": "View",
+    "dismiss": "Dismiss",
+    "new": "new",
+    "inboxHint": "What your friends think you should watch or play."
   },
   "theme": {
     "label": "Theme",
@@ -86,7 +137,9 @@
     "byType": "By category",
     "byYear": "By year watched",
     "topRated": "Top rated",
-    "ratingDist": "Rating distribution"
+    "ratingDist": "Rating distribution",
+    "timeByType": "Time by category",
+    "hoursUnit": "h"
   },
   "onThisDay": {
     "title": "On this day",
@@ -213,6 +266,8 @@
     "saved": "Saved",
     "refreshAllHeading": "Existing entries",
     "refreshAll": "Refresh all my entries",
-    "refreshAllHint": "Older entries were saved in a single language. This re-fetches every imported movie / series / game from the source and fills in all three languages, so switching language re-labels them instantly. May take a while for large libraries."
+    "refreshAllHint": "Older entries were saved in a single language. This re-fetches every imported movie / series / game from the source and fills in all three languages, so switching language re-labels them instantly. May take a while for large libraries.",
+    "totalTimeHeading": "Total time spent",
+    "viewStats": "View statistics →"
   }
 }

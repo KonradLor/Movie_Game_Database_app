@@ -2,6 +2,8 @@ import { getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
+import { db } from "@/lib/db";
+import { totalHoursOf } from "@/lib/stats";
 import { getCurrentUser } from "@/lib/current-user";
 import { resolveTmdb, resolveTwitch, ownKeysRequired, SHARED_KEY_LIMIT } from "@/lib/api-keys";
 import { toTheme, THEME_COOKIE } from "@/lib/theme";
@@ -17,11 +19,19 @@ export default async function ProfilePage() {
   const user = await getCurrentUser();
   if (!user) notFound();
   const t = await getTranslations("profile");
+  const tRoot = await getTranslations();
 
   const tmdb = resolveTmdb(user);
   const twitch = resolveTwitch(user);
   const required = ownKeysRequired(user.userNumber);
   const theme = toTheme((await cookies()).get(THEME_COOKIE)?.value);
+
+  // Bendras praleistas laikas (santrauka; pilnas isskaidymas - Statistikoje)
+  const watched = await db.mediaItem.findMany({
+    where: { userId: user.id, status: "WATCHED" },
+    select: { type: true, durationMin: true, watchCount: true, playedHours: true },
+  });
+  const totalHours = totalHoursOf(watched);
 
   const setLabel = (v: string | null) => (v ? t("set") : t("notSet"));
 
@@ -67,6 +77,27 @@ export default async function ProfilePage() {
             ? t("requiredInfo", { number: user.userNumber, limit: SHARED_KEY_LIMIT })
             : t("sharedInfo", { limit: SHARED_KEY_LIMIT })}
         </p>
+      </section>
+
+      {/* Bendras laikas (santrauka -> Statistika) */}
+      <section className="glass mb-6 p-6">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-sm font-semibold text-white/80">{t("totalTimeHeading")}</h2>
+            <p className="mt-1 text-3xl font-bold">
+              {totalHours}{" "}
+              <span className="text-base font-normal text-white/50">
+                {tRoot("stats.hoursUnit")}
+              </span>
+            </p>
+          </div>
+          <Link
+            href="/statistika"
+            className="text-sm text-[var(--color-accent)] transition hover:brightness-125"
+          >
+            {t("viewStats")}
+          </Link>
+        </div>
       </section>
 
       {/* Kalba (perjungiama viršuje per vėliavėles) + esamų įrašų atnaujinimas */}

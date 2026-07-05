@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/current-user";
 import { Link } from "@/i18n/navigation";
 import { pickText } from "@/lib/locale";
+import { totalHoursOf, hoursByType } from "@/lib/stats";
 import type { MediaType, Prisma } from "@prisma/client";
 
 const TYPES: MediaType[] = ["MOVIE", "SERIES", "ANIME", "DOCUMENTARY", "GAME"];
@@ -21,17 +22,18 @@ export default async function StatsPage() {
   const items = await db.mediaItem.findMany({ where });
 
   const total = items.length;
-  const totalMinutes = items.reduce(
-    (sum, i) => sum + (i.durationMin || 0) * (i.watchCount || 1),
-    0
-  );
-  const totalHours = Math.round(totalMinutes / 60);
+  // Bendras laikas: filmams/serialams trukme*kartai, zaidimams zaista valandos.
+  const totalHours = totalHoursOf(items);
 
   const byType = TYPES.map((ty) => ({
     type: ty,
     count: items.filter((i) => i.type === ty).length,
   }));
   const maxType = Math.max(1, ...byType.map((b) => b.count));
+
+  // Laikas pagal kategorija (valandomis) - kiek is viso praleista kiekvienai
+  const timeByType = TYPES.map((ty) => ({ type: ty, hours: hoursByType(items, ty) }));
+  const maxTypeHours = Math.max(1, ...timeByType.map((b) => b.hours));
 
   const ratingDist = [1, 2, 3, 4, 5].map((r) => ({
     rating: r,
@@ -112,6 +114,26 @@ export default async function StatsPage() {
           </div>
         </section>
       </div>
+
+      {/* Laikas pagal kategorija (valandomis) */}
+      <section className="glass mt-6 p-6">
+        <h2 className="mb-4 text-sm font-semibold text-white/70">
+          {t("stats.timeByType")}
+        </h2>
+        <div className="space-y-3">
+          {timeByType.map((b) => (
+            <div key={b.type} className="flex items-center gap-3">
+              <span className="w-24 shrink-0 text-xs text-white/60">
+                {t(`type.${b.type}`)}
+              </span>
+              <Bar value={b.hours} max={maxTypeHours} />
+              <span className="w-16 shrink-0 text-right text-xs text-white/50">
+                {b.hours} {t("stats.hoursUnit")}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Eksportas (savo duomenu) */}
       {loggedIn && (

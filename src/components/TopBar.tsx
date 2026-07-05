@@ -1,6 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { auth, signIn, signOut } from "@/auth";
+import { getCurrentUser } from "@/lib/current-user";
+import { getPendingIncomingCount, getUnreadRecommendationCount } from "@/lib/friends";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 // Authentik registracijos (enroll) srautas - bendras kondev SSO.
@@ -12,7 +14,22 @@ export default async function TopBar() {
   const loggedIn = Boolean(session?.user);
   const admin = session?.user?.isAdmin === true;
 
+  // Nav badge'ai: laukiancios draugystes uzklausos + neskaitytos rekomendacijos
+  let pendingReq = 0;
+  let unreadRec = 0;
+  if (loggedIn) {
+    const cu = await getCurrentUser();
+    if (cu) {
+      [pendingReq, unreadRec] = await Promise.all([
+        getPendingIncomingCount(cu.id),
+        getUnreadRecommendationCount(cu.id),
+      ]);
+    }
+  }
+
   const linkCls = "text-sm text-white/60 transition hover:text-white";
+  const badgeCls =
+    "ml-1 inline-flex min-w-[1.1rem] justify-center rounded-full bg-[var(--color-accent)] px-1 text-[10px] font-bold leading-4 text-white";
 
   return (
     <header className="sticky top-0 z-30 border-b border-white/5 bg-black/30 backdrop-blur-xl">
@@ -37,6 +54,18 @@ export default async function TopBar() {
           <Link href="/atsiliepimai" className={linkCls}>
             {t("nav.feedback")}
           </Link>
+          {loggedIn && (
+            <>
+              <Link href="/draugai" className={linkCls}>
+                {t("nav.friends")}
+                {pendingReq > 0 && <span className={badgeCls}>{pendingReq}</span>}
+              </Link>
+              <Link href="/rekomendacijos" className={linkCls}>
+                {t("nav.recommendations")}
+                {unreadRec > 0 && <span className={badgeCls}>{unreadRec}</span>}
+              </Link>
+            </>
+          )}
           {admin && (
             <Link href="/admin" className="text-sm text-[var(--color-accent)] transition hover:brightness-125">
               Admin

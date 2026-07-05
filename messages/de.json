@@ -19,7 +19,58 @@
     "feedback": "Feedback",
     "login": "Anmelden",
     "register": "Registrieren",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "friends": "Freunde",
+    "recommendations": "Empfehlungen"
+  },
+  "friends": {
+    "title": "Freunde",
+    "back": "Zurück",
+    "yourCode": "Dein Freundescode",
+    "yourCodeHint": "Teile diese Nummer, damit Freunde dich hinzufügen können.",
+    "addByCode": "Freund per Code hinzufügen",
+    "addHint": "Gib den Code (#Nummer) deines Freundes ein und sende eine Anfrage.",
+    "sendRequest": "Anfrage senden",
+    "requestSent": "Anfrage gesendet!",
+    "incoming": "Freundschaftsanfragen",
+    "outgoing": "Gesendete Anfragen",
+    "yourFriends": "Deine Freunde",
+    "noFriends": "Noch keine Freunde. Füge oben jemanden per Code hinzu.",
+    "accept": "Annehmen",
+    "decline": "Ablehnen",
+    "cancel": "Abbrechen",
+    "remove": "Entfernen",
+    "viewCollection": "Sammlung ansehen",
+    "activity": "Neueste Aktivität der Freunde",
+    "noActivity": "Noch keine öffentlichen Einträge von Freunden.",
+    "waiting": "wartet",
+    "err_badCode": "Gib einen gültigen Code (eine Zahl) ein.",
+    "err_self": "Das ist dein eigener Code.",
+    "err_notFound": "Kein Benutzer mit diesem Code.",
+    "err_already": "Ihr seid bereits Freunde.",
+    "err_pending": "Anfrage bereits gesendet.",
+    "err_badRequest": "Etwas ist schiefgelaufen."
+  },
+  "friendCol": {
+    "title": "Sammlung von {name}",
+    "subtitle": "Öffentliche Filme, Serien und Spiele",
+    "empty": "Noch keine öffentlichen Einträge."
+  },
+  "rec": {
+    "recommend": "Einem Freund empfehlen",
+    "toFriend": "Freund",
+    "messagePlaceholder": "Warum lohnt es sich? (optional)",
+    "send": "Empfehlung senden",
+    "sent": "Empfehlung gesendet!",
+    "error": "Konnte nicht gesendet werden.",
+    "notPublicHint": "Mache diesen Eintrag öffentlich, um ihn Freunden zu empfehlen.",
+    "title": "Empfehlungen",
+    "empty": "Noch keine Empfehlungen.",
+    "from": "von",
+    "viewDetails": "Ansehen",
+    "dismiss": "Entfernen",
+    "new": "neu",
+    "inboxHint": "Was deine Freunde dir zum Ansehen oder Spielen vorschlagen."
   },
   "theme": {
     "label": "Design",
@@ -86,7 +137,9 @@
     "byType": "Nach Kategorie",
     "byYear": "Nach Jahr gesehen",
     "topRated": "Am besten bewertet",
-    "ratingDist": "Bewertungsverteilung"
+    "ratingDist": "Bewertungsverteilung",
+    "timeByType": "Zeit nach Kategorie",
+    "hoursUnit": "Std"
   },
   "onThisDay": {
     "title": "An diesem Tag",
@@ -213,6 +266,8 @@
     "saved": "Gespeichert",
     "refreshAllHeading": "Vorhandene Einträge",
     "refreshAll": "Alle meine Einträge aktualisieren",
-    "refreshAllHint": "Ältere Einträge wurden in einer einzigen Sprache gespeichert. Dies lädt jeden importierten Film / jede Serie / jedes Spiel neu aus der Quelle und füllt alle drei Sprachen, sodass das Umschalten der Sprache sie sofort neu beschriftet. Bei großen Sammlungen kann es etwas dauern."
+    "refreshAllHint": "Ältere Einträge wurden in einer einzigen Sprache gespeichert. Dies lädt jeden importierten Film / jede Serie / jedes Spiel neu aus der Quelle und füllt alle drei Sprachen, sodass das Umschalten der Sprache sie sofort neu beschriftet. Bei großen Sammlungen kann es etwas dauern.",
+    "totalTimeHeading": "Insgesamt verbrachte Zeit",
+    "viewStats": "Statistik ansehen →"
   }
 }

@@ -50,6 +50,12 @@ enum GamePlatform {
   OTHER
 }
 
+// Draugystes busena (abipusis patvirtinimas: uzklausa -> priimta).
+enum FriendStatus {
+  PENDING // issiusta uzklausa, laukiama patvirtinimo
+  ACCEPTED // draugai
+}
+
 enum CreditRole {
   ACTOR // Aktorius
   DIRECTOR // Rezisierius
@@ -87,6 +93,12 @@ model User {
   updatedAt  DateTime @updatedAt
 
   mediaItems MediaItem[]
+
+  // Socialiniai rysiai (draugyste + rekomendacijos)
+  sentFriendRequests      Friendship[]     @relation("FriendRequester")
+  receivedFriendRequests  Friendship[]     @relation("FriendAddressee")
+  sentRecommendations     Recommendation[] @relation("RecFrom")
+  receivedRecommendations Recommendation[] @relation("RecTo")
 
   @@index([userNumber])
 }
@@ -143,6 +155,7 @@ model MediaItem {
   tags        TagOnMedia[]
   credits     Credit[]
   watchLogs   WatchLog[]
+  recommendations Recommendation[]
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -246,4 +259,49 @@ model Credit {
   @@index([mediaId])
   @@index([personId])
   @@index([companyId])
+}
+
+// ----------------------------------------------------------------------
+// DRAUGYSTE (abipuse: uzklausa -> priimta). Pridedama pagal draugo koda (#userNumber).
+// ----------------------------------------------------------------------
+
+model Friendship {
+  id          String       @id @default(cuid())
+  requesterId String
+  requester   User         @relation("FriendRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addresseeId String
+  addressee   User         @relation("FriendAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+  status      FriendStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([requesterId, addresseeId])
+  @@index([addresseeId])
+  @@index([requesterId])
+}
+
+// ----------------------------------------------------------------------
+// REKOMENDACIJA (draugui: koki filma/zaidima ziureti/zaisti + zinute "kodel").
+// Snapshot laukai (mediaTitle/Type/Poster) leidzia rekomendacijai islikti net
+// istrynus originalu irasa (mediaId tada -> NULL).
+// ----------------------------------------------------------------------
+
+model Recommendation {
+  id          String     @id @default(cuid())
+  fromId      String
+  from        User       @relation("RecFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  toId        String
+  to          User       @relation("RecTo", fields: [toId], references: [id], onDelete: Cascade)
+  mediaId     String?
+  media       MediaItem? @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+  mediaTitle  String
+  mediaType   MediaType
+  mediaPoster String?
+  message     String?
+  readAt      DateTime?
+  createdAt   DateTime   @default(now())
+
+  @@index([toId])
+  @@index([fromId])
+  @@index([mediaId])
 }

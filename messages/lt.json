@@ -19,7 +19,58 @@
     "feedback": "Atsiliepimai",
     "login": "Prisijungti",
     "register": "Registruotis",
-    "logout": "Atsijungti"
+    "logout": "Atsijungti",
+    "friends": "Draugai",
+    "recommendations": "Rekomendacijos"
+  },
+  "friends": {
+    "title": "Draugai",
+    "back": "Atgal",
+    "yourCode": "Tavo draugo kodas",
+    "yourCodeHint": "Pasidalink šiuo numeriu, kad draugai galėtų tave pridėti.",
+    "addByCode": "Pridėti draugą pagal kodą",
+    "addHint": "Įvesk draugo kodą (#numeris) ir išsiųsk užklausą.",
+    "sendRequest": "Siųsti užklausą",
+    "requestSent": "Užklausa išsiųsta!",
+    "incoming": "Draugystės užklausos",
+    "outgoing": "Išsiųstos užklausos",
+    "yourFriends": "Tavo draugai",
+    "noFriends": "Kol kas draugų nėra. Pridėk ką nors pagal kodą viršuje.",
+    "accept": "Priimti",
+    "decline": "Atmesti",
+    "cancel": "Atšaukti",
+    "remove": "Pašalinti",
+    "viewCollection": "Peržiūrėti kolekciją",
+    "activity": "Naujausia draugų veikla",
+    "noActivity": "Draugai kol kas neturi viešų įrašų.",
+    "waiting": "laukiama",
+    "err_badCode": "Įvesk teisingą kodą (skaičių).",
+    "err_self": "Tai tavo paties kodas.",
+    "err_notFound": "Tokio kodo vartotojo nėra.",
+    "err_already": "Jūs jau draugai.",
+    "err_pending": "Užklausa jau išsiųsta.",
+    "err_badRequest": "Kažkas nepavyko."
+  },
+  "friendCol": {
+    "title": "{name} kolekcija",
+    "subtitle": "Vieši filmai, serialai ir žaidimai",
+    "empty": "Kol kas viešų įrašų nėra."
+  },
+  "rec": {
+    "recommend": "Rekomenduoti draugui",
+    "toFriend": "Draugas",
+    "messagePlaceholder": "Kodėl verta? (nebūtina)",
+    "send": "Siųsti rekomendaciją",
+    "sent": "Rekomendacija išsiųsta!",
+    "error": "Nepavyko išsiųsti.",
+    "notPublicHint": "Padaryk šį įrašą viešą, kad galėtum jį rekomenduoti draugams.",
+    "title": "Rekomendacijos",
+    "empty": "Kol kas rekomendacijų nėra.",
+    "from": "nuo",
+    "viewDetails": "Peržiūrėti",
+    "dismiss": "Pašalinti",
+    "new": "nauja",
+    "inboxHint": "Ką draugai siūlo tau pažiūrėti ar pažaisti."
   },
   "theme": {
     "label": "Tema",
@@ -86,7 +137,9 @@
     "byType": "Pagal kategoriją",
     "byYear": "Pagal žiūrėjimo metus",
     "topRated": "Geriausiai įvertinti",
-    "ratingDist": "Įvertinimų pasiskirstymas"
+    "ratingDist": "Įvertinimų pasiskirstymas",
+    "timeByType": "Laikas pagal kategoriją",
+    "hoursUnit": "val"
   },
   "onThisDay": {
     "title": "Šią dieną",
@@ -213,6 +266,8 @@
     "saved": "Išsaugota",
     "refreshAllHeading": "Esami įrašai",
     "refreshAll": "Atnaujinti visus mano įrašus",
-    "refreshAllHint": "Senesni įrašai buvo išsaugoti viena kalba. Tai iš naujo parsiunčia kiekvieną importuotą filmą / serialą / žaidimą iš šaltinio ir užpildo visas tris kalbas, tad perjungus kalbą jie iškart persivadina. Didelėms bibliotekoms gali užtrukti."
+    "refreshAllHint": "Senesni įrašai buvo išsaugoti viena kalba. Tai iš naujo parsiunčia kiekvieną importuotą filmą / serialą / žaidimą iš šaltinio ir užpildo visas tris kalbas, tad perjungus kalbą jie iškart persivadina. Didelėms bibliotekoms gali užtrukti.",
+    "totalTimeHeading": "Iš viso praleista laiko",
+    "viewStats": "Peržiūrėti statistiką →"
   }
 }

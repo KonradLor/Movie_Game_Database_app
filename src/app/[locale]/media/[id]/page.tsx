@@ -4,7 +4,9 @@ import { Link } from "@/i18n/navigation";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/current-user";
 import { pickText } from "@/lib/locale";
+import { areFriends, getFriends } from "@/lib/friends";
 import { deleteMedia, refreshMediaAction, markWatchedAction } from "@/lib/actions";
+import RecommendButton from "@/components/RecommendButton";
 
 export default async function MediaDetailPage({
   params,
@@ -16,9 +18,8 @@ export default async function MediaDetailPage({
   const locale = await getLocale();
   const user = await getCurrentUser();
 
-  // Tik SAVO irasa rodom (daugiavartotojiskumas)
   const item = await db.mediaItem.findFirst({
-    where: { id, userId: user?.id ?? "__no_user__" },
+    where: { id },
     include: {
       tags: { include: { tag: true } },
       credits: { include: { person: true, company: true } },
@@ -26,8 +27,30 @@ export default async function MediaDetailPage({
   });
 
   if (!item) notFound();
-  // Savininkas gali tvarkyti savo irasa
-  const admin = !!user;
+
+  const isOwner = !!user && user.id === item.userId;
+  if (!isOwner) {
+    // Ne savininkas mato tik VIESA (PUBLIC) draugo irasa
+    const canView =
+      !!user && item.visibility === "PUBLIC" && (await areFriends(user.id, item.userId));
+    if (!canView) notFound();
+  }
+
+  // Tik savininkas tvarko savo irasa
+  const admin = isOwner;
+
+  // Rekomenduoti draugams galima tik savo viesa irasa (ir jei turi draugu)
+  const friends =
+    isOwner && item.visibility === "PUBLIC" ? await getFriends(user!.id) : [];
+
+  // Kai ziuri draugo irasa - parodom, kieno tai kolekcija
+  const owner = !isOwner
+    ? await db.user.findUnique({
+        where: { id: item.userId },
+        select: { name: true, userNumber: true },
+      })
+    : null;
+
   const { title, description } = pickText(item, locale);
 
   const actors = item.credits.filter((c) => c.role === "ACTOR" && c.person);
@@ -92,6 +115,11 @@ export default async function MediaDetailPage({
           <h1 className="text-2xl font-bold">{title}</h1>
           {item.originalTitle && item.originalTitle !== title && (
             <p className="text-sm text-white/40">{item.originalTitle}</p>
+          )}
+          {owner && (
+            <p className="mt-1 text-xs text-[var(--color-accent)]/80">
+              {t("friendCol.title", { name: owner.name || `#${owner.userNumber}` })}
+            </p>
           )}
 
           <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
@@ -224,6 +252,21 @@ export default async function MediaDetailPage({
                 </span>
               ))}
             </p>
+          )}
+
+          {/* Rekomenduoti draugui - tik savo viesa irasa */}
+          {isOwner && item.visibility === "PUBLIC" && (
+            <RecommendButton
+              mediaId={item.id}
+              friends={friends.map((f) => ({
+                id: f.id,
+                userNumber: f.userNumber,
+                name: f.name,
+              }))}
+            />
+          )}
+          {isOwner && item.visibility !== "PUBLIC" && (
+            <p className="mt-4 text-xs text-white/40">{t("rec.notPublicHint")}</p>
           )}
         </div>
       </div>
