@@ -30,10 +30,18 @@ export default async function PersonPage({
   });
   if (!person) notFound();
 
-  // Kuriniai musu kolekcijoje (per kreditus)
-  const inCollection = person.credits
-    .filter((c) => c.media)
-    .map((c) => ({ media: c.media, role: c.role, character: c.character }));
+  // Kuriniai musu kolekcijoje (per kreditus). Asmuo gali tureti kelis kreditus tam
+  // paciam kuriniui (pvz. rezisierius IR scenaristas) -> dedup pagal media.id.
+  const inCollection = [
+    ...new Map(
+      person.credits
+        .filter((c) => c.media)
+        .map(
+          (c) =>
+            [c.media!.id, { media: c.media!, role: c.role, character: c.character }] as const
+        )
+    ).values(),
+  ];
   const collectionTmdbIds = new Set(
     inCollection.map((x) => x.media.tmdbId).filter(Boolean)
   );
