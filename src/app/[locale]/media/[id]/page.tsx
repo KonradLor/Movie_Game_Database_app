@@ -58,11 +58,32 @@ export default async function MediaDetailPage({
 
   const { title, description } = pickText(item, locale);
 
-  const actors = item.credits.filter((c) => c.role === "ACTOR" && c.person);
-  const directors = item.credits.filter((c) => c.role === "DIRECTOR" && c.person);
-  const studios = item.credits.filter((c) => c.role === "STUDIO" && c.company);
-  const developers = item.credits.filter((c) => c.role === "DEVELOPER" && c.company);
-  const publishers = item.credits.filter((c) => c.role === "PUBLISHER" && c.company);
+  // Dedup pagal asmens/kompanijos id: saltinis (TMDB/IGDB) retkarciais grazina ta
+  // pati asmeni/kompanija du kartus tame paciame vaidmenyje (pvz. aktorius su dviem
+  // personazais) -> nerodom vardo du kartus.
+  const uniqBy = <T,>(arr: T[], id: (x: T) => string): T[] => [
+    ...new Map(arr.map((x) => [id(x), x])).values(),
+  ];
+  const actors = uniqBy(
+    item.credits.filter((c) => c.role === "ACTOR" && c.person),
+    (c) => c.person!.id
+  );
+  const directors = uniqBy(
+    item.credits.filter((c) => c.role === "DIRECTOR" && c.person),
+    (c) => c.person!.id
+  );
+  const studios = uniqBy(
+    item.credits.filter((c) => c.role === "STUDIO" && c.company),
+    (c) => c.company!.id
+  );
+  const developers = uniqBy(
+    item.credits.filter((c) => c.role === "DEVELOPER" && c.company),
+    (c) => c.company!.id
+  );
+  const publishers = uniqBy(
+    item.credits.filter((c) => c.role === "PUBLISHER" && c.company),
+    (c) => c.company!.id
+  );
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
