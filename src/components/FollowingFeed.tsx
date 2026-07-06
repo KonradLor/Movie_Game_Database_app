@@ -4,9 +4,10 @@ import { getFollowingFeed } from "@/lib/friends";
 import { pickText } from "@/lib/locale";
 import type { MediaType, MediaStatus } from "@prisma/client";
 
-// Veiksmazodis pagal busena+tipa: ziurejo / zaide / nori paziureti / nori pazaisti.
+// Veiksmazodis pagal busena+tipa: zaidzia/ziuri dabar / ziurejo / zaide / nori.
 export function verbKey(type: MediaType, status: MediaStatus): string {
   const isGame = type === "GAME";
+  if (status === "PLAYING") return isGame ? "playingNow" : "watchingNow";
   if (status === "WATCHLIST") return isGame ? "wantsToPlay" : "wantsToWatch";
   return isGame ? "played" : "watched";
 }

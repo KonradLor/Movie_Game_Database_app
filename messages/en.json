@@ -84,7 +84,18 @@
     "navLabel": "Activity",
     "seeAll": "See all",
     "empty": "No activity from people you follow yet.",
-    "new": "new"
+    "new": "new",
+    "playingNow": "is playing now",
+    "watchingNow": "is watching now"
+  },
+  "now": {
+    "myHeading": "Currently playing & watching",
+    "friendsHeading": "Friends playing & watching now",
+    "startGame": "Start playing",
+    "startWatch": "Start watching",
+    "finish": "Finished",
+    "statusPlayingGame": "Playing now",
+    "statusPlayingWatch": "Watching now"
   },
   "theme": {
     "label": "Theme",
@@ -240,7 +251,8 @@
   },
   "status": {
     "WATCHED": "Watched",
-    "WATCHLIST": "Want to watch"
+    "WATCHLIST": "Want to watch",
+    "PLAYING": "Playing / watching now"
   },
   "visibility": {
     "PUBLIC": "Public",

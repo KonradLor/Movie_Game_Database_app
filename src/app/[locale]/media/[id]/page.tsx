@@ -5,7 +5,12 @@ import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/current-user";
 import { pickText } from "@/lib/locale";
 import { areFriends, getFriends } from "@/lib/friends";
-import { deleteMedia, refreshMediaAction, markWatchedAction } from "@/lib/actions";
+import {
+  deleteMedia,
+  refreshMediaAction,
+  markWatchedAction,
+  startPlayingAction,
+} from "@/lib/actions";
 import RecommendButton from "@/components/RecommendButton";
 
 export default async function MediaDetailPage({
@@ -67,13 +72,32 @@ export default async function MediaDetailPage({
         </Link>
         {admin && (
           <div className="flex items-center gap-2">
-            {item.status === "WATCHLIST" && (
+            {item.status === "PLAYING" ? (
               <form action={markWatchedAction}>
                 <input type="hidden" name="id" value={item.id} />
                 <button className="rounded-lg bg-emerald-500/20 px-3 py-1.5 text-sm text-emerald-300 hover:bg-emerald-500/30">
-                  ✓ {t("watchlist.markWatched")}
+                  ✓ {t("now.finish")}
                 </button>
               </form>
+            ) : (
+              <>
+                {(item.type === "GAME" || item.type === "SERIES" || item.type === "ANIME") && (
+                  <form action={startPlayingAction}>
+                    <input type="hidden" name="id" value={item.id} />
+                    <button className="rounded-lg bg-[var(--color-accent)]/20 px-3 py-1.5 text-sm text-[var(--color-accent)] hover:bg-[var(--color-accent)]/30">
+                      ▶ {t(item.type === "GAME" ? "now.startGame" : "now.startWatch")}
+                    </button>
+                  </form>
+                )}
+                {item.status === "WATCHLIST" && (
+                  <form action={markWatchedAction}>
+                    <input type="hidden" name="id" value={item.id} />
+                    <button className="rounded-lg bg-emerald-500/20 px-3 py-1.5 text-sm text-emerald-300 hover:bg-emerald-500/30">
+                      ✓ {t("watchlist.markWatched")}
+                    </button>
+                  </form>
+                )}
+              </>
             )}
             <Link
               href={`/media/${item.id}/redaguoti`}

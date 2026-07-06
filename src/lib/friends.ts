@@ -102,9 +102,10 @@ export async function isFollowing(userId: string, targetId: string): Promise<boo
   return Boolean(row);
 }
 
-// Sekamu draugu naujausia VIESA (PUBLIC) veikla: ka ziurejo/zaide (WATCHED) IR ka
-// nori paziureti/pazaisti (WATCHLIST). Rikiuojama pagal activityAt (kad "pazymejo
-// ziureta" irgi issoktu i virsu, ne tik naujai pridetas). Su savininko vardu.
+// Sekamu draugu naujausia VIESA (PUBLIC) veikla: ka ziurejo/zaide (WATCHED), ka
+// nori paziureti/pazaisti (WATCHLIST) IR ka dabar aktyviai zaidzia/ziuri (PLAYING).
+// Rikiuojama pagal activityAt (kad "pazymejo ziureta" ar "pradejo zaisti" irgi
+// issoktu i virsu, ne tik naujai pridetas). Su savininko vardu.
 export async function getFollowingFeed(userId: string, take = 20) {
   const ids = await getFollowingIds(userId);
   if (ids.length === 0) return [];
@@ -112,7 +113,7 @@ export async function getFollowingFeed(userId: string, take = 20) {
     where: {
       userId: { in: ids },
       visibility: "PUBLIC",
-      status: { in: ["WATCHED", "WATCHLIST"] },
+      status: { in: ["WATCHED", "WATCHLIST", "PLAYING"] },
     },
     orderBy: { activityAt: { sort: "desc", nulls: "last" } },
     take,
@@ -132,8 +133,29 @@ export async function getNewFollowingActivityCount(
     where: {
       userId: { in: ids },
       visibility: "PUBLIC",
-      status: { in: ["WATCHED", "WATCHLIST"] },
+      status: { in: ["WATCHED", "WATCHLIST", "PLAYING"] },
       ...(since ? { activityAt: { gt: since } } : {}),
     },
+  });
+}
+
+// VISU draugu (ne tik sekamu) viesi (PUBLIC) "dabar zaidziu/ziuriu" (PLAYING)
+// irasai - live juostai draugu puslapyje. Naujausiai pradeti virsuje.
+export async function getFriendsNowPlaying(userId: string) {
+  const ids = await getFriendUserIds(userId);
+  if (ids.length === 0) return [];
+  return db.mediaItem.findMany({
+    where: { userId: { in: ids }, visibility: "PUBLIC", status: "PLAYING" },
+    orderBy: { activityAt: { sort: "desc", nulls: "last" } },
+    include: { user: { select: { name: true, userNumber: true } } },
+  });
+}
+
+// Tavo paties "dabar zaidziu/ziuriu" (PLAYING) irasai - juostai pagrindiniame
+// puslapyje su "Baigiau" mygtuku. Naujausiai pradeti virsuje.
+export async function getMyNowPlaying(userId: string) {
+  return db.mediaItem.findMany({
+    where: { userId, status: "PLAYING" },
+    orderBy: { activityAt: { sort: "desc", nulls: "last" } },
   });
 }

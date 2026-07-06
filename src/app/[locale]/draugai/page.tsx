@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { db } from "@/lib/db";
@@ -8,6 +8,7 @@ import {
   getIncomingRequests,
   getOutgoingRequests,
   getFollowingIds,
+  getFriendsNowPlaying,
 } from "@/lib/friends";
 import {
   acceptFriendRequestAction,
@@ -16,6 +17,8 @@ import {
 } from "@/lib/social-actions";
 import AddFriendForm from "@/components/AddFriendForm";
 import MediaCard from "@/components/MediaCard";
+import { verbKey } from "@/components/FollowingFeed";
+import { pickText } from "@/lib/locale";
 
 function label(u: { name: string | null; userNumber: number }): string {
   return u.name || `#${u.userNumber}`;
@@ -26,12 +29,15 @@ export default async function FriendsPage() {
   if (!user) notFound();
   const t = await getTranslations("friends");
   const tFollow = await getTranslations("follow");
+  const tNow = await getTranslations("now");
+  const locale = await getLocale();
 
-  const [friends, incoming, outgoing, followingIds] = await Promise.all([
+  const [friends, incoming, outgoing, followingIds, nowPlaying] = await Promise.all([
     getFriends(user.id),
     getIncomingRequests(user.id),
     getOutgoingRequests(user.id),
     getFollowingIds(user.id),
+    getFriendsNowPlaying(user.id),
   ]);
   const followingSet = new Set(followingIds);
 
@@ -73,6 +79,34 @@ export default async function FriendsPage() {
         <p className="mb-3 text-xs text-white/45">{t("addHint")}</p>
         <AddFriendForm />
       </section>
+
+      {/* Draugai dabar zaidzia / ziuri (live) */}
+      {nowPlaying.length > 0 && (
+        <section className="glass mb-6 p-6">
+          <h2 className="mb-3 text-sm font-semibold text-white/80">
+            {tNow("friendsHeading")}
+          </h2>
+          <ul className="space-y-2">
+            {nowPlaying.map((i) => (
+              <li key={i.id} className="flex items-center gap-2 text-sm">
+                <span aria-hidden>{i.type === "GAME" ? "🎮" : "📺"}</span>
+                <span className="min-w-0 truncate text-white/80">
+                  <span className="font-medium">
+                    {i.user.name || `#${i.user.userNumber}`}
+                  </span>{" "}
+                  <span className="text-white/50">{tFollow(verbKey(i.type, i.status))}</span>{" "}
+                  <Link
+                    href={`/media/${i.id}`}
+                    className="text-[var(--color-accent)] hover:underline"
+                  >
+                    {pickText(i, locale).title}
+                  </Link>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Gautos uzklausos */}
       {incoming.length > 0 && (

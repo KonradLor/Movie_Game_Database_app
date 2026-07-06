@@ -40,6 +40,8 @@ export default function MediaForm({
   const isEdit = Boolean(item);
   const [type, setType] = useState<string>(item?.type ?? "MOVIE");
   const isGame = type === "GAME";
+  // Tipai, kuriems galima "dabar zaidziu/ziuriu" busena (GAME/SERIES/ANIME).
+  const canPlay = type === "GAME" || type === "SERIES" || type === "ANIME";
   const tagsCsv = item?.tags?.map((x) => x.tag.name).join(", ") || "";
 
   const labelCls = "block text-sm text-white/70 mb-1";
@@ -144,6 +146,11 @@ export default function MediaForm({
                   {t(`status.${s}`)}
                 </option>
               ))}
+              {canPlay && (
+                <option value="PLAYING">
+                  {t(isGame ? "now.statusPlayingGame" : "now.statusPlayingWatch")}
+                </option>
+              )}
             </select>
           </div>
           <div>

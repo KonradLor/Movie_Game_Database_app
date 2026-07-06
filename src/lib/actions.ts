@@ -55,6 +55,12 @@ function bool(fd: FormData, key: string): boolean {
   return fd.get(key) !== null;
 }
 
+// Tipai, kuriuos galima "dabar zaisti/ziureti" (PLAYING busena). Filmui/dokumentikai
+// tokia busena netaikoma - jie viena karta perziurimi, ne testinis procesas.
+function isPlayableType(type: MediaType | null | undefined): boolean {
+  return type === "GAME" || type === "SERIES" || type === "ANIME";
+}
+
 // Zaidimo laukai is FormData (tik jei tipas GAME; kitaip null/false).
 function gameFields(fd: FormData, type: MediaType | null | undefined) {
   const isGame = type === "GAME";
@@ -111,6 +117,9 @@ export async function createManualMedia(fd: FormData) {
   const user = await ensureUser();
 
   const type = (str(fd, "type") as MediaType) || "MOVIE";
+  // PLAYING leidziama tik playable tipams (apsauga nuo pasenusio select ar tampymo).
+  let status = (str(fd, "status") as MediaStatus) || "WATCHED";
+  if (status === "PLAYING" && !isPlayableType(type)) status = "WATCHED";
   const media = await db.mediaItem.create({
     data: {
       userId: user.id,
@@ -123,7 +132,7 @@ export async function createManualMedia(fd: FormData) {
       posterUrl: str(fd, "posterUrl"),
       rating: int(fd, "rating"),
       opinion: str(fd, "opinion"),
-      status: (str(fd, "status") as MediaStatus) || "WATCHED",
+      status,
       watchCount: int(fd, "watchCount") ?? 1,
       firstWatched: date(fd, "firstWatched"),
       lastWatched: date(fd, "lastWatched"),
@@ -149,10 +158,16 @@ export async function updateMedia(fd: FormData) {
   const existing = await ensureOwned(id, user.id);
 
   const newType = (str(fd, "type") as MediaType) || undefined;
-  const newStatus = (str(fd, "status") as MediaStatus) || undefined;
-  // Perejimas i WATCHED per redagavimo forma (ne markWatched mygtuka) = veikla,
+  let newStatus = (str(fd, "status") as MediaStatus) || undefined;
+  // PLAYING leidziama tik playable tipams (pvz. jei pakeitus tipa i MOVIE liko
+  // pasenusi PLAYING reiksme select'e).
+  if (newStatus === "PLAYING" && !isPlayableType(newType ?? existing.type)) {
+    newStatus = "WATCHED";
+  }
+  // Perejimas i WATCHED ar PLAYING per redagavimo forma (ne mygtuka) = veikla,
   // kad ir sitas kelias issoktu i sekimo srauto virsu (suderinta su markWatched).
-  const becameWatched = newStatus === "WATCHED" && existing.status !== "WATCHED";
+  const becameActive =
+    (newStatus === "WATCHED" || newStatus === "PLAYING") && existing.status !== newStatus;
 
   await db.mediaItem.update({
     where: { id },
@@ -169,7 +184,7 @@ export async function updateMedia(fd: FormData) {
       visibility: (str(fd, "visibility") as Visibility) || undefined,
       ...watchFieldsUpdate(fd, newType),
       ...gameFields(fd, newType),
-      ...(becameWatched ? { activityAt: new Date() } : {}),
+      ...(becameActive ? { activityAt: new Date() } : {}),
     },
   });
 
@@ -297,13 +312,40 @@ export async function markWatchedAction(fd: FormData) {
     where: { id },
     data: {
       status: "WATCHED",
-      watchCount: media.status === "WATCHLIST" ? 1 : media.watchCount + 1,
+      // Uzbaigimu skaicius NIEKADA nemazeja (kad pakartojimo ciklas
+      // WATCHED -> PLAYING -> "Baigiau" ar rankiniu budu ivestas watchCount
+      // neprarastu duomenu). Jei jau buvo uzbaigta anksciau (buvo WATCHED arba
+      // turi firstWatched) - pakartojimas, didinam; kitaip - pirmas uzbaigimas,
+      // bent 1 (nesumazinam esamo).
+      watchCount:
+        media.status === "WATCHED" || media.firstWatched != null
+          ? media.watchCount + 1
+          : Math.max(media.watchCount, 1),
       firstWatched: media.firstWatched ?? now,
       lastWatched: now,
       activityAt: now, // pazymejo ziureta = veikla (issoka i sekimo srauto virsu)
     },
   });
   await db.watchLog.create({ data: { mediaId: id, watchedAt: now } });
+  revalidatePath("/", "layout");
+  redirect(`/media/${id}`);
+}
+
+// Pradeti "dabar zaisti/ziureti" - tik savo iraso ir tik playable tipo (GAME/
+// SERIES/ANIME). Padaro irasa PLAYING ir pakelia activityAt (matoma draugams +
+// tavo "Dabar zaidziu" juostoje).
+export async function startPlayingAction(fd: FormData) {
+  const user = await ensureUser();
+  const id = str(fd, "id");
+  if (!id) throw new Error("Truksta id");
+  const media = await ensureOwned(id, user.id);
+  if (!isPlayableType(media.type)) {
+    throw new Error("Sio tipo negalima zymeti 'dabar zaidziu/ziuriu'");
+  }
+  await db.mediaItem.update({
+    where: { id },
+    data: { status: "PLAYING", activityAt: new Date() },
+  });
   revalidatePath("/", "layout");
   redirect(`/media/${id}`);
 }

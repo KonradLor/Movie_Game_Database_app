@@ -84,7 +84,18 @@
     "navLabel": "Aktivität",
     "seeAll": "Alle ansehen",
     "empty": "Noch keine Aktivität von Abonnierten.",
-    "new": "neu"
+    "new": "neu",
+    "playingNow": "spielt gerade",
+    "watchingNow": "schaut gerade"
+  },
+  "now": {
+    "myHeading": "Läuft gerade bei mir",
+    "friendsHeading": "Freunde spielen & schauen gerade",
+    "startGame": "Jetzt spielen",
+    "startWatch": "Jetzt anschauen",
+    "finish": "Fertig",
+    "statusPlayingGame": "Spiele gerade",
+    "statusPlayingWatch": "Schaue gerade"
   },
   "theme": {
     "label": "Design",
@@ -240,7 +251,8 @@
   },
   "status": {
     "WATCHED": "Gesehen",
-    "WATCHLIST": "Möchte ich sehen"
+    "WATCHLIST": "Möchte ich sehen",
+    "PLAYING": "Spiele / schaue gerade"
   },
   "visibility": {
     "PUBLIC": "Öffentlich",

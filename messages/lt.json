@@ -84,7 +84,18 @@
     "navLabel": "Veikla",
     "seeAll": "Visa veikla",
     "empty": "Sekamų draugų veiklos kol kas nėra.",
-    "new": "nauja"
+    "new": "nauja",
+    "playingNow": "žaidžia dabar",
+    "watchingNow": "žiūri dabar"
+  },
+  "now": {
+    "myHeading": "Dabar žaidžiu ir žiūriu",
+    "friendsHeading": "Draugai dabar žaidžia ir žiūri",
+    "startGame": "Pradėti žaisti",
+    "startWatch": "Pradėti žiūrėti",
+    "finish": "Baigiau",
+    "statusPlayingGame": "Žaidžiu dabar",
+    "statusPlayingWatch": "Žiūriu dabar"
   },
   "theme": {
     "label": "Tema",
@@ -240,7 +251,8 @@
   },
   "status": {
     "WATCHED": "Žiūrėta",
-    "WATCHLIST": "Noriu žiūrėti"
+    "WATCHLIST": "Noriu žiūrėti",
+    "PLAYING": "Žaidžiu / žiūriu dabar"
   },
   "visibility": {
     "PUBLIC": "Viešas",
