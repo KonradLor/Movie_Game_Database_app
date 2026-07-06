@@ -94,7 +94,6 @@
     "startGame": "Jetzt spielen",
     "startWatch": "Jetzt anschauen",
     "finish": "Fertig",
-    "statusPlayingGame": "Spiele gerade",
     "statusPlayingWatch": "Schaue gerade"
   },
   "theme": {
@@ -253,6 +252,11 @@
     "WATCHED": "Gesehen",
     "WATCHLIST": "Möchte ich sehen",
     "PLAYING": "Spiele / schaue gerade"
+  },
+  "statusGame": {
+    "WATCHED": "Durchgespielt",
+    "WATCHLIST": "Möchte ich spielen",
+    "PLAYING": "Spiele gerade"
   },
   "visibility": {
     "PUBLIC": "Öffentlich",

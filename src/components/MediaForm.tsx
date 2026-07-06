@@ -143,12 +143,12 @@ export default function MediaForm({
             <select name="status" defaultValue={item?.status || "WATCHED"} className={inputCls}>
               {STATUSES.map((s) => (
                 <option key={s} value={s}>
-                  {t(`status.${s}`)}
+                  {t(isGame ? `statusGame.${s}` : `status.${s}`)}
                 </option>
               ))}
               {canPlay && (
                 <option value="PLAYING">
-                  {t(isGame ? "now.statusPlayingGame" : "now.statusPlayingWatch")}
+                  {t(isGame ? "statusGame.PLAYING" : "now.statusPlayingWatch")}
                 </option>
               )}
             </select>

@@ -94,7 +94,6 @@
     "startGame": "Start playing",
     "startWatch": "Start watching",
     "finish": "Finished",
-    "statusPlayingGame": "Playing now",
     "statusPlayingWatch": "Watching now"
   },
   "theme": {
@@ -253,6 +252,11 @@
     "WATCHED": "Watched",
     "WATCHLIST": "Want to watch",
     "PLAYING": "Playing / watching now"
+  },
+  "statusGame": {
+    "WATCHED": "Completed",
+    "WATCHLIST": "Want to play",
+    "PLAYING": "Playing now"
   },
   "visibility": {
     "PUBLIC": "Public",

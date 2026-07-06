@@ -94,7 +94,6 @@
     "startGame": "Pradėti žaisti",
     "startWatch": "Pradėti žiūrėti",
     "finish": "Baigiau",
-    "statusPlayingGame": "Žaidžiu dabar",
     "statusPlayingWatch": "Žiūriu dabar"
   },
   "theme": {
@@ -253,6 +252,11 @@
     "WATCHED": "Žiūrėta",
     "WATCHLIST": "Noriu žiūrėti",
     "PLAYING": "Žaidžiu / žiūriu dabar"
+  },
+  "statusGame": {
+    "WATCHED": "Praėjau",
+    "WATCHLIST": "Noriu žaisti",
+    "PLAYING": "Žaidžiu dabar"
   },
   "visibility": {
     "PUBLIC": "Viešas",
