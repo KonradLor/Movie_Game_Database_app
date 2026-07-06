@@ -124,10 +124,10 @@ export default async function MediaDetailPage({
       </div>
 
       <div className="glass flex flex-col gap-6 p-6 sm:flex-row">
-        <div className="mx-auto w-48 shrink-0 overflow-hidden rounded-xl bg-white/5 sm:mx-0">
+        <div className="mx-auto w-48 shrink-0 self-start overflow-hidden rounded-xl bg-white/5 sm:mx-0">
           {item.posterUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={item.posterUrl} alt={title} className="w-full" />
+            <img src={item.posterUrl} alt={title} className="aspect-[2/3] w-full object-cover" />
           ) : (
             <div className="flex aspect-[2/3] items-center justify-center text-xs text-white/30">
               —
@@ -163,7 +163,9 @@ export default async function MediaDetailPage({
             <p className="mt-2 text-[var(--color-accent)]">{"★".repeat(item.rating)}</p>
           )}
           <p className="mt-1 text-sm text-white/60">
-            {t("card.watchedTimes", { count: item.watchCount })}
+            {t(item.type === "GAME" ? "card.playedTimes" : "card.watchedTimes", {
+              count: item.watchCount,
+            })}
           </p>
 
           {/* Zaidimo asmeniniai duomenys */}

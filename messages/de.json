@@ -109,7 +109,8 @@
     "platform": "Plattform",
     "playedHours": "Gespielte Stunden",
     "beatenHours": "Stunden zum Durchspielen",
-    "platinum": "Platin / 100%"
+    "platinum": "Platin / 100%",
+    "timesCompleted": "Wie oft durchgespielt"
   },
   "platform": {
     "PC": "PC",
@@ -181,7 +182,8 @@
   },
   "card": {
     "minutes": "Min.",
-    "watchedTimes": "{count}× gesehen"
+    "watchedTimes": "{count}× gesehen",
+    "playedTimes": "{count}× durchgespielt"
   },
   "actions": {
     "add": "Hinzufügen",

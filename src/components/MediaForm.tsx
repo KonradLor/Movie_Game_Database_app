@@ -224,6 +224,18 @@ export default function MediaForm({
                   />
                 </div>
               </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className={labelCls}>{t("gameFields.timesCompleted")}</label>
+                  <input
+                    name="watchCount"
+                    type="number"
+                    min="0"
+                    defaultValue={item?.watchCount ?? 1}
+                    className={inputCls}
+                  />
+                </div>
+              </div>
             </div>
           </fieldset>
         ) : (

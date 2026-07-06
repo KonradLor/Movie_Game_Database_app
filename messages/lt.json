@@ -109,7 +109,8 @@
     "platform": "Platforma",
     "playedHours": "Žaista valandų",
     "beatenHours": "Valandų iki perėjimo",
-    "platinum": "Platinum / 100%"
+    "platinum": "Platinum / 100%",
+    "timesCompleted": "Kiek kartų praėjau"
   },
   "platform": {
     "PC": "PC",
@@ -181,7 +182,8 @@
   },
   "card": {
     "minutes": "min.",
-    "watchedTimes": "Žiūrėta kartų: {count}"
+    "watchedTimes": "Žiūrėta kartų: {count}",
+    "playedTimes": "Praėjau {count}×"
   },
   "actions": {
     "add": "Pridėti",

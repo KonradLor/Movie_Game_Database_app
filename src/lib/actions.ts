@@ -80,7 +80,10 @@ function watchFieldsUpdate(fd: FormData, type: MediaType | null | undefined) {
   if (type === "GAME") {
     return {
       durationMin: undefined,
-      watchCount: undefined,
+      // Zaidimams "kiek kartu praejau" (watchCount) redaguojamas savo lauke game
+      // fieldset'e, tad ji skaitom; durationMin/firstWatched/lastWatched formoje
+      // nerodomi -> nekeiciam.
+      watchCount: int(fd, "watchCount") ?? undefined,
       firstWatched: undefined,
       lastWatched: undefined,
     };
