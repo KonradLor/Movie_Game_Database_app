@@ -31,12 +31,30 @@ enum Visibility {
 enum MediaStatus {
   WATCHED // Jau ziureta/zaista
   WATCHLIST // Noriu paziureti (Faze 7)
+  PLAYING // Dabar aktyviai zaidziu/ziuriu (GAME/SERIES/ANIME) - matoma draugams
 }
 
 enum DataSource {
   TMDB
   IGDB
   MANUAL
+}
+
+// Zaidimo platforma (kur zaista/praeita). Tik GAME tipui.
+enum GamePlatform {
+  PC
+  STEAM
+  PLAYSTATION
+  XBOX
+  NINTENDO_SWITCH
+  MOBILE
+  OTHER
+}
+
+// Draugystes busena (abipusis patvirtinimas: uzklausa -> priimta).
+enum FriendStatus {
+  PENDING // issiusta uzklausa, laukiama patvirtinimo
+  ACCEPTED // draugai
 }
 
 enum CreditRole {
@@ -68,10 +86,26 @@ model User {
   twitchClientId     String?
   twitchClientSecret String?
 
+  // Suaugusiuju turinio filtras. false (numatyta) = pornografija/adult blokuojama
+  // paieskoje ir importe. Vartotojas gali issijungti profilyje savo rizika.
+  allowAdult Boolean @default(false)
+
+  // Kada paskutini karta ziurejo sekamu draugu veiklos srauta (/sekimas) -
+  // "nauja veikla" badge skaicius = irasu su activityAt > sio laiko.
+  followFeedSeenAt DateTime?
+
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   mediaItems MediaItem[]
+
+  // Socialiniai rysiai (draugyste + rekomendacijos + sekimas)
+  sentFriendRequests      Friendship[]     @relation("FriendRequester")
+  receivedFriendRequests  Friendship[]     @relation("FriendAddressee")
+  sentRecommendations     Recommendation[] @relation("RecFrom")
+  receivedRecommendations Recommendation[] @relation("RecTo")
+  following               Follow[]         @relation("Follower")
+  followers               Follow[]         @relation("Following")
 
   @@index([userNumber])
 }
@@ -88,11 +122,16 @@ model MediaItem {
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   type        MediaType
-  title       String
+  title       String // numatytoji/atsargine kalba (EN)
   originalTitle String?
   year        Int?
   durationMin Int? // trukme minutemis
-  description String? // aprasymas
+  description String? // aprasymas numatytaja/atsargine kalba (EN)
+
+  // Daugiakalbis turinys: { "en": {title, description}, "de": {...}, "lt": {...} }
+  // Uzpildomas importuojant is TMDB (3 kalbos). Rodant - parenkama pagal UI kalba,
+  // atsargine varianta - EN (title/description laukai virsuje).
+  translations Json?
   posterUrl   String? // isorinis (TMDB CDN)
   localPoster String? // parsisiustas i serveri (Faze 4)
 
@@ -103,6 +142,17 @@ model MediaItem {
   watchCount  Int         @default(1) // kiek kartu ziureta
   firstWatched DateTime? // pirma perziura
   lastWatched DateTime? // paskutine perziura
+
+  // Veiklos laikas draugu sekimo srautui: keliamas pridedant irasa ir pazymint
+  // "ziureta" (markWatched), bet NE atnaujinant metaduomenis is saltinio. Pagal ji
+  // rikiuojamas srautas (kad "pazymejo ziureta" irgi issoktu i virsu).
+  activityAt  DateTime?
+
+  // Zaidimams (GAME) skirti asmeniniai laukai
+  platform     GamePlatform? // kurioje platformoje zaista/praeita
+  playedHours  Float? // kiek valandu is viso zaista
+  beatenHours  Float? // kiek valandu reikejo praeiti
+  platinum     Boolean @default(false) // platinum / 100% pasiekimai / perejimas
 
   // Privatumas
   visibility  Visibility  @default(PUBLIC)
@@ -117,6 +167,7 @@ model MediaItem {
   tags        TagOnMedia[]
   credits     Credit[]
   watchLogs   WatchLog[]
+  recommendations Recommendation[]
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -127,6 +178,7 @@ model MediaItem {
   @@index([type])
   @@index([visibility])
   @@index([status])
+  @@index([activityAt])
 }
 
 // ----------------------------------------------------------------------
@@ -220,4 +272,67 @@ model Credit {
   @@index([mediaId])
   @@index([personId])
   @@index([companyId])
+}
+
+// ----------------------------------------------------------------------
+// DRAUGYSTE (abipuse: uzklausa -> priimta). Pridedama pagal draugo koda (#userNumber).
+// ----------------------------------------------------------------------
+
+model Friendship {
+  id          String       @id @default(cuid())
+  requesterId String
+  requester   User         @relation("FriendRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addresseeId String
+  addressee   User         @relation("FriendAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+  status      FriendStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([requesterId, addresseeId])
+  @@index([addresseeId])
+  @@index([requesterId])
+}
+
+// ----------------------------------------------------------------------
+// REKOMENDACIJA (draugui: koki filma/zaidima ziureti/zaisti + zinute "kodel").
+// Snapshot laukai (mediaTitle/Type/Poster) leidzia rekomendacijai islikti net
+// istrynus originalu irasa (mediaId tada -> NULL).
+// ----------------------------------------------------------------------
+
+model Recommendation {
+  id          String     @id @default(cuid())
+  fromId      String
+  from        User       @relation("RecFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  toId        String
+  to          User       @relation("RecTo", fields: [toId], references: [id], onDelete: Cascade)
+  mediaId     String?
+  media       MediaItem? @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+  mediaTitle  String
+  mediaType   MediaType
+  mediaPoster String?
+  message     String?
+  readAt      DateTime?
+  createdAt   DateTime   @default(now())
+
+  @@index([toId])
+  @@index([fromId])
+  @@index([mediaId])
+}
+
+// ----------------------------------------------------------------------
+// SEKIMAS (kryptinis: as seku drauga -> jo nauja vieša veikla matoma mano
+// pagrindiniame puslapyje). Leidziamas tik tarp draugu.
+// ----------------------------------------------------------------------
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  follower    User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following   User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
 }

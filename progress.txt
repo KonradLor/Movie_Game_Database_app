@@ -17,8 +17,8 @@ FAZIU BUSENA
 -------------------------------------------------------------------------
 [~] Faze 0  - Pasiruosimas (media.kondev.app, Authentik OIDC klientas, TMDB+IGDB raktai)
               [x] TMDB raktai GAUTI ir issaugoti i .env (v3 key + v4 read token)
-              [~] IGDB/Twitch raktai - ATIDETA (problemu su Twitch; zaidimu integracija
-                  prijungiama veliau, kodas paruosiamas kad uztektu idet 2 raktus)
+              [x] IGDB/Twitch raktai GAUTI (private/Twitch_ID.txt) ir idetii i .env
+                  (2026-07-04). Zaidimu integracija BAIGTA ir testuota gyvai.
               [ ] media.kondev.app subdomeno patvirtinimas
               [ ] Authentik OIDC klientas (daroma su Faze 3)
 [x] Faze 1  - Next.js karkasas (arm64 Docker, standalone, web tinklas, i18n LT)
@@ -58,7 +58,9 @@ FAZIU BUSENA
               [x] API: /api/tmdb/search, /api/media/import, /api/media/[id]/refresh
               [x] TESTUOTA gyvai: Hacksaw Ridge importuotas (140min, 31 kreditas,
                   3 tagai), matomas puslapyje su plakatu, refresh veikia
-              [ ] IGDB (zaidimai) - ATIDETA, laukiam Twitch raktu
+              [x] IGDB (zaidimai) BAIGTA (2026-07-04): src/lib/igdb.ts, importFromIgdb,
+                  /api/igdb/search, IgdbSearch komponentas, refresh palaikymas
+              [x] Daugiakalbis (EN/DE/LT) TMDB importas + suaugusiuju blokas (2026-07-04)
               [ ] (veliau, neprivaloma) plakatu parsisiuntimas i serveri (localPoster)
                   pilnai autonomijai - dabar hotlink is TMDB CDN
               [ ] API marsrutu apsauga (tik adminui) - bus Faze 3
@@ -120,6 +122,41 @@ FAZIU BUSENA
 -------------------------------------------------------------------------
 DARBU ZURNALAS (naujausias virsuje)
 -------------------------------------------------------------------------
+2026-07-04
+  - BAIGTA: IGDB (zaidimai) integracija. Twitch raktai (private/Twitch_ID.txt)
+    idetii i .env (bendri serverio raktai vartotojams 1-20). Naujas src/lib/igdb.ts
+    (app token kesas atmintyje, searchGames, getGameDetails, coverUrl, gameYear).
+    importFromIgdb (media-cache.ts): zaidimo issaugojimas, zanrai->tagai, kompanijos
+    ->kreditai (DEVELOPER/PUBLISHER). API /api/igdb/search, importIgdbAction,
+    komponentas IgdbSearch (i /prideti). Refresh (route + action) palaiko zaidimus.
+    TESTUOTA gyvai: Twitch OAuth + IGDB "zelda" uzklausa grazina duomenis.
+    PASTABA: curl'ui reikia --ssl-no-revoke (Avast TLS revocation), Node app'ui NE.
+  - BAIGTA: 3 kalbos (EN numatytoji+fallback, LT, DE). routing.ts locales
+    ["en","lt","de"], defaultLocale "en", localePrefix as-needed (EN be prefikso,
+    /lt /de su). messages/en.json (kanoninis) + de.json + lt.json - po 126 raktus,
+    struktura patikrinta (identiska). LanguageSwitcher komponentas (TopBar, matomas
+    visada), pasirinkimas islieka NEXT_LOCALE slapuke. Isversta VISA sasaja: TopBar,
+    profilis, TmdbSearch/IgdbSearch ispejimai, media detales, asmuo, studija, noriu,
+    statistika, kreditu etiketes. TESTUOTA naršykleje: EN/LT/DE persijungia, diakritikai OK.
+  - BAIGTA: TMDB kalbos fix. Panaikintas hardcoded de-DE (tmdb.ts). Funkcijos priima
+    {token, lang, includeAdult}. UI kalba -> TMDB language (en-US/de-DE/lt-LT, locale.ts).
+    Daugiakalbis saugojimas: MediaItem.translations JSONB { en/de/lt: {title,description} }.
+    Importas parsiunta VISAS 3 kalbas; baziniai laukai = EN (fallback). Rodant - pickText
+    parenka pagal kalba su EN atsargine. Senus vokiskus irasus "Atnaujinti is saltinio"
+    pakelia i daugiakalbius. Migracija 20260704120000_multilang_and_adult.
+  - BAIGTA: suaugusiuju/pornografijos blokas. TMDB include_adult=false + adult veliavos
+    filtras; IGDB Erotic tema (42) filtras. Importas ATMETA adult (ADULT_BLOCKED) jei
+    neleista. User.allowAdult (numatyta false=blokuota), perjungiklis profilyje
+    (saveAdultPrefAction). Paieska ir importas gerbia nustatyma.
+  - BUILD: prisma migrate deploy (multiuser + multilang_and_adult), prisma generate,
+    tsc --noEmit 0 klaidu, npm run build OK (visi maršrutai + en/lt/de puslapiai).
+  - Failai: prisma/schema.prisma (+translations,+allowAdult), src/lib/{igdb,locale}.ts (nauji),
+    tmdb.ts, media-cache.ts, current-user.ts, actions.ts, api-keys naudojimas; API
+    igdb/search (naujas), tmdb/search, media/import, media/[id]/refresh; komponentai
+    LanguageSwitcher, IgdbSearch (nauji), TopBar, TmdbSearch, MediaCard; puslapiai
+    layout, prideti, profilis, media/[id], noriu, statistika, asmuo, studija;
+    messages/{en,de,lt}.json; i18n/routing.ts.
+
 2026-05-25
   - Paruostas diegimo gidas serveriui: GIDAS_diegimas_oracle.txt (Authentik OIDC
     klientas, repo klonavimas i /home/ubuntu/repos/media, .env, Caddy media.kondev.app
@@ -205,5 +242,9 @@ ATVIRI KLAUSIMAI / PASTABOS
 -------------------------------------------------------------------------
   - Subdomenas: media.kondev.app (gali keistis i filmai.kondev.app).
   - Google Sheets importas - atliekamas veliau (Faze 8).
-  - i18n: dabar tik LT, paruosta DE/ENG veliau.
+  - i18n: BAIGTA - 3 kalbos EN(numatyta/fallback)/LT/DE, perjungiklis TopBar'e,
+    pasirinkimas islieka NEXT_LOCALE slapuke.
+  - Daugiakalbis turinys: MediaItem.translations (JSONB) laiko title/description
+    3 kalbomis. Seni (vokiski) irasai be translations kris atgal i baz. laukus,
+    kol nepaspausta "Atnaujinti is saltinio" (uzpildo visas 3 kalbas).
 =========================================================================

@@ -1,7 +1,9 @@
 {
   "app": {
     "title": "Medijų dienoraštis",
-    "subtitle": "Filmai, serialai, anime, dokumentika ir žaidimai"
+    "subtitle": "Filmai, serialai, anime, dokumentika ir žaidimai",
+    "brandTagline": "Visas tavo asmeninis multimedijų pasaulis čia",
+    "description": "Asmeninė filmų, serialų, anime, dokumentikos ir žaidimų bazė"
   },
   "nav": {
     "all": "Viskas",
@@ -14,9 +16,139 @@
     "watchlist": "Noriu žiūrėti",
     "stats": "Statistika",
     "random": "Atsitiktinis",
+    "feedback": "Atsiliepimai",
     "login": "Prisijungti",
     "register": "Registruotis",
-    "logout": "Atsijungti"
+    "logout": "Atsijungti",
+    "friends": "Draugai",
+    "recommendations": "Rekomendacijos"
+  },
+  "friends": {
+    "title": "Draugai",
+    "back": "Atgal",
+    "yourCode": "Tavo draugo kodas",
+    "yourCodeHint": "Pasidalink šiuo numeriu, kad draugai galėtų tave pridėti.",
+    "addByCode": "Pridėti draugą pagal kodą",
+    "addHint": "Įvesk draugo kodą (#numeris) ir išsiųsk užklausą.",
+    "sendRequest": "Siųsti užklausą",
+    "requestSent": "Užklausa išsiųsta!",
+    "incoming": "Draugystės užklausos",
+    "outgoing": "Išsiųstos užklausos",
+    "yourFriends": "Tavo draugai",
+    "noFriends": "Kol kas draugų nėra. Pridėk ką nors pagal kodą viršuje.",
+    "accept": "Priimti",
+    "decline": "Atmesti",
+    "cancel": "Atšaukti",
+    "remove": "Pašalinti",
+    "viewCollection": "Peržiūrėti kolekciją",
+    "activity": "Naujausia draugų veikla",
+    "noActivity": "Draugai kol kas neturi viešų įrašų.",
+    "waiting": "laukiama",
+    "err_badCode": "Įvesk teisingą kodą (skaičių).",
+    "err_self": "Tai tavo paties kodas.",
+    "err_notFound": "Tokio kodo vartotojo nėra.",
+    "err_already": "Jūs jau draugai.",
+    "err_pending": "Užklausa jau išsiųsta.",
+    "err_badRequest": "Kažkas nepavyko."
+  },
+  "friendCol": {
+    "title": "{name} kolekcija",
+    "subtitle": "Vieši filmai, serialai ir žaidimai",
+    "empty": "Kol kas viešų įrašų nėra."
+  },
+  "rec": {
+    "recommend": "Rekomenduoti draugui",
+    "toFriend": "Draugas",
+    "messagePlaceholder": "Kodėl verta? (nebūtina)",
+    "send": "Siųsti rekomendaciją",
+    "sent": "Rekomendacija išsiųsta!",
+    "error": "Nepavyko išsiųsti.",
+    "notPublicHint": "Padaryk šį įrašą viešą, kad galėtum jį rekomenduoti draugams.",
+    "title": "Rekomendacijos",
+    "empty": "Kol kas rekomendacijų nėra.",
+    "from": "nuo",
+    "viewDetails": "Peržiūrėti",
+    "dismiss": "Pašalinti",
+    "new": "nauja",
+    "inboxHint": "Ką draugai siūlo tau pažiūrėti ar pažaisti."
+  },
+  "follow": {
+    "follow": "Sekti",
+    "following": "Sekama",
+    "feedHeading": "Sekami draugai — naujausia veikla",
+    "watched": "neseniai žiūrėjo",
+    "played": "neseniai žaidė",
+    "wantsToWatch": "nori pažiūrėti",
+    "wantsToPlay": "nori pažaisti",
+    "feedTitle": "Sekamų draugų veikla",
+    "navLabel": "Veikla",
+    "seeAll": "Visa veikla",
+    "empty": "Sekamų draugų veiklos kol kas nėra.",
+    "new": "nauja",
+    "playingNow": "žaidžia dabar",
+    "watchingNow": "žiūri dabar"
+  },
+  "now": {
+    "myHeading": "Dabar žaidžiu ir žiūriu",
+    "friendsHeading": "Draugai dabar žaidžia ir žiūri",
+    "startGame": "Pradėti žaisti",
+    "startWatch": "Pradėti žiūrėti",
+    "finish": "Baigiau",
+    "statusPlayingWatch": "Žiūriu dabar"
+  },
+  "theme": {
+    "label": "Tema",
+    "default": "Violetinė",
+    "neon": "Neonas",
+    "sunset": "Saulėlydis",
+    "emerald": "Smaragdas",
+    "rose": "Rožinė"
+  },
+  "gameFields": {
+    "section": "Žaidimo informacija",
+    "platform": "Platforma",
+    "playedHours": "Žaista valandų",
+    "beatenHours": "Valandų iki perėjimo",
+    "platinum": "Platinum / 100%",
+    "timesCompleted": "Kiek kartų praėjau"
+  },
+  "platform": {
+    "PC": "PC",
+    "STEAM": "Steam",
+    "PLAYSTATION": "PlayStation",
+    "XBOX": "Xbox",
+    "NINTENDO_SWITCH": "Nintendo Switch",
+    "MOBILE": "Mobilusis",
+    "OTHER": "Kita"
+  },
+  "feedback": {
+    "title": "Atsiliepimai",
+    "back": "Atgal",
+    "intro": "Radai klaidą, turi idėją ar naujos funkcijos pageidavimą? Atsiųsk čia — tai padeda tobulinti portalą.",
+    "type": "Tipas",
+    "type_BUG": "Klaida / problema",
+    "type_IDEA": "Idėja",
+    "type_FEATURE": "Naujos funkcijos pageidavimas",
+    "type_FEEDBACK": "Atsiliepimas",
+    "type_OTHER": "Kita",
+    "name": "Vardas",
+    "email": "El. paštas",
+    "message": "Žinutė",
+    "messagePlaceholder": "Parašyk savo pasiūlymą, klaidos aprašymą ar idėją…",
+    "optional": "neprivaloma",
+    "submit": "Siųsti",
+    "sent": "Ačiū! Tavo žinutė išsiųsta.",
+    "sendAnother": "Siųsti dar vieną",
+    "error": "Kažkas nepavyko. Pabandyk dar kartą.",
+    "tooFast": "Per greitai — palauk kelias sekundes ir bandyk vėl.",
+    "adminHeading": "Gauti atsiliepimai (admin)",
+    "empty": "Atsiliepimų dar nėra."
+  },
+  "lang": {
+    "label": "Kalba",
+    "en": "English",
+    "lt": "Lietuvių",
+    "de": "Deutsch"
   },
   "watchlist": {
     "title": "Noriu žiūrėti",
@@ -30,7 +162,9 @@
     "byType": "Pagal kategoriją",
     "byYear": "Pagal žiūrėjimo metus",
     "topRated": "Geriausiai įvertinti",
-    "ratingDist": "Įvertinimų pasiskirstymas"
+    "ratingDist": "Įvertinimų pasiskirstymas",
+    "timeByType": "Laikas pagal kategoriją",
+    "hoursUnit": "val"
   },
   "onThisDay": {
     "title": "Šią dieną",
@@ -48,7 +182,8 @@
   },
   "card": {
     "minutes": "min.",
-    "watchedTimes": "Žiūrėta kartų: {count}"
+    "watchedTimes": "Žiūrėta kartų: {count}",
+    "playedTimes": "Praėjau {count}×"
   },
   "actions": {
     "add": "Pridėti",
@@ -67,8 +202,11 @@
     "addTitle": "Naujas įrašas",
     "editTitle": "Redaguoti įrašą",
     "searchTmdb": "Ieškoti TMDB (filmai / serialai)",
+    "searchGames": "Ieškoti žaidimų (IGDB)",
     "searchPlaceholder": "Įveskite pavadinimą…",
+    "searchGamesPlaceholder": "Įveskite žaidimo pavadinimą…",
     "orManual": "Arba įveskite rankiniu būdu",
+    "watchInfo": "Žiūrėjimo informacija",
     "type": "Kategorija",
     "title": "Pavadinimas",
     "originalTitle": "Originalus pavadinimas",
@@ -86,6 +224,25 @@
     "tags": "Žymos (atskirtos kableliais)",
     "noResults": "Nieko nerasta"
   },
+  "search": {
+    "needKeysTitle": "Reikia tavo API raktų",
+    "needKeysBody": "Bendri serverio raktai skirti tik pirmiems vartotojams. Norint ieškoti ir pridėti naujų įrašų, įvesk savo raktą profilyje.",
+    "toProfile": "→ Į profilį (įvesti raktus)",
+    "adultBlocked": "Suaugusiųjų turinys paslėptas. Gali jį įjungti profilyje."
+  },
+  "credits": {
+    "directors": "Rež.:",
+    "cast": "Vaidina:",
+    "studios": "Studijos:",
+    "developers": "Kūrėjai:",
+    "publishers": "Leidėjai:"
+  },
+  "detail": {
+    "inCollection": "Tavo kolekcijoje",
+    "filmography": "Filmografija",
+    "moreInfo": "+ Daugiau informacijos",
+    "ownedBadge": "✓ kolekcijoje"
+  },
   "type": {
     "MOVIE": "Filmas",
     "SERIES": "Serialas",
@@ -95,11 +252,54 @@
   },
   "status": {
     "WATCHED": "Žiūrėta",
-    "WATCHLIST": "Noriu žiūrėti"
+    "WATCHLIST": "Noriu žiūrėti",
+    "PLAYING": "Žaidžiu / žiūriu dabar"
+  },
+  "statusGame": {
+    "WATCHED": "Praėjau",
+    "WATCHLIST": "Noriu žaisti",
+    "PLAYING": "Žaidžiu dabar"
   },
   "visibility": {
     "PUBLIC": "Viešas",
     "UNLISTED": "Tik su nuoroda",
     "PRIVATE": "Privatus"
+  },
+  "profile": {
+    "title": "Profilis",
+    "back": "Atgal",
+    "user": "Vartotojas",
+    "number": "Nr.",
+    "adminBadge": "admin",
+    "sharedInfo": "Pirmieji {limit} vartotojai gali naudotis bendrais serverio raktais. Nori naudoti savo? Įvesk juos žemiau (neprivaloma).",
+    "requiredInfo": "Esi vartotojas #{number} (po pirmų {limit}). Norėdamas pridėti naujų filmų/žaidimų iš duomenų bazių, PRIVALAI įvesti savo API raktus žemiau.",
+    "tmdbHeading": "TMDB (filmai / serialai / anime)",
+    "readToken": "Read Access Token (v4)",
+    "apiKey": "API Key (v3)",
+    "twitchHeading": "Twitch / IGDB (žaidimai)",
+    "clientId": "Client ID",
+    "clientSecret": "Client Secret",
+    "keyPlaceholder": "Įvesk, kad nustatytum / pakeistum",
+    "emptyHint": "Palik lauką tuščią — reikšmė nesikeis. Raktai matomi tik tau.",
+    "saveKeys": "Išsaugoti raktus",
+    "clearKeys": "Išvalyti visus mano raktus",
+    "set": "nustatyta ••••••",
+    "notSet": "neįvesta",
+    "srcRequired": "PRIVALOMA įvesti savo raktus",
+    "srcOwn": "naudojami tavo raktai",
+    "srcShared": "naudojami bendri serverio raktai",
+    "langHeading": "Kalba",
+    "langHint": "Pasirink sąsajos kalbą. Nauji importai aprašus taip pat parsiunčia šia kalba. Kalbą gali perjungti bet kada viršutinėje juostoje.",
+    "themeHeading": "Tema",
+    "themeHint": "Pasirink spalvų temą visam portalui. Pritaikoma iškart ir išsaugoma kitam kartui.",
+    "adultHeading": "Suaugusiųjų turinys",
+    "adultToggle": "Leisti suaugusiųjų turinį (pornografiniai filmai / žaidimai)",
+    "adultHint": "Numatytai išjungta: suaugusiųjų turinys slepiamas paieškoje ir atmetamas importuojant. Įjunk savo rizika.",
+    "saved": "Išsaugota",
+    "refreshAllHeading": "Esami įrašai",
+    "refreshAll": "Atnaujinti visus mano įrašus",
+    "refreshAllHint": "Senesni įrašai buvo išsaugoti viena kalba. Tai iš naujo parsiunčia kiekvieną importuotą filmą / serialą / žaidimą iš šaltinio ir užpildo visas tris kalbas, tad perjungus kalbą jie iškart persivadina. Didelėms bibliotekoms gali užtrukti.",
+    "totalTimeHeading": "Iš viso praleista laiko",
+    "viewStats": "Peržiūrėti statistiką →"
   }
 }

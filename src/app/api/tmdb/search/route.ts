@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { searchMulti, posterUrl } from "@/lib/tmdb";
 import { getCurrentUser } from "@/lib/current-user";
 import { resolveTmdb } from "@/lib/api-keys";
+import { tmdbLang } from "@/lib/locale";
 
 // GET /api/tmdb/search?q=...  -> TMDB paieska (filmai + serialai). Reikia prisijungti.
 export async function GET(req: NextRequest) {
@@ -20,9 +21,15 @@ export async function GET(req: NextRequest) {
   if (!q.trim()) {
     return NextResponse.json({ results: [] });
   }
+  // Kalba pagal UI (paduodama is kliento). Suaugusiuju - pagal vartotojo nustatyma.
+  const lang = tmdbLang(req.nextUrl.searchParams.get("lang"));
 
   try {
-    const results = await searchMulti(q, tmdb.readToken ?? undefined);
+    const results = await searchMulti(q, {
+      token: tmdb.readToken ?? undefined,
+      lang,
+      includeAdult: user.allowAdult,
+    });
     const mapped = results.map((r) => ({
       tmdbId: r.id,
       tmdbType: r.media_type as "movie" | "tv",

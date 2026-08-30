@@ -1,8 +1,9 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/current-user";
+import { pickText } from "@/lib/locale";
 
 export default async function CompanyPage({
   params,
@@ -11,6 +12,7 @@ export default async function CompanyPage({
 }) {
   const { id } = await params;
   const t = await getTranslations();
+  const locale = await getLocale();
   const user = await getCurrentUser();
 
   // Kreditai filtruojami i DABARTINIO vartotojo irasus (Company - bendras cache)
@@ -25,8 +27,15 @@ export default async function CompanyPage({
   });
   if (!company) notFound();
 
-  // Kuriniai tavo kolekcijoje
-  const works = company.credits.map((c) => c.media).filter(Boolean);
+  // Kuriniai tavo kolekcijoje. Vienas irasas gali tureti kelis tos pacios kompanijos
+  // kreditus (pvz. DEVELOPER IR PUBLISHER) -> dedup pagal media.id, kad nesikartotu.
+  const works = [
+    ...new Map(
+      company.credits
+        .filter((c) => c.media)
+        .map((c) => [c.media!.id, c.media!] as const)
+    ).values(),
+  ];
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
@@ -42,15 +51,16 @@ export default async function CompanyPage({
         <h1 className="text-2xl font-bold">{company.name}</h1>
       </div>
 
-      <h2 className="mb-3 text-sm font-semibold text-white/70">Tavo kolekcijoje</h2>
+      <h2 className="mb-3 text-sm font-semibold text-white/70">{t("detail.inCollection")}</h2>
       <div className="flex flex-wrap gap-2">
         {works.map((m) => (
           <Link
-            key={m!.id}
-            href={`/media/${m!.id}`}
+            key={m.id}
+            href={`/media/${m.id}`}
             className="rounded-lg bg-white/5 px-3 py-2 text-sm hover:bg-white/10"
           >
-            {m!.title} {m!.year && <span className="text-white/40">({m!.year})</span>}
+            {pickText(m, locale).title}{" "}
+            {m.year && <span className="text-white/40">({m.year})</span>}
           </Link>
         ))}
       </div>

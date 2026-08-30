@@ -15,11 +15,15 @@ export interface CachedWork {
 }
 
 // Parsiusti ir issaugoti asmens info + filmografija. Reikia, kad Person turetu tmdbId.
-export async function cachePersonWorks(personDbId: string, readToken?: string): Promise<void> {
+export async function cachePersonWorks(
+  personDbId: string,
+  readToken?: string,
+  lang?: string
+): Promise<void> {
   const person = await db.person.findUnique({ where: { id: personDbId } });
   if (!person?.tmdbId) throw new Error("Asmuo neturi TMDB saltinio");
 
-  const data = await getPerson(person.tmdbId, readToken);
+  const data = await getPerson(person.tmdbId, { token: readToken, lang });
 
   // Sujungiam cast + crew, dedublikuojam pagal id+type, surikiuojam pagal populiaruma
   const all = [

@@ -11,6 +11,10 @@ services:
     env_file: .env
     environment:
       DATABASE_URL: postgresql://moviedb:${POSTGRES_PASSWORD}@moviedb-postgres:5432/moviedb
+      # Vartotoju atsiliepimai (TXT). Bind-mount zemiau -> host /var/server-data/media-feedback
+      FEEDBACK_DIR: /data/feedback
+    volumes:
+      - /var/server-data/media-feedback:/data/feedback
     depends_on:
       - moviedb-postgres
     networks:

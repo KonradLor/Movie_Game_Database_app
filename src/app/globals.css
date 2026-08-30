@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* === Tema: tamsus bento / glass / glow === */
+/* === Numatytoji tema: violetinis bento / glass / glow === */
 @theme {
   --color-bg: #08080c;
   --color-surface: #14141c;
@@ -11,6 +11,83 @@
   --color-accent-3: #4cc9ff;
 }
 
+/* Numatytosios svytejimo (glow) spalvos - temos jas perrasys per [data-theme]. */
+:root {
+  --glow-1: rgba(124, 92, 255, 0.14);
+  --glow-2: rgba(255, 92, 168, 0.1);
+  --glow-3: rgba(76, 201, 255, 0.08);
+  --glow-border: rgba(124, 92, 255, 0.45);
+  --glow-shadow: rgba(124, 92, 255, 0.5);
+}
+
+/* ====================================================================== */
+/* TEMOS (vartotojas pasirenka; issaugoma "theme" slapuke, data-theme ant <html>) */
+/* ====================================================================== */
+
+/* Neon - svytintis neonas (ciano + magenta ant beveik juodo) */
+[data-theme="neon"] {
+  --color-bg: #04060b;
+  --color-surface: #0b1018;
+  --color-glass: rgba(0, 240, 255, 0.04);
+  --color-glass-border: rgba(0, 240, 255, 0.14);
+  --color-accent: #00f0ff;
+  --color-accent-2: #ff2fd0;
+  --color-accent-3: #9b5cff;
+  --glow-1: rgba(0, 240, 255, 0.18);
+  --glow-2: rgba(255, 47, 208, 0.15);
+  --glow-3: rgba(155, 92, 255, 0.12);
+  --glow-border: rgba(0, 240, 255, 0.6);
+  --glow-shadow: rgba(255, 47, 208, 0.5);
+}
+
+/* Sunset - saulelydis (oranzine -> roze -> auksas) */
+[data-theme="sunset"] {
+  --color-bg: #0d0707;
+  --color-surface: #1a1210;
+  --color-glass: rgba(255, 170, 120, 0.05);
+  --color-glass-border: rgba(255, 150, 100, 0.12);
+  --color-accent: #ff8a3d;
+  --color-accent-2: #ff4d6d;
+  --color-accent-3: #ffd166;
+  --glow-1: rgba(255, 138, 61, 0.17);
+  --glow-2: rgba(255, 77, 109, 0.13);
+  --glow-3: rgba(255, 209, 102, 0.1);
+  --glow-border: rgba(255, 138, 61, 0.5);
+  --glow-shadow: rgba(255, 77, 109, 0.5);
+}
+
+/* Emerald - smaragdas (zalias / matrix) */
+[data-theme="emerald"] {
+  --color-bg: #040c08;
+  --color-surface: #0c1712;
+  --color-glass: rgba(46, 230, 160, 0.045);
+  --color-glass-border: rgba(46, 230, 160, 0.13);
+  --color-accent: #2ee6a0;
+  --color-accent-2: #7cff6b;
+  --color-accent-3: #34d399;
+  --glow-1: rgba(46, 230, 160, 0.16);
+  --glow-2: rgba(124, 255, 107, 0.1);
+  --glow-3: rgba(52, 211, 153, 0.1);
+  --glow-border: rgba(46, 230, 160, 0.5);
+  --glow-shadow: rgba(46, 230, 160, 0.45);
+}
+
+/* Rose - roze (svelnus glam) */
+[data-theme="rose"] {
+  --color-bg: #0c0709;
+  --color-surface: #191016;
+  --color-glass: rgba(255, 130, 175, 0.05);
+  --color-glass-border: rgba(255, 130, 175, 0.13);
+  --color-accent: #ff6fa5;
+  --color-accent-2: #c77dff;
+  --color-accent-3: #ffb3c8;
+  --glow-1: rgba(255, 111, 165, 0.16);
+  --glow-2: rgba(199, 125, 255, 0.13);
+  --glow-3: rgba(255, 179, 200, 0.1);
+  --glow-border: rgba(255, 111, 165, 0.5);
+  --glow-shadow: rgba(199, 125, 255, 0.45);
+}
+
 html,
 body {
   background: var(--color-bg);
@@ -19,12 +96,20 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Native <select> isskleidziamas sarasas: be sito narsykle piesia balta fona,
+   o mes turim balta teksta -> balta ant balto, nesimato. Priverstinai tamsu. */
+select option,
+select optgroup {
+  background-color: #14141c;
+  color: #e8e8f0;
+}
+
 body {
-  /* Svytintys gradientai fone (glow) */
+  /* Svytintys gradientai fone (glow) - spalvos is temos */
   background-image:
-    radial-gradient(50rem 50rem at 8% -8%, rgba(124, 92, 255, 0.14), transparent 60%),
-    radial-gradient(45rem 45rem at 100% 0%, rgba(255, 92, 168, 0.1), transparent 55%),
-    radial-gradient(40rem 40rem at 50% 120%, rgba(76, 201, 255, 0.08), transparent 55%);
+    radial-gradient(50rem 50rem at 8% -8%, var(--glow-1), transparent 60%),
+    radial-gradient(45rem 45rem at 100% 0%, var(--glow-2), transparent 55%),
+    radial-gradient(40rem 40rem at 50% 120%, var(--glow-3), transparent 55%);
   background-attachment: fixed;
   min-height: 100vh;
 }
@@ -38,7 +123,7 @@ body {
   border-radius: 1rem;
 }
 
-/* Plyteles svytejimas uzvedus */
+/* Plyteles svytejimas uzvedus - spalvos is temos */
 .card-glow {
   transition:
     transform 0.25s ease,
@@ -47,10 +132,10 @@ body {
 }
 .card-glow:hover {
   transform: translateY(-4px);
-  border-color: rgba(124, 92, 255, 0.45);
+  border-color: var(--glow-border);
   box-shadow:
-    0 0 0 1px rgba(124, 92, 255, 0.25),
-    0 12px 40px -12px rgba(124, 92, 255, 0.5);
+    0 0 0 1px var(--glow-border),
+    0 12px 40px -12px var(--glow-shadow);
 }
 
 /* Gradientinis tekstas */

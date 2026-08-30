@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { importTmdbAction } from "@/lib/actions";
 
@@ -16,10 +16,12 @@ interface Result {
   poster: string | null;
 }
 
-const TYPES = ["MOVIE", "SERIES", "ANIME", "DOCUMENTARY", "GAME"] as const;
+// Tik TMDB tipai (zaidimai importuojami atskirai per IGDB).
+const TYPES = ["MOVIE", "SERIES", "ANIME", "DOCUMENTARY"] as const;
 
 export default function TmdbSearch() {
   const t = useTranslations();
+  const locale = useLocale();
   const [q, setQ] = useState("");
   const [results, setResults] = useState<Result[]>([]);
   const [loading, setLoading] = useState(false);
@@ -33,7 +35,9 @@ export default function TmdbSearch() {
     setSearched(true);
     setNeedKeys(false);
     try {
-      const res = await fetch(`/api/tmdb/search?q=${encodeURIComponent(q)}`);
+      const res = await fetch(
+        `/api/tmdb/search?q=${encodeURIComponent(q)}&lang=${locale}`
+      );
       if (res.status === 403) {
         setNeedKeys(true);
         setResults([]);
@@ -70,16 +74,13 @@ export default function TmdbSearch() {
 
       {needKeys && (
         <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
-          <p className="font-medium text-amber-200">Reikia tavo API raktų</p>
-          <p className="mt-1 text-amber-100/70">
-            Bendri serverio raktai skirti tik pirmiems vartotojams. Norint ieškoti ir
-            pridėti naujų įrašų iš TMDB, įvesk savo TMDB raktą profilyje.
-          </p>
+          <p className="font-medium text-amber-200">{t("search.needKeysTitle")}</p>
+          <p className="mt-1 text-amber-100/70">{t("search.needKeysBody")}</p>
           <Link
             href="/profilis"
             className="mt-3 inline-block rounded-lg bg-amber-500/20 px-3 py-1.5 text-xs font-medium text-amber-200 transition hover:bg-amber-500/30"
           >
-            → Į profilį (įvesti raktus)
+            {t("search.toProfile")}
           </Link>
         </div>
       )}

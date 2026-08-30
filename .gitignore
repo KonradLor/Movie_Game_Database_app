@@ -4,6 +4,8 @@
 .env.*.local
 *.key
 *.pem
+# API raktai (Twitch/IGDB ir kt.) - laikomi lokaliai, niekada i git
+private/
 
 # Node / Next.js (Faze 1+)
 node_modules/
@@ -13,6 +15,7 @@ dist/
 build/
 npm-debug.log*
 yarn-error.log*
+*.tsbuildinfo
 
 # OS / IDE
 .DS_Store
@@ -24,6 +27,8 @@ Thumbs.db
 *.sqlite
 *.db
 /data/
+# Lokalus atsiliepimu aplankas (dev) - serveryje tai bind-mount
+.feedback/
 
 # Serverio infrastrukturos dokumentai (IP, architektura, SSO konfig) - tik lokaliai
 atsakymai_infrastrukturai.txt

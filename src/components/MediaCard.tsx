@@ -1,9 +1,12 @@
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import type { MediaItem } from "@prisma/client";
 import { Link } from "@/i18n/navigation";
+import { pickText } from "@/lib/locale";
 
 export default async function MediaCard({ item }: { item: MediaItem }) {
   const t = await getTranslations();
+  const locale = await getLocale();
+  const { title } = pickText(item, locale);
 
   return (
     <Link
@@ -16,13 +19,13 @@ export default async function MediaCard({ item }: { item: MediaItem }) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={item.posterUrl}
-            alt={item.title}
+            alt={title}
             loading="lazy"
             className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-xs text-white/25">
-            {item.title}
+            {title}
           </div>
         )}
 
@@ -42,7 +45,7 @@ export default async function MediaCard({ item }: { item: MediaItem }) {
 
       {/* Pavadinimas */}
       <h3 className="line-clamp-1 px-1 text-sm font-medium text-white/90">
-        {item.title}
+        {title}
       </h3>
 
       {/* Meta eilute: metai · tipas · trukme */}
