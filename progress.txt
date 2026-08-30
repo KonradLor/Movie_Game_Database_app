@@ -121,6 +121,11 @@ FAZIU BUSENA
 DARBU ZURNALAS (naujausias virsuje)
 -------------------------------------------------------------------------
 2026-05-25
+  - Paruostas diegimo gidas serveriui: GIDAS_diegimas_oracle.txt (Authentik OIDC
+    klientas, repo klonavimas i /home/ubuntu/repos/media, .env, Caddy media.kondev.app
+    blokas, docker compose up, migraciju pritaikymas per psql, login testas, backup).
+    Gidas .gitignore'intas (serverio IP/keliai). Repo bus klonuojamas serveryje ir
+    darbas tesiamas ten. Faze 9 dar NEivykdyta - tik gidas paruostas.
   - BAIGTA Faze 4c (PASIRENKAMA): admin REST API (/api/admin/*) apsaugotas
     ADMIN_API_KEY raktu. Numatytai ISJUNGTA (tuscias raktas -> 404). MCP serveris
     atskirame mcp/ pakete (optional, prijungi tik panorejes). Testuota visa CRUD.
