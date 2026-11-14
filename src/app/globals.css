@@ -9,6 +9,9 @@
   --color-accent: #7c5cff;
   --color-accent-2: #ff5ca8;
   --color-accent-3: #4cc9ff;
+  /* Tekstas ant akcento ir jo gradiento (LD4 P-07, NFR-01): baltas buvo 1,28-2,86:1,
+     šis tamsus visose 5 temose >= 4,5:1 (patikra: kontrastas skaičiuotas WCAG formule). */
+  --color-on-accent: #0b0b10;
 }
 
 /* Numatytosios svytejimo (glow) spalvos - temos jas perrasys per [data-theme]. */
@@ -157,7 +160,7 @@ body {
     var(--color-accent),
     var(--color-accent-2)
   );
-  color: #fff;
+  color: var(--color-on-accent);
   border-color: transparent;
 }
 

@@ -62,7 +62,7 @@ export default async function HomePage({
       {/* Tinklelis */}
       {items.length === 0 ? (
         <section className="glass flex min-h-[40vh] items-center justify-center p-10 text-center">
-          <p className="text-white/45">
+          <p className="text-white/55">
             {q ? t("form.noResults") : t("home.empty")}
           </p>
         </section>

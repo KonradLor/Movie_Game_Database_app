@@ -37,7 +37,7 @@ export default async function FollowingActivityPage() {
 
       {items.length === 0 ? (
         <section className="glass flex min-h-[30vh] items-center justify-center p-10 text-center">
-          <p className="text-white/45">{t("empty")}</p>
+          <p className="text-white/55">{t("empty")}</p>
         </section>
       ) : (
         <ul className="space-y-2">
@@ -55,7 +55,7 @@ export default async function FollowingActivityPage() {
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm">
                     <span className="font-medium">{i.user.name || `#${i.user.userNumber}`}</span>{" "}
-                    <span className="text-white/50">{t(verbKey(i.type, i.status))}</span>{" "}
+                    <span className="text-white/55">{t(verbKey(i.type, i.status))}</span>{" "}
                     <Link href={`/media/${i.id}`} className="text-[var(--color-accent)] hover:underline">
                       {title}
                     </Link>
@@ -65,7 +65,7 @@ export default async function FollowingActivityPage() {
                       </span>
                     )}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-white/35">
+                  <p className="mt-0.5 text-[11px] text-white/55">
                     {i.type === "GAME" ? "🎮" : "🎬"}{" "}
                     {(i.activityAt ?? i.createdAt).toISOString().slice(0, 10)}
                   </p>

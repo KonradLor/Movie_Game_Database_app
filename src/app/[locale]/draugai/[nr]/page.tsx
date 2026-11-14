@@ -40,7 +40,7 @@ export default async function FriendCollectionPage({
           <h1 className="text-gradient text-2xl font-bold sm:text-3xl">
             {t("friendCol.title", { name })}
           </h1>
-          <p className="mt-1 text-sm text-white/50">{t("friendCol.subtitle")}</p>
+          <p className="mt-1 text-sm text-white/55">{t("friendCol.subtitle")}</p>
         </div>
         <Link href="/draugai" className="text-sm text-white/60 hover:text-white">
           ← {t("friends.title")}
@@ -49,7 +49,7 @@ export default async function FriendCollectionPage({
 
       {items.length === 0 ? (
         <section className="glass flex min-h-[30vh] items-center justify-center p-10 text-center">
-          <p className="text-white/45">{t("friendCol.empty")}</p>
+          <p className="text-white/55">{t("friendCol.empty")}</p>
         </section>
       ) : (
         <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">

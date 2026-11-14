@@ -64,11 +64,11 @@ export default async function StatsPage() {
       {/* Suvestine */}
       <div className="mb-8 grid grid-cols-2 gap-4">
         <div className="glass p-6">
-          <p className="text-sm text-white/50">{t("stats.totalItems")}</p>
+          <p className="text-sm text-white/55">{t("stats.totalItems")}</p>
           <p className="mt-1 text-4xl font-bold">{total}</p>
         </div>
         <div className="glass p-6">
-          <p className="text-sm text-white/50">{t("stats.totalHours")}</p>
+          <p className="text-sm text-white/55">{t("stats.totalHours")}</p>
           <p className="mt-1 text-4xl font-bold">{totalHours}</p>
         </div>
       </div>
@@ -86,7 +86,7 @@ export default async function StatsPage() {
                   {t(`type.${b.type}`)}
                 </span>
                 <Bar value={b.count} max={maxType} />
-                <span className="w-6 shrink-0 text-right text-xs text-white/50">
+                <span className="w-6 shrink-0 text-right text-xs text-white/55">
                   {b.count}
                 </span>
               </div>
@@ -106,7 +106,7 @@ export default async function StatsPage() {
                   {"★".repeat(b.rating)}
                 </span>
                 <Bar value={b.count} max={maxRating} />
-                <span className="w-6 shrink-0 text-right text-xs text-white/50">
+                <span className="w-6 shrink-0 text-right text-xs text-white/55">
                   {b.count}
                 </span>
               </div>
@@ -127,7 +127,7 @@ export default async function StatsPage() {
                 {t(`type.${b.type}`)}
               </span>
               <Bar value={b.hours} max={maxTypeHours} />
-              <span className="w-16 shrink-0 text-right text-xs text-white/50">
+              <span className="w-16 shrink-0 text-right text-xs text-white/55">
                 {b.hours} {t("stats.hoursUnit")}
               </span>
             </div>

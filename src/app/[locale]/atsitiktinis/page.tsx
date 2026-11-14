@@ -24,7 +24,7 @@ export default async function RandomPage({
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-20 text-center">
-      <p className="text-white/50">{t("home.empty")}</p>
+      <p className="text-white/55">{t("home.empty")}</p>
     </main>
   );
 }

@@ -23,9 +23,9 @@ enum MediaType {
 }
 
 enum Visibility {
-  PUBLIC // Matomas visiems
-  UNLISTED // Tik su tiesiogine nuoroda
-  PRIVATE // Tik adminui prisijungus
+  PUBLIC // "Draugams": savininkas ir patvirtinti draugai (lankytojai nemato)
+  UNLISTED // Senas "Tik su nuoroda": veikia kaip PRIVATE, formoje nesiulomas
+  PRIVATE // "Tik man": tik savininkas
 }
 
 enum MediaStatus {
@@ -335,4 +335,29 @@ model Follow {
   @@unique([followerId, followingId])
   @@index([followerId])
   @@index([followingId])
+}
+
+// ----------------------------------------------------------------------
+// ATSILIEPIMAI (LD4 S12): forma rašo čia ir į TXT (atsarginė kopija).
+// Būsenas keičia tik administratorius.
+// ----------------------------------------------------------------------
+
+enum FeedbackStatus {
+  NEW // Nauja
+  READ // Perskaityta
+  DONE // Sutvarkyta
+}
+
+model Feedback {
+  id        String         @id @default(cuid())
+  type      String // BUG | IDEA | FEATURE | FEEDBACK | OTHER
+  message   String
+  name      String?
+  email     String?
+  locale    String?
+  account   String? // prisijungusio vartotojo vardas / el. paštas / #numeris
+  status    FeedbackStatus @default(NEW)
+  createdAt DateTime       @default(now())
+
+  @@index([status, createdAt])
 }

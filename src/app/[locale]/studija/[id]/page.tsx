@@ -60,7 +60,7 @@ export default async function CompanyPage({
             className="rounded-lg bg-white/5 px-3 py-2 text-sm hover:bg-white/10"
           >
             {pickText(m, locale).title}{" "}
-            {m.year && <span className="text-white/40">({m.year})</span>}
+            {m.year && <span className="text-white/55">({m.year})</span>}
           </Link>
         ))}
       </div>

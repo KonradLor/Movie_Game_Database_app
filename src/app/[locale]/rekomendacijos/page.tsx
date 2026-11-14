@@ -36,11 +36,11 @@ export default async function RecommendationsPage() {
           ← {t("friends.back")}
         </Link>
       </div>
-      <p className="mb-6 text-sm text-white/45">{t("rec.inboxHint")}</p>
+      <p className="mb-6 text-sm text-white/55">{t("rec.inboxHint")}</p>
 
       {recs.length === 0 ? (
         <section className="glass flex min-h-[30vh] items-center justify-center p-10 text-center">
-          <p className="text-white/45">{t("rec.empty")}</p>
+          <p className="text-white/55">{t("rec.empty")}</p>
         </section>
       ) : (
         <ul className="space-y-3">
@@ -66,9 +66,9 @@ export default async function RecommendationsPage() {
                       </span>
                     )}
                   </div>
-                  <p className="mt-0.5 text-xs text-white/45">
+                  <p className="mt-0.5 text-xs text-white/55">
                     {t("rec.from")} <span className="text-white/70">{fromLabel(r.from)}</span>
-                    <span className="text-white/30"> · {r.createdAt.toISOString().slice(0, 10)}</span>
+                    <span className="text-white/55"> · {r.createdAt.toISOString().slice(0, 10)}</span>
                   </p>
                   {r.message && (
                     <p className="mt-2 rounded-lg bg-white/5 p-2.5 text-sm italic text-white/80">
@@ -86,7 +86,7 @@ export default async function RecommendationsPage() {
                     )}
                     <form action={dismissRecommendationAction}>
                       <input type="hidden" name="id" value={r.id} />
-                      <button className="rounded-lg bg-white/5 px-3 py-1 text-xs text-white/50 transition hover:bg-red-500/20 hover:text-red-300">
+                      <button className="rounded-lg bg-white/5 px-3 py-1 text-xs text-white/55 transition hover:bg-red-500/20 hover:text-red-300">
                         {t("rec.dismiss")}
                       </button>
                     </form>

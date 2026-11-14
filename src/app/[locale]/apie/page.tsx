@@ -126,7 +126,7 @@ export default async function AboutPage() {
               </div>
               <Link
                 href="/atsiliepimai"
-                className="rounded-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+                className="rounded-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:brightness-110"
               >
                 {t("contactButton")}
               </Link>

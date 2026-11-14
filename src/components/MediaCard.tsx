@@ -24,7 +24,7 @@ export default async function MediaCard({ item }: { item: MediaItem }) {
             className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-xs text-white/25">
+          <div className="flex h-full w-full items-center justify-center text-xs text-white/55">
             {title}
           </div>
         )}
@@ -49,7 +49,7 @@ export default async function MediaCard({ item }: { item: MediaItem }) {
       </h3>
 
       {/* Meta eilute: metai · tipas · trukme */}
-      <div className="mt-1 flex flex-wrap items-center gap-1.5 px-1 pb-1 text-[11px] text-white/45">
+      <div className="mt-1 flex flex-wrap items-center gap-1.5 px-1 pb-1 text-[11px] text-white/55">
         {item.year && <span>{item.year}</span>}
         <span className="rounded bg-white/10 px-1.5 py-0.5 text-white/60">
           {t(`type.${item.type}`)}

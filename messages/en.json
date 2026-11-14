@@ -40,9 +40,10 @@
     "decline": "Decline",
     "cancel": "Cancel",
     "remove": "Remove",
+    "confirmRemove": "Remove from friends? This person will no longer see your “Friends” entries, and following stops in both directions.",
     "viewCollection": "View collection",
     "activity": "Friends' recent activity",
-    "noActivity": "No public entries from friends yet.",
+    "noActivity": "Your friends aren't sharing any entries yet.",
     "waiting": "waiting",
     "err_badCode": "Enter a valid code (a number).",
     "err_self": "That is your own code.",
@@ -53,8 +54,8 @@
   },
   "friendCol": {
     "title": "{name}'s collection",
-    "subtitle": "Public movies, series and games",
-    "empty": "No public entries yet."
+    "subtitle": "Entries this friend shares with friends",
+    "empty": "This friend isn't sharing any entries yet."
   },
   "rec": {
     "recommend": "Recommend to a friend",
@@ -63,7 +64,7 @@
     "send": "Send recommendation",
     "sent": "Recommendation sent!",
     "error": "Could not send.",
-    "notPublicHint": "Make this entry public to recommend it to friends.",
+    "notPublicHint": "Set visibility to “Friends” to recommend this entry.",
     "title": "Recommendations",
     "empty": "No recommendations yet.",
     "from": "from",
@@ -261,9 +262,14 @@
     "PLAYING": "Playing now"
   },
   "visibility": {
-    "PUBLIC": "Public",
-    "UNLISTED": "Unlisted",
-    "PRIVATE": "Private"
+    "PUBLIC": "Friends",
+    "UNLISTED": "Only me (old setting)",
+    "PRIVATE": "Only me"
+  },
+  "visibilityHint": {
+    "PUBLIC": "You and your confirmed friends can see it. Visitors cannot.",
+    "UNLISTED": "Only you can see it. This is the old “Link only” setting; it works like “Only me”.",
+    "PRIVATE": "Only you can see it."
   },
   "profile": {
     "title": "Profile",
@@ -373,12 +379,21 @@
   "feedbackAdmin": {
     "crumb": "Administration",
     "title": "Feedback",
-    "intro": "All messages received via the form, newest first.",
+    "intro": "All messages received via the form, newest first. Mark what you have read and resolved.",
     "allTypes": "All types",
     "anonymous": "Anonymous",
     "account": "account",
     "empty": "No feedback yet.",
-    "emptyType": "No feedback of this type.",
-    "openLink": "Feedback"
+    "openLink": "Feedback",
+    "statusFilter": "Filter by status",
+    "typeFilter": "Filter by type",
+    "allStatuses": "All statuses",
+    "status_NEW": "New",
+    "status_READ": "Read",
+    "status_DONE": "Resolved",
+    "mark_NEW": "Mark as new",
+    "mark_READ": "Mark as read",
+    "mark_DONE": "Mark as resolved",
+    "emptyFilter": "No feedback matches this filter."
   }
 }

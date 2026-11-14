@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { appendFeedback, FEEDBACK_TYPES, FEEDBACK_FULL } from "@/lib/feedback";
 import { getCurrentUser } from "@/lib/current-user";
+import { db } from "@/lib/db";
 
 // Apsaugos atmintyje (endpointas viešas, be autentifikacijos):
 //  1) globalus limitas - visiems kartu ne daugiau GLOBAL_MAX per langą;
@@ -41,7 +42,8 @@ function clip(v: unknown, max: number): string | null {
 }
 
 // POST /api/feedback  body: { type, message, name?, email?, locale? }
-// Vieša (bet kas gali siųsti). Saugoma į TXT (FEEDBACK_DIR).
+// Vieša (bet kas gali siųsti). Saugoma į TXT (FEEDBACK_DIR, atsarginė kopija ir
+// disko riba) ir į DB lentelę Feedback (admin sąrašas su būsenomis).
 export async function POST(req: NextRequest) {
   const now = Date.now();
   // Globalus limitas pirmiausia (gina net jei per-IP kaip nors apeitas).
@@ -82,8 +84,9 @@ export async function POST(req: NextRequest) {
     user = null;
   }
 
+  const at = new Date();
   try {
-    await appendFeedback({ type, message, name, email, locale, user, at: new Date() });
+    await appendFeedback({ type, message, name, email, locale, user, at });
   } catch (e) {
     if (e instanceof Error && e.message === FEEDBACK_FULL) {
       return NextResponse.json({ error: FEEDBACK_FULL }, { status: 429 });
@@ -92,6 +95,16 @@ export async function POST(req: NextRequest) {
       { error: e instanceof Error ? e.message : "writeFailed" },
       { status: 500 }
     );
+  }
+
+  // DB įrašas admin sąrašui. Jei DB nepasiekiama, žinutė jau išsaugota TXT,
+  // todėl siuntėjui klaidos nerodom, tik užrašom į logą.
+  try {
+    await db.feedback.create({
+      data: { type, message, name, email, locale, account: user, createdAt: at },
+    });
+  } catch (e) {
+    console.error("[feedback] DB įrašas nepavyko (liko tik TXT):", e instanceof Error ? e.message : e);
   }
 
   lastByIp.set(ip, now);

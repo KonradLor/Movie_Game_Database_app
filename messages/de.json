@@ -40,9 +40,10 @@
     "decline": "Ablehnen",
     "cancel": "Abbrechen",
     "remove": "Entfernen",
+    "confirmRemove": "Aus Freunden entfernen? Diese Person sieht deine Einträge für „Freunde“ nicht mehr, und das Folgen endet in beide Richtungen.",
     "viewCollection": "Sammlung ansehen",
     "activity": "Neueste Aktivität der Freunde",
-    "noActivity": "Noch keine öffentlichen Einträge von Freunden.",
+    "noActivity": "Deine Freunde teilen noch keine Einträge.",
     "waiting": "wartet",
     "err_badCode": "Gib einen gültigen Code (eine Zahl) ein.",
     "err_self": "Das ist dein eigener Code.",
@@ -53,8 +54,8 @@
   },
   "friendCol": {
     "title": "Sammlung von {name}",
-    "subtitle": "Öffentliche Filme, Serien und Spiele",
-    "empty": "Noch keine öffentlichen Einträge."
+    "subtitle": "Einträge, die dieser Freund mit Freunden teilt",
+    "empty": "Dieser Freund teilt noch keine Einträge."
   },
   "rec": {
     "recommend": "Einem Freund empfehlen",
@@ -63,7 +64,7 @@
     "send": "Empfehlung senden",
     "sent": "Empfehlung gesendet!",
     "error": "Konnte nicht gesendet werden.",
-    "notPublicHint": "Mache diesen Eintrag öffentlich, um ihn Freunden zu empfehlen.",
+    "notPublicHint": "Stelle die Sichtbarkeit auf „Freunde“, um diesen Eintrag zu empfehlen.",
     "title": "Empfehlungen",
     "empty": "Noch keine Empfehlungen.",
     "from": "von",
@@ -261,9 +262,14 @@
     "PLAYING": "Spiele gerade"
   },
   "visibility": {
-    "PUBLIC": "Öffentlich",
-    "UNLISTED": "Nur mit Link",
-    "PRIVATE": "Privat"
+    "PUBLIC": "Freunde",
+    "UNLISTED": "Nur ich (alte Einstellung)",
+    "PRIVATE": "Nur ich"
+  },
+  "visibilityHint": {
+    "PUBLIC": "Du und deine bestätigten Freunde sehen ihn. Besucher nicht.",
+    "UNLISTED": "Nur du siehst ihn. Das ist die alte Einstellung „Nur mit Link“; sie wirkt wie „Nur ich“.",
+    "PRIVATE": "Nur du siehst ihn."
   },
   "profile": {
     "title": "Profil",
@@ -373,12 +379,21 @@
   "feedbackAdmin": {
     "crumb": "Verwaltung",
     "title": "Feedback",
-    "intro": "Alle über das Formular eingegangenen Nachrichten, neueste zuerst.",
+    "intro": "Alle über das Formular eingegangenen Nachrichten, neueste zuerst. Markiere, was du gelesen und erledigt hast.",
     "allTypes": "Alle Typen",
     "anonymous": "Anonym",
     "account": "Konto",
     "empty": "Noch kein Feedback.",
-    "emptyType": "Kein Feedback dieses Typs.",
-    "openLink": "Feedback"
+    "openLink": "Feedback",
+    "statusFilter": "Nach Status filtern",
+    "typeFilter": "Nach Typ filtern",
+    "allStatuses": "Alle Status",
+    "status_NEW": "Neu",
+    "status_READ": "Gelesen",
+    "status_DONE": "Erledigt",
+    "mark_NEW": "Als neu markieren",
+    "mark_READ": "Als gelesen markieren",
+    "mark_DONE": "Als erledigt markieren",
+    "emptyFilter": "Kein Feedback für diesen Filter."
   }
 }

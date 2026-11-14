@@ -1,13 +1,17 @@
-// Vartotoju atsiliepimu sistema. Viskas saugoma paprastu TXT formatu atskirame
-// aplanke (FEEDBACK_DIR), po vieną failą per mėnesį. Serveryje aplankas yra
-// bind-mount (/var/server-data/media-feedback -> /data/feedback), tad prieinamas
-// tiek per portalą (admin), tiek tiesiogiai serveryje.
+// Vartotoju atsiliepimu sistema. Pagrindinė saugykla yra DB lentelė Feedback
+// (būsenos Nauja / Perskaityta / Sutvarkyta, admin sąrašas). Čia - TXT atsarginė
+// kopija atskirame aplanke (FEEDBACK_DIR), po vieną failą per mėnesį. Serveryje
+// aplankas yra bind-mount (/var/server-data/media-feedback -> /data/feedback), tad
+// įrašus galima perskaityti ir tiesiogiai serveryje, net jei DB nepasiekiama.
 
 import { promises as fs } from "fs";
 import path from "path";
+import type { FeedbackStatus } from "@prisma/client";
 
 export const FEEDBACK_TYPES = ["BUG", "IDEA", "FEATURE", "FEEDBACK", "OTHER"] as const;
 export type FeedbackType = (typeof FEEDBACK_TYPES)[number];
+// Admin būsenos (DB enum FeedbackStatus). "use server" failas konstantų eksportuoti negali.
+export const FEEDBACK_STATUSES = ["NEW", "READ", "DONE"] as const satisfies readonly FeedbackStatus[];
 
 // Vieno mėnesio failo riba (apsauga nuo disko užpildymo per viešą endpointą).
 const MAX_FILE_BYTES = 2 * 1024 * 1024; // 2 MB
@@ -78,65 +82,4 @@ export async function appendFeedback(e: FeedbackEntry): Promise<void> {
   }
 
   await fs.appendFile(file, block, "utf-8");
-}
-
-// Perskaityti visus atsiliepimus (admin peržiūrai portale). Naujausias mėnuo viršuje.
-export async function readAllFeedback(): Promise<string> {
-  const dir = feedbackDir();
-  let files: string[];
-  try {
-    files = (await fs.readdir(dir))
-      .filter((f) => f.startsWith("feedback-") && f.endsWith(".txt"))
-      .sort()
-      .reverse();
-  } catch {
-    return "";
-  }
-  const parts: string[] = [];
-  for (const f of files) {
-    const content = await fs.readFile(path.join(dir, f), "utf-8");
-    parts.push(`### ${f}\n${content}`);
-  }
-  return parts.join("\n").trim();
-}
-
-// Išskaidytas atsiliepimas admin sąrašui (LD4 maketas E-8).
-export interface ParsedFeedback {
-  at: string; // "YYYY-MM-DD HH:MM:SS" (UTC)
-  type: string;
-  from: string;
-  account: string | null;
-  locale: string;
-  message: string;
-}
-
-const DASH = "-".repeat(60);
-
-// TXT formatą (žr. appendFeedback) paverčia įrašų sąrašu, naujausi pirmi.
-// Žinutės eilutės atitrauktos 2 tarpais, todėl skaidom TIK ties eilutės pradžioje
-// esančiu "=" x 60: įterptas (atitrauktas) skirtukas lieka žinutės tekstu.
-export function parseFeedback(text: string): ParsedFeedback[] {
-  const out: ParsedFeedback[] = [];
-  for (const raw of text.replace(/\r\n/g, "\n").split(/^={60}\n/m)) {
-    const lines = raw.split("\n");
-    const head = /^\[(.+?) UTC\] (\S+)$/.exec(lines[0] ?? "");
-    if (!head) continue;
-    const nuo = /^Nuo: (.*?)(?:  \(paskyra: (.*)\))?$/.exec(lines[1] ?? "");
-    const kalba = /^Kalba: (.*)$/.exec(lines[2] ?? "");
-    if (lines[3] !== DASH) continue;
-    const body: string[] = [];
-    for (const l of lines.slice(4)) {
-      if (l.startsWith("### feedback-")) break; // kito mėnesio failo antraštė
-      body.push(l.startsWith("  ") ? l.slice(2) : l);
-    }
-    out.push({
-      at: head[1],
-      type: head[2],
-      from: nuo?.[1] ?? "",
-      account: nuo?.[2] ?? null,
-      locale: kalba?.[1] ?? "-",
-      message: body.join("\n").trim(),
-    });
-  }
-  return out.sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
 }

@@ -11,7 +11,9 @@ type ItemWithTags = MediaItem & { tags?: (TagOnMedia & { tag: Tag })[] };
 
 const TYPES = ["MOVIE", "SERIES", "ANIME", "DOCUMENTARY", "GAME"] as const;
 const STATUSES = ["WATCHED", "WATCHLIST"] as const;
-const VISIBILITIES = ["PUBLIC", "UNLISTED", "PRIVATE"] as const;
+// "UNLISTED" (senas „Tik su nuoroda“) veikia kaip PRIVATE, todėl naujiems įrašams
+// nesiūlomas - rodomas tik jei įrašas jį jau turi (LD4 P-03, FR-05).
+const VISIBILITIES = ["PUBLIC", "PRIVATE"] as const;
 const PLATFORMS = [
   "PC",
   "STEAM",
@@ -39,6 +41,9 @@ export default function MediaForm({
   const t = useTranslations();
   const isEdit = Boolean(item);
   const [type, setType] = useState<string>(item?.type ?? "MOVIE");
+  const [visibility, setVisibility] = useState<"PUBLIC" | "UNLISTED" | "PRIVATE">(
+    item?.visibility ?? "PUBLIC"
+  );
   const isGame = type === "GAME";
   // Tipai, kuriems galima "dabar zaidziu/ziuriu" busena (GAME/SERIES/ANIME).
   const canPlay = type === "GAME" || type === "SERIES" || type === "ANIME";
@@ -50,7 +55,7 @@ export default function MediaForm({
   const segCls = (on: boolean) =>
     `rounded-full px-4 py-1.5 text-sm font-medium transition ${
       on
-        ? "bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] text-white"
+        ? "bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] text-[var(--color-on-accent)]"
         : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
     }`;
 
@@ -81,7 +86,7 @@ export default function MediaForm({
             {isGame ? t("form.searchGames") : t("form.searchTmdb")}
           </h2>
           {isGame ? <IgdbSearch /> : <TmdbSearch />}
-          <div className="flex items-center gap-3 pt-1 text-xs uppercase tracking-wide text-white/35">
+          <div className="flex items-center gap-3 pt-1 text-xs uppercase tracking-wide text-white/55">
             <span className="h-px flex-1 bg-white/10" />
             {t("form.orManual")}
             <span className="h-px flex-1 bg-white/10" />
@@ -157,15 +162,20 @@ export default function MediaForm({
             <label className={labelCls}>{t("form.visibility")}</label>
             <select
               name="visibility"
-              defaultValue={item?.visibility || "PUBLIC"}
+              value={visibility}
+              onChange={(e) => setVisibility(e.target.value as typeof visibility)}
+              aria-describedby="visibility-hint"
               className={inputCls}
             >
-              {VISIBILITIES.map((v) => (
+              {(item?.visibility === "UNLISTED" ? [...VISIBILITIES, "UNLISTED" as const] : VISIBILITIES).map((v) => (
                 <option key={v} value={v}>
                   {t(`visibility.${v}`)}
                 </option>
               ))}
             </select>
+            <p id="visibility-hint" className="mt-1 text-xs text-white/70">
+              {t(`visibilityHint.${visibility}`)}
+            </p>
           </div>
         </div>
 
@@ -316,7 +326,7 @@ export default function MediaForm({
 
         <button
           type="submit"
-          className="rounded-lg bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90"
+          className="rounded-lg bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-5 py-2.5 text-sm font-medium text-[var(--color-on-accent)] transition hover:brightness-110"
         >
           {t("actions.save")}
         </button>

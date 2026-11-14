@@ -1,6 +1,7 @@
 import { getTranslations, getLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
+import ConfirmSubmitButton from "@/components/ConfirmSubmitButton";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/current-user";
 import {
@@ -69,14 +70,14 @@ export default async function FriendsPage() {
       {/* Tavo kodas + pridejimas */}
       <section className="glass mb-6 p-6">
         <div className="mb-4 flex flex-wrap items-center gap-2 text-sm">
-          <span className="text-white/50">{t("yourCode")}:</span>
+          <span className="text-white/55">{t("yourCode")}:</span>
           <span className="rounded-full bg-[var(--color-accent)]/20 px-3 py-1 font-mono font-semibold text-[var(--color-accent)]">
             #{user.userNumber}
           </span>
-          <span className="text-xs text-white/40">{t("yourCodeHint")}</span>
+          <span className="text-xs text-white/55">{t("yourCodeHint")}</span>
         </div>
         <h2 className="mb-1 text-sm font-semibold text-white/80">{t("addByCode")}</h2>
-        <p className="mb-3 text-xs text-white/45">{t("addHint")}</p>
+        <p className="mb-3 text-xs text-white/55">{t("addHint")}</p>
         <AddFriendForm />
       </section>
 
@@ -94,7 +95,7 @@ export default async function FriendsPage() {
                   <span className="font-medium">
                     {i.user.name || `#${i.user.userNumber}`}
                   </span>{" "}
-                  <span className="text-white/50">{tFollow(verbKey(i.type, i.status))}</span>{" "}
+                  <span className="text-white/55">{tFollow(verbKey(i.type, i.status))}</span>{" "}
                   <Link
                     href={`/media/${i.id}`}
                     className="text-[var(--color-accent)] hover:underline"
@@ -141,7 +142,7 @@ export default async function FriendsPage() {
       <section className="glass mb-6 p-6">
         <h2 className="mb-3 text-sm font-semibold text-white/80">{t("yourFriends")}</h2>
         {friends.length === 0 ? (
-          <p className="text-sm text-white/45">{t("noFriends")}</p>
+          <p className="text-sm text-white/55">{t("noFriends")}</p>
         ) : (
           <ul className="space-y-2">
             {friends.map((f) => (
@@ -150,7 +151,7 @@ export default async function FriendsPage() {
                 className="flex items-center justify-between gap-3 rounded-lg bg-white/5 px-3 py-2"
               >
                 <span className="text-sm">
-                  {label(f)} <span className="text-white/35">#{f.userNumber}</span>
+                  {label(f)} <span className="text-white/55">#{f.userNumber}</span>
                 </span>
                 <div className="flex items-center gap-2">
                   <form action={toggleFollowAction}>
@@ -168,9 +169,12 @@ export default async function FriendsPage() {
                   <Link href={`/draugai/${f.userNumber}`} className={btnGhost}>
                     {t("viewCollection")}
                   </Link>
+                  {/* Pašalinus draugą dingsta ir sekimas - klausiam patvirtinimo (LD4 E-3) */}
                   <form action={removeFriendshipAction}>
                     <input type="hidden" name="id" value={f.friendshipId} />
-                    <button className={btnDanger}>{t("remove")}</button>
+                    <ConfirmSubmitButton confirmText={t("confirmRemove")} className={btnDanger}>
+                      {t("remove")}
+                    </ConfirmSubmitButton>
                   </form>
                 </div>
               </li>
@@ -191,7 +195,7 @@ export default async function FriendsPage() {
               >
                 <span className="text-sm text-white/70">
                   {label(fr.addressee)}{" "}
-                  <span className="text-xs text-white/35">({t("waiting")})</span>
+                  <span className="text-xs text-white/55">({t("waiting")})</span>
                 </span>
                 <form action={removeFriendshipAction}>
                   <input type="hidden" name="id" value={fr.id} />
@@ -207,13 +211,13 @@ export default async function FriendsPage() {
       <section className="glass p-6">
         <h2 className="mb-4 text-sm font-semibold text-white/80">{t("activity")}</h2>
         {activity.length === 0 ? (
-          <p className="text-sm text-white/45">{t("noActivity")}</p>
+          <p className="text-sm text-white/55">{t("noActivity")}</p>
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {activity.map((item) => (
               <div key={item.id}>
                 <MediaCard item={item} />
-                <p className="mt-1 truncate px-1 text-[11px] text-white/40">
+                <p className="mt-1 truncate px-1 text-[11px] text-white/55">
                   {nameById.get(item.userId)}
                 </p>
               </div>

@@ -30,12 +30,12 @@ export default function SearchBar({
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder={t("actions.search") + "…"}
-        className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2 pr-9 text-sm text-white placeholder:text-white/30 focus:border-[var(--color-accent)] focus:outline-none"
+        className="w-full rounded-full border border-white/10 bg-white/5 px-4 py-2 pr-9 text-sm text-white placeholder:text-white/55 focus:border-[var(--color-accent)] focus:outline-none"
       />
       <button
         type="submit"
         aria-label={t("actions.search")}
-        className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-white/40 hover:text-white"
+        className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full p-1.5 text-white/55 hover:text-white"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="11" cy="11" r="7" />

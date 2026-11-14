@@ -72,7 +72,7 @@ export default function FeedbackForm() {
         </div>
         <div>
           <label className={labelCls}>
-            {t("name")} <span className="text-white/30">({t("optional")})</span>
+            {t("name")} <span className="text-white/55">({t("optional")})</span>
           </label>
           <input value={name} onChange={(e) => setName(e.target.value)} className={inputCls} />
         </div>
@@ -80,7 +80,7 @@ export default function FeedbackForm() {
 
       <div>
         <label className={labelCls}>
-          {t("email")} <span className="text-white/30">({t("optional")})</span>
+          {t("email")} <span className="text-white/55">({t("optional")})</span>
         </label>
         <input
           type="email"
@@ -109,7 +109,7 @@ export default function FeedbackForm() {
       <button
         type="submit"
         disabled={status === "sending" || !message.trim()}
-        className="rounded-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+        className="rounded-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-5 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:brightness-110 disabled:opacity-50"
       >
         {status === "sending" ? "…" : t("submit")}
       </button>

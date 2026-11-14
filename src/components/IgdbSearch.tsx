@@ -61,7 +61,7 @@ export default function IgdbSearch() {
         </button>
       </form>
 
-      {loading && <p className="text-sm text-white/50">{t("home.loading")}</p>}
+      {loading && <p className="text-sm text-white/55">{t("home.loading")}</p>}
 
       {needKeys && (
         <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
@@ -77,7 +77,7 @@ export default function IgdbSearch() {
       )}
 
       {!loading && !needKeys && searched && results.length === 0 && (
-        <p className="text-sm text-white/50">{t("form.noResults")}</p>
+        <p className="text-sm text-white/55">{t("form.noResults")}</p>
       )}
 
       <ul className="space-y-3">
@@ -94,9 +94,9 @@ export default function IgdbSearch() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">
-                {r.title} {r.year && <span className="text-white/40">({r.year})</span>}
+                {r.title} {r.year && <span className="text-white/55">({r.year})</span>}
               </p>
-              <p className="line-clamp-2 text-xs text-white/50">{r.overview}</p>
+              <p className="line-clamp-2 text-xs text-white/55">{r.overview}</p>
 
               <form action={importIgdbAction} className="mt-2 flex items-center gap-2">
                 <input type="hidden" name="igdbId" value={r.igdbId} />
@@ -105,7 +105,7 @@ export default function IgdbSearch() {
                 </span>
                 <button
                   type="submit"
-                  className="rounded bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-3 py-1 text-xs font-medium text-white transition hover:opacity-90"
+                  className="rounded bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-3 py-1 text-xs font-medium text-[var(--color-on-accent)] transition hover:brightness-110"
                 >
                   {t("actions.import")}
                 </button>

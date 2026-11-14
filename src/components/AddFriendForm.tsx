@@ -19,7 +19,7 @@ export default function AddFriendForm() {
     <form action={action} className="space-y-2">
       <div className="flex items-stretch gap-2">
         <div className="flex flex-1 items-center gap-2 rounded-lg bg-white/5 border border-white/10 px-3 focus-within:border-[var(--color-accent)]">
-          <span className="text-white/40">#</span>
+          <span className="text-white/55">#</span>
           <input
             name="userNumber"
             type="number"
@@ -33,7 +33,7 @@ export default function AddFriendForm() {
         <button
           type="submit"
           disabled={pending}
-          className="shrink-0 rounded-lg bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+          className="shrink-0 rounded-lg bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-4 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:brightness-110 disabled:opacity-50"
         >
           {t("sendRequest")}
         </button>

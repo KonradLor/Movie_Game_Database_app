@@ -12,6 +12,7 @@ import {
   startPlayingAction,
 } from "@/lib/actions";
 import RecommendButton from "@/components/RecommendButton";
+import ConfirmSubmitButton from "@/components/ConfirmSubmitButton";
 
 export default async function MediaDetailPage({
   params,
@@ -134,11 +135,15 @@ export default async function MediaDetailPage({
                 </button>
               </form>
             )}
-            <form action={deleteMedia}>
+            {/* Negrįžtamas veiksmas: atskirtas nuo kitų mygtukų ir klausia patvirtinimo (LD4 E-3, P-09) */}
+            <form action={deleteMedia} className="sm:ml-4">
               <input type="hidden" name="id" value={item.id} />
-              <button className="rounded-lg bg-red-500/20 px-3 py-1.5 text-sm text-red-300 hover:bg-red-500/30">
+              <ConfirmSubmitButton
+                confirmText={t("actions.confirmDelete")}
+                className="rounded-lg bg-red-500/20 px-3 py-1.5 text-sm text-red-300 hover:bg-red-500/30"
+              >
                 {t("actions.delete")}
-              </button>
+              </ConfirmSubmitButton>
             </form>
           </div>
         )}
@@ -150,7 +155,7 @@ export default async function MediaDetailPage({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={item.posterUrl} alt={title} className="aspect-[2/3] w-full object-cover" />
           ) : (
-            <div className="flex aspect-[2/3] items-center justify-center text-xs text-white/30">
+            <div className="flex aspect-[2/3] items-center justify-center text-xs text-white/55">
               —
             </div>
           )}
@@ -159,7 +164,7 @@ export default async function MediaDetailPage({
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold">{title}</h1>
           {item.originalTitle && item.originalTitle !== title && (
-            <p className="text-sm text-white/40">{item.originalTitle}</p>
+            <p className="text-sm text-white/55">{item.originalTitle}</p>
           )}
           {owner && (
             <p className="mt-1 text-xs text-[var(--color-accent)]/80">
@@ -175,7 +180,7 @@ export default async function MediaDetailPage({
                 {item.durationMin} {t("card.minutes")}
               </span>
             )}
-            <span className="rounded bg-white/5 px-2 py-0.5 text-white/50">
+            <span className="rounded bg-white/5 px-2 py-0.5 text-white/55">
               {t(`visibility.${item.visibility}`)}
             </span>
           </div>
@@ -237,7 +242,7 @@ export default async function MediaDetailPage({
 
           {directors.length > 0 && (
             <p className="mt-3 text-sm text-white/60">
-              <span className="text-white/40">{t("credits.directors")} </span>
+              <span className="text-white/55">{t("credits.directors")} </span>
               {directors.map((c, idx) => (
                 <span key={c.id}>
                   {idx > 0 && ", "}
@@ -250,7 +255,7 @@ export default async function MediaDetailPage({
           )}
           {actors.length > 0 && (
             <p className="mt-1 text-sm text-white/60">
-              <span className="text-white/40">{t("credits.cast")} </span>
+              <span className="text-white/55">{t("credits.cast")} </span>
               {actors.slice(0, 8).map((c, idx) => (
                 <span key={c.id}>
                   {idx > 0 && ", "}
@@ -263,7 +268,7 @@ export default async function MediaDetailPage({
           )}
           {studios.length > 0 && (
             <p className="mt-1 text-sm text-white/60">
-              <span className="text-white/40">{t("credits.studios")} </span>
+              <span className="text-white/55">{t("credits.studios")} </span>
               {studios.map((c, idx) => (
                 <span key={c.id}>
                   {idx > 0 && ", "}
@@ -276,7 +281,7 @@ export default async function MediaDetailPage({
           )}
           {developers.length > 0 && (
             <p className="mt-1 text-sm text-white/60">
-              <span className="text-white/40">{t("credits.developers")} </span>
+              <span className="text-white/55">{t("credits.developers")} </span>
               {developers.map((c, idx) => (
                 <span key={c.id}>
                   {idx > 0 && ", "}
@@ -289,7 +294,7 @@ export default async function MediaDetailPage({
           )}
           {publishers.length > 0 && (
             <p className="mt-1 text-sm text-white/60">
-              <span className="text-white/40">{t("credits.publishers")} </span>
+              <span className="text-white/55">{t("credits.publishers")} </span>
               {publishers.map((c, idx) => (
                 <span key={c.id}>
                   {idx > 0 && ", "}
@@ -313,7 +318,7 @@ export default async function MediaDetailPage({
             />
           )}
           {isOwner && item.visibility !== "PUBLIC" && (
-            <p className="mt-4 text-xs text-white/40">{t("rec.notPublicHint")}</p>
+            <p className="mt-4 text-xs text-white/55">{t("rec.notPublicHint")}</p>
           )}
         </div>
       </div>

@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/current-user";
 import { Link } from "@/i18n/navigation";
-import { readAllFeedback, parseFeedback } from "@/lib/feedback";
 
 // Admin apžvalga: visų vartotojų sąrašas + bendra statistika (priežiūrai).
 // Tik adminui (Konradui). Kiekvienas vartotojas savo dienorastį tvarko atskirai.
@@ -32,8 +31,11 @@ export default async function AdminPage() {
   const totalItems = await db.mediaItem.count();
   const totalWatched = await db.mediaItem.count({ where: { status: "WATCHED" } });
 
-  // Atsiliepimų skaičius (nuoroda į /admin/atsiliepimai)
-  const feedbackCount = parseFeedback(await readAllFeedback()).length;
+  // Atsiliepimų skaičiai (nuoroda į /admin/atsiliepimai): naujų ir visų
+  const [feedbackNew, feedbackCount] = await Promise.all([
+    db.feedback.count({ where: { status: "NEW" } }),
+    db.feedback.count(),
+  ]);
 
   // Naujausi įrašai (visų vartotojų) - priežiūrai
   const recent = await db.mediaItem.findMany({
@@ -47,7 +49,7 @@ export default async function AdminPage() {
       <h1 className="text-gradient mb-2 text-3xl font-extrabold tracking-tight">
         Admin apžvalga
       </h1>
-      <p className="mb-8 text-sm text-white/50">
+      <p className="mb-8 text-sm text-white/55">
         Visų vartotojų suvestinė (tik administratoriui). Kiekvienas vartotojas mato
         ir tvarko tik savo dienoraštį.
       </p>
@@ -58,21 +60,28 @@ export default async function AdminPage() {
         className="glass mb-8 flex items-center justify-between p-5 transition hover:bg-white/10"
       >
         <span className="font-semibold">Atsiliepimai</span>
-        <span className="text-sm text-white/70">{feedbackCount} →</span>
+        <span className="text-sm text-white/70">
+          {feedbackNew > 0 && (
+            <span className="mr-2 rounded-full bg-[var(--color-accent)] px-2 py-0.5 text-xs font-bold text-[var(--color-on-accent)]">
+              naujų: {feedbackNew}
+            </span>
+          )}
+          {feedbackCount} →
+        </span>
       </Link>
 
       {/* Bendri skaičiai */}
       <div className="mb-8 grid grid-cols-3 gap-4">
         <div className="glass p-6">
-          <p className="text-sm text-white/50">Vartotojų</p>
+          <p className="text-sm text-white/55">Vartotojų</p>
           <p className="mt-1 text-4xl font-bold">{totalUsers}</p>
         </div>
         <div className="glass p-6">
-          <p className="text-sm text-white/50">Iš viso įrašų</p>
+          <p className="text-sm text-white/55">Iš viso įrašų</p>
           <p className="mt-1 text-4xl font-bold">{totalItems}</p>
         </div>
         <div className="glass p-6">
-          <p className="text-sm text-white/50">Peržiūrėta</p>
+          <p className="text-sm text-white/55">Peržiūrėta</p>
           <p className="mt-1 text-4xl font-bold">{totalWatched}</p>
         </div>
       </div>
@@ -82,7 +91,7 @@ export default async function AdminPage() {
         <h2 className="mb-4 text-sm font-semibold text-white/70">Vartotojai</h2>
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-xs text-white/40">
+            <tr className="text-left text-xs text-white/55">
               <th className="pb-2 pr-4">#</th>
               <th className="pb-2 pr-4">Vartotojas</th>
               <th className="pb-2 pr-4">Rolė</th>
@@ -94,11 +103,11 @@ export default async function AdminPage() {
           <tbody>
             {users.map((u) => (
               <tr key={u.id} className="border-t border-white/5">
-                <td className="py-2 pr-4 text-white/50">{u.userNumber}</td>
+                <td className="py-2 pr-4 text-white/55">{u.userNumber}</td>
                 <td className="py-2 pr-4">
                   <span className="text-white/90">{u.name || u.email || u.sub}</span>
                   {u.email && u.name && (
-                    <span className="block text-xs text-white/40">{u.email}</span>
+                    <span className="block text-xs text-white/55">{u.email}</span>
                   )}
                 </td>
                 <td className="py-2 pr-4">
@@ -107,14 +116,14 @@ export default async function AdminPage() {
                       admin
                     </span>
                   ) : (
-                    <span className="text-white/40">vartotojas</span>
+                    <span className="text-white/55">vartotojas</span>
                   )}
                 </td>
                 <td className="py-2 pr-4 text-right tabular-nums">{u._count.mediaItems}</td>
                 <td className="py-2 pr-4 text-right tabular-nums">
                   {watchedMap.get(u.id) ?? 0}
                 </td>
-                <td className="py-2 text-right text-xs text-white/40">
+                <td className="py-2 text-right text-xs text-white/55">
                   {u.createdAt.toISOString().slice(0, 10)}
                 </td>
               </tr>
@@ -137,9 +146,9 @@ export default async function AdminPage() {
               >
                 <span className="min-w-0 truncate text-white/90">
                   {m.title}{" "}
-                  {m.year && <span className="text-white/40">({m.year})</span>}
+                  {m.year && <span className="text-white/55">({m.year})</span>}
                 </span>
-                <span className="shrink-0 text-xs text-white/40">
+                <span className="shrink-0 text-xs text-white/55">
                   #{m.user.userNumber} {m.user.name || m.user.email} · {t(`type.${m.type}`)}
                 </span>
               </div>

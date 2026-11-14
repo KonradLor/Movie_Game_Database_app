@@ -68,7 +68,7 @@ export default async function TopBar() {
   const iconCls =
     "relative flex items-center rounded-md p-1.5 text-white/70 transition hover:bg-white/10 hover:text-white";
   const badgeCls =
-    "absolute -right-1 -top-1 inline-flex min-w-[1.05rem] justify-center rounded-full bg-[var(--color-accent)] px-1 text-[10px] font-bold leading-4 text-white";
+    "absolute -right-1 -top-1 inline-flex min-w-[1.05rem] justify-center rounded-full bg-[var(--color-accent)] px-1 text-[10px] font-bold leading-4 text-[var(--color-on-accent)]";
 
   return (
     <header className="sticky top-0 z-30 border-b border-white/5 bg-black/30 backdrop-blur-xl">
@@ -120,7 +120,7 @@ export default async function TopBar() {
 
               <Link
                 href="/prideti"
-                className="rounded-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-3 py-1.5 text-sm font-semibold text-white transition hover:opacity-90"
+                className="rounded-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-3 py-1.5 text-sm font-semibold text-[var(--color-on-accent)] transition hover:brightness-110"
               >
                 + {t("actions.add")}
               </Link>
@@ -147,7 +147,7 @@ export default async function TopBar() {
               </form>
               <a
                 href={ENROLL_URL}
-                className="rounded-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-4 py-1.5 text-sm font-semibold text-white transition hover:opacity-90"
+                className="rounded-full bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-4 py-1.5 text-sm font-semibold text-[var(--color-on-accent)] transition hover:brightness-110"
               >
                 {t("nav.register")}
               </a>

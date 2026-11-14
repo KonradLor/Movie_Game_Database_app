@@ -29,7 +29,7 @@ export default async function OnThisDay({ userId }: { userId: string | null }) {
   return (
     <section className="glass mb-8 p-5">
       <h2 className="text-sm font-semibold text-white/80">{t("onThisDay.title")}</h2>
-      <p className="mb-3 text-xs text-white/45">{t("onThisDay.subtitle")}</p>
+      <p className="mb-3 text-xs text-white/55">{t("onThisDay.subtitle")}</p>
       <div className="flex flex-wrap gap-2">
         {matches.map((i) => (
           <Link
@@ -37,7 +37,7 @@ export default async function OnThisDay({ userId }: { userId: string | null }) {
             href={`/media/${i.id}`}
             className="rounded-lg bg-white/5 px-3 py-1.5 text-sm hover:bg-white/10"
           >
-            {i.title} {i.year && <span className="text-white/40">({i.year})</span>}
+            {i.title} {i.year && <span className="text-white/55">({i.year})</span>}
           </Link>
         ))}
       </div>

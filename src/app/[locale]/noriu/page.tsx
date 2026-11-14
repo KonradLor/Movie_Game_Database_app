@@ -30,7 +30,7 @@ export default async function WatchlistPage() {
 
       {items.length === 0 ? (
         <section className="glass flex min-h-[40vh] items-center justify-center p-10 text-center">
-          <p className="text-white/45">{t("watchlist.empty")}</p>
+          <p className="text-white/55">{t("watchlist.empty")}</p>
         </section>
       ) : (
         <section className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
@@ -49,7 +49,7 @@ export default async function WatchlistPage() {
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center px-2 text-center text-xs text-white/25">
+                    <div className="flex h-full w-full items-center justify-center px-2 text-center text-xs text-white/55">
                       {title}
                     </div>
                   )}

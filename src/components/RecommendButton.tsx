@@ -66,7 +66,7 @@ export default function RecommendButton({
             <button
               type="submit"
               disabled={pending}
-              className="rounded-lg bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+              className="rounded-lg bg-gradient-to-r from-[var(--color-accent)] to-[var(--color-accent-2)] px-4 py-2 text-sm font-semibold text-[var(--color-on-accent)] transition hover:brightness-110 disabled:opacity-50"
             >
               {t("send")}
             </button>

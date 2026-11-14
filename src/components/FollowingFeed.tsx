@@ -38,12 +38,12 @@ export default async function FollowingFeed({ userId }: { userId: string | null 
               <span aria-hidden>{i.type === "GAME" ? "🎮" : "🎬"}</span>
               <span className="min-w-0 truncate text-white/80">
                 <span className="font-medium">{i.user.name || `#${i.user.userNumber}`}</span>{" "}
-                <span className="text-white/50">{t(verbKey(i.type, i.status))}</span>{" "}
+                <span className="text-white/55">{t(verbKey(i.type, i.status))}</span>{" "}
                 <Link href={`/media/${i.id}`} className="text-[var(--color-accent)] hover:underline">
                   {title}
                 </Link>
               </span>
-              <span className="ml-auto shrink-0 text-[11px] text-white/30">
+              <span className="ml-auto shrink-0 text-[11px] text-white/55">
                 {(i.activityAt ?? i.createdAt).toISOString().slice(0, 10)}
               </span>
             </li>

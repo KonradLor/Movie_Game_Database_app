@@ -61,7 +61,7 @@ export default async function PersonPage({
             // eslint-disable-next-line @next/next/no-img-element
             <img src={person.photoUrl} alt={person.name} className="w-full" />
           ) : (
-            <div className="flex aspect-[2/3] items-center justify-center text-xs text-white/30">
+            <div className="flex aspect-[2/3] items-center justify-center text-xs text-white/55">
               {person.name}
             </div>
           )}
@@ -94,7 +94,7 @@ export default async function PersonPage({
                 className="rounded-lg bg-white/5 px-3 py-2 text-sm hover:bg-white/10"
               >
                 {pickText(x.media, locale).title}
-                {x.character && <span className="text-white/40"> — {x.character}</span>}
+                {x.character && <span className="text-white/55"> — {x.character}</span>}
               </Link>
             ))}
           </div>
@@ -117,13 +117,13 @@ export default async function PersonPage({
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={w.poster} alt={w.title} loading="lazy" className="h-full w-full object-cover" />
                     ) : (
-                      <div className="flex h-full items-center justify-center px-2 text-center text-[11px] text-white/25">
+                      <div className="flex h-full items-center justify-center px-2 text-center text-[11px] text-white/55">
                         {w.title}
                       </div>
                     )}
                   </div>
                   <p className="line-clamp-1 px-1 text-xs font-medium text-white/90">{w.title}</p>
-                  <p className="px-1 text-[11px] text-white/40">
+                  <p className="px-1 text-[11px] text-white/55">
                     {w.year || ""} {w.role && `· ${w.role}`}
                   </p>
                   {admin && !owned && (

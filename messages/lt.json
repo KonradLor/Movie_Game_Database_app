@@ -40,9 +40,10 @@
     "decline": "Atmesti",
     "cancel": "Atšaukti",
     "remove": "Pašalinti",
+    "confirmRemove": "Pašalinti iš draugų? Šis žmogus nebematys tavo įrašų „Draugams“, o sekimas abiem kryptimis bus nutrauktas.",
     "viewCollection": "Peržiūrėti kolekciją",
     "activity": "Naujausia draugų veikla",
-    "noActivity": "Draugai kol kas neturi viešų įrašų.",
+    "noActivity": "Draugai kol kas nesidalija nė vienu įrašu.",
     "waiting": "laukiama",
     "err_badCode": "Įvesk teisingą kodą (skaičių).",
     "err_self": "Tai tavo paties kodas.",
@@ -53,8 +54,8 @@
   },
   "friendCol": {
     "title": "{name} kolekcija",
-    "subtitle": "Vieši filmai, serialai ir žaidimai",
-    "empty": "Kol kas viešų įrašų nėra."
+    "subtitle": "Įrašai, kuriuos draugas rodo draugams",
+    "empty": "Draugas kol kas nesidalija nė vienu įrašu."
   },
   "rec": {
     "recommend": "Rekomenduoti draugui",
@@ -63,7 +64,7 @@
     "send": "Siųsti rekomendaciją",
     "sent": "Rekomendacija išsiųsta!",
     "error": "Nepavyko išsiųsti.",
-    "notPublicHint": "Padaryk šį įrašą viešą, kad galėtum jį rekomenduoti draugams.",
+    "notPublicHint": "Pakeisk matomumą į „Draugams“, kad galėtum rekomenduoti šį įrašą.",
     "title": "Rekomendacijos",
     "empty": "Kol kas rekomendacijų nėra.",
     "from": "nuo",
@@ -261,9 +262,14 @@
     "PLAYING": "Žaidžiu dabar"
   },
   "visibility": {
-    "PUBLIC": "Viešas",
-    "UNLISTED": "Tik su nuoroda",
-    "PRIVATE": "Privatus"
+    "PUBLIC": "Draugams",
+    "UNLISTED": "Tik man (senas nustatymas)",
+    "PRIVATE": "Tik man"
+  },
+  "visibilityHint": {
+    "PUBLIC": "Matai tu ir tavo patvirtinti draugai. Lankytojai nemato.",
+    "UNLISTED": "Matai tik tu. Tai senas „Tik su nuoroda“ nustatymas, jis veikia kaip „Tik man“.",
+    "PRIVATE": "Matai tik tu."
   },
   "profile": {
     "title": "Profilis",
@@ -373,12 +379,21 @@
   "feedbackAdmin": {
     "crumb": "Administravimas",
     "title": "Atsiliepimai",
-    "intro": "Visi per formą gauti pranešimai, naujausi viršuje.",
+    "intro": "Visi per formą gauti pranešimai, naujausi viršuje. Pažymėk, ką perskaitei ir sutvarkei.",
     "allTypes": "Visi tipai",
     "anonymous": "Anonimas",
     "account": "paskyra",
     "empty": "Atsiliepimų dar nėra.",
-    "emptyType": "Šio tipo atsiliepimų nėra.",
-    "openLink": "Atsiliepimai"
+    "openLink": "Atsiliepimai",
+    "statusFilter": "Filtras pagal būseną",
+    "typeFilter": "Filtras pagal tipą",
+    "allStatuses": "Visos būsenos",
+    "status_NEW": "Nauja",
+    "status_READ": "Perskaityta",
+    "status_DONE": "Sutvarkyta",
+    "mark_NEW": "Žymėti kaip naują",
+    "mark_READ": "Žymėti kaip perskaitytą",
+    "mark_DONE": "Žymėti kaip sutvarkytą",
+    "emptyFilter": "Pagal šį filtrą atsiliepimų nėra."
   }
 }

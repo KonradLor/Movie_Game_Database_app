@@ -65,7 +65,7 @@ export default function UserMenu({
 
             {/* Temos greitas perjungimas */}
             <div className="px-3 py-2">
-              <p className="mb-1.5 text-xs text-white/45">{t("theme.label")}</p>
+              <p className="mb-1.5 text-xs text-white/55">{t("theme.label")}</p>
               <ThemeSwitcher initial={theme} variant="compact" />
             </div>
 
