@@ -14,6 +14,7 @@ import {
   refreshAllMediaAction,
 } from "@/lib/actions";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import ConfirmSubmitButton from "@/components/ConfirmSubmitButton";
 
 export default async function ProfilePage() {
   const user = await getCurrentUser();
@@ -147,7 +148,7 @@ export default async function ProfilePage() {
             type="submit"
             className="mt-3 rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium text-white transition hover:bg-white/20"
           >
-            {t("saveKeys")}
+            {t("savePref")}
           </button>
         </form>
       </section>
@@ -222,12 +223,12 @@ export default async function ProfilePage() {
 
       {/* Isvalyti */}
       <form action={clearApiKeysAction} className="mt-4">
-        <button
-          type="submit"
+        <ConfirmSubmitButton
+          confirmText={t("clearKeysConfirm")}
           className="rounded-lg bg-white/5 px-3 py-1.5 text-xs text-white/50 transition hover:bg-red-500/20 hover:text-red-300"
         >
           {t("clearKeys")}
-        </button>
+        </ConfirmSubmitButton>
       </form>
     </main>
   );

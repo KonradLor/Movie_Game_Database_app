@@ -6,6 +6,7 @@ import { getLocale } from "next-intl/server";
 import type { MediaType, Visibility, MediaStatus, GamePlatform, Prisma } from "@prisma/client";
 import { db } from "./db";
 import { getCurrentUser } from "./current-user";
+import { encryptSecret } from "./secret-box";
 import { resolveTmdb, resolveTwitch } from "./api-keys";
 import { importFromTmdb, importFromIgdb } from "./media-cache";
 import { cachePersonWorks } from "./people-cache";
@@ -381,7 +382,8 @@ export async function saveApiKeysAction(fd: FormData) {
   ] as const;
   for (const f of fields) {
     const v = str(fd, f);
-    if (v !== null) (data as Record<string, string>)[f] = v;
+    // Raktai DB saugomi uzsifruoti (secret-box); skaitant issifruoja getCurrentUser.
+    if (v !== null) (data as Record<string, string>)[f] = encryptSecret(v);
   }
   if (Object.keys(data).length > 0) {
     await db.user.update({ where: { id: user.id }, data });

@@ -2,6 +2,8 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/current-user";
+import { Link } from "@/i18n/navigation";
+import { readAllFeedback, parseFeedback } from "@/lib/feedback";
 
 // Admin apžvalga: visų vartotojų sąrašas + bendra statistika (priežiūrai).
 // Tik adminui (Konradui). Kiekvienas vartotojas savo dienorastį tvarko atskirai.
@@ -30,6 +32,9 @@ export default async function AdminPage() {
   const totalItems = await db.mediaItem.count();
   const totalWatched = await db.mediaItem.count({ where: { status: "WATCHED" } });
 
+  // Atsiliepimų skaičius (nuoroda į /admin/atsiliepimai)
+  const feedbackCount = parseFeedback(await readAllFeedback()).length;
+
   // Naujausi įrašai (visų vartotojų) - priežiūrai
   const recent = await db.mediaItem.findMany({
     orderBy: { createdAt: "desc" },
@@ -46,6 +51,15 @@ export default async function AdminPage() {
         Visų vartotojų suvestinė (tik administratoriui). Kiekvienas vartotojas mato
         ir tvarko tik savo dienoraštį.
       </p>
+
+      {/* Atsiliepimai (LD4 E-8): anksčiau matomi tik viešos formos apačioje */}
+      <Link
+        href="/admin/atsiliepimai"
+        className="glass mb-8 flex items-center justify-between p-5 transition hover:bg-white/10"
+      >
+        <span className="font-semibold">Atsiliepimai</span>
+        <span className="text-sm text-white/70">{feedbackCount} →</span>
+      </Link>
 
       {/* Bendri skaičiai */}
       <div className="mb-8 grid grid-cols-3 gap-4">

@@ -99,3 +99,44 @@ export async function readAllFeedback(): Promise<string> {
   }
   return parts.join("\n").trim();
 }
+
+// Išskaidytas atsiliepimas admin sąrašui (LD4 maketas E-8).
+export interface ParsedFeedback {
+  at: string; // "YYYY-MM-DD HH:MM:SS" (UTC)
+  type: string;
+  from: string;
+  account: string | null;
+  locale: string;
+  message: string;
+}
+
+const DASH = "-".repeat(60);
+
+// TXT formatą (žr. appendFeedback) paverčia įrašų sąrašu, naujausi pirmi.
+// Žinutės eilutės atitrauktos 2 tarpais, todėl skaidom TIK ties eilutės pradžioje
+// esančiu "=" x 60: įterptas (atitrauktas) skirtukas lieka žinutės tekstu.
+export function parseFeedback(text: string): ParsedFeedback[] {
+  const out: ParsedFeedback[] = [];
+  for (const raw of text.replace(/\r\n/g, "\n").split(/^={60}\n/m)) {
+    const lines = raw.split("\n");
+    const head = /^\[(.+?) UTC\] (\S+)$/.exec(lines[0] ?? "");
+    if (!head) continue;
+    const nuo = /^Nuo: (.*?)(?:  \(paskyra: (.*)\))?$/.exec(lines[1] ?? "");
+    const kalba = /^Kalba: (.*)$/.exec(lines[2] ?? "");
+    if (lines[3] !== DASH) continue;
+    const body: string[] = [];
+    for (const l of lines.slice(4)) {
+      if (l.startsWith("### feedback-")) break; // kito mėnesio failo antraštė
+      body.push(l.startsWith("  ") ? l.slice(2) : l);
+    }
+    out.push({
+      at: head[1],
+      type: head[2],
+      from: nuo?.[1] ?? "",
+      account: nuo?.[2] ?? null,
+      locale: kalba?.[1] ?? "-",
+      message: body.join("\n").trim(),
+    });
+  }
+  return out.sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
+}

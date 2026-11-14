@@ -7,6 +7,7 @@ import { routing } from "@/i18n/routing";
 import { toTheme, THEME_COOKIE } from "@/lib/theme";
 import TopBar from "@/components/TopBar";
 import MobileGate from "@/components/MobileGate";
+import Footer from "@/components/Footer";
 import "../globals.css";
 
 export const metadata: Metadata = {
@@ -40,6 +41,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <TopBar />
           {children}
+          <Footer />
           <MobileGate />
         </NextIntlClientProvider>
       </body>

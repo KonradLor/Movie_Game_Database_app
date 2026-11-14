@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "./db";
+import { decryptSecret, encryptSecret, isEncrypted } from "./secret-box";
 
 // Dabartinis prisijunges vartotojas (DB irasas). Pirma karta prisijungus -
 // sukuriamas User irasas ir priskiriamas userNumber (eiles nr. - API gating'ui).
@@ -52,16 +53,29 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     });
   }
 
+  // Tinginė migracija: senos nesifruotos API raktu reiksmes persifruojam DB.
+  const keyFields = ["tmdbReadToken", "tmdbApiKey", "twitchClientId", "twitchClientSecret"] as const;
+  const legacy = keyFields.filter((f) => user![f] && !isEncrypted(user![f]));
+  if (legacy.length > 0) {
+    try {
+      const data: Record<string, string> = {};
+      for (const f of legacy) data[f] = encryptSecret(user[f] as string);
+      user = await db.user.update({ where: { id: user.id }, data });
+    } catch (err) {
+      console.warn("[current-user] API raktu persifruoti nepavyko:", err);
+    }
+  }
+
   return {
     id: user.id,
     userNumber: user.userNumber,
     isAdmin: user.isAdmin,
     email: user.email,
     name: user.name,
-    tmdbReadToken: user.tmdbReadToken,
-    tmdbApiKey: user.tmdbApiKey,
-    twitchClientId: user.twitchClientId,
-    twitchClientSecret: user.twitchClientSecret,
+    tmdbReadToken: decryptSecret(user.tmdbReadToken),
+    tmdbApiKey: decryptSecret(user.tmdbApiKey),
+    twitchClientId: decryptSecret(user.twitchClientId),
+    twitchClientSecret: decryptSecret(user.twitchClientSecret),
     allowAdult: user.allowAdult,
     followFeedSeenAt: user.followFeedSeenAt,
   };
